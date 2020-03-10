@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+	<title>MoSy</title>
+</h:head>
+
+<h:outputStylesheet name="primeicons/primeicons.css"
+	library="primefaces" />
+
+<h:body>
+
+	<h:form id="form">
+
+		<p:growl id="common_growl" for="common_growl" showDetail="true"
+			life="1000">
+			<p:autoUpdate />
+		</p:growl>
+
+		<p:panel>
+
+			<p:messages id="info" showDetail="true" closeable="true" for="info"
+				escape="false">
+				<p:autoUpdate />
+			</p:messages>
+			<p:messages id="warn" showDetail="true" closeable="true" for="warn"
+				escape="false">
+				<p:autoUpdate />
+			</p:messages>
+			<p:messages id="error" showDetail="true" closeable="true" for="error"
+				escape="false">
+				<p:autoUpdate />
+			</p:messages>
+			<p:messages id="fatal" showDetail="true" closeable="true" for="fatal"
+				escape="false">
+				<p:autoUpdate />
+			</p:messages>
+
+
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/images/loading.gif" />
+			</p:dialog>
+
+
+			<div class="ui-g">
+
+				<div class="ui-g-12">
+					<p:menubar id="men_main">
+						<p:menuitem id="men_refresh" value="#{labels.refresh}"
+							action="#{main.refresh}" icon="pi pi-refresh" update=":form" />
+							
+						<p:menuitem id="men_upload_mockdata" value="#{labels.upload_mockdata}"
+							action="#{main.uploadMockData}" icon="pi pi-cloud-upload" />
+							
+						<f:facet name="options">
+							<p:commandButton id="btnLogout" value="#{labels.logout}"
+								icon="pi pi-home" action="#{main.logout}" process="@this" />
+						</f:facet>
+					</p:menubar>
+				</div>
+
+				<div class="ui-g-12">
+
+					<div class="ui-g-12 ui-md-3">
+						<p:tree id="tree_main" value="#{main.treeRoot}" var="node"
+							selectionMode="single" selection="#{main.selectedNode}"
+							dynamic="true">
+							<p:ajax event="select" update=":form:data_panel"
+								listener="#{main.onNodeSelect}" />
+							<p:ajax event="unselect" update=":form:data_panel"
+								listener="#{main.onNodeUnselect}" />
+
+							<p:treeNode>
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+					</div>
+
+					<div class="ui-g-12 ui-md-9">
+
+						<h:panelGroup id="data_panel">
+							<h:panelGroup id="pangr_main" rendered="true">
+								<ui:include id="uincl_dataPanel" src="#{main.dataPanel}" />
+							</h:panelGroup>
+						</h:panelGroup>
+
+					</div>
+
+				</div>
+
+				<div class="ui-g-12"></div>
+
+			</div>
+
+		</p:panel>
+
+	</h:form>
+
+</h:body>
+
+</html>

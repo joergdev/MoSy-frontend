@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+	<title>MoSy Login</title>
+</h:head>
+
+<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
+
+<style type="text/css">
+.pan_grid td {
+	text-align: right;
+}
+</style>
+
+<h:body>
+	<h:form id="f_login">
+
+		<p:panel header="#{labels.login_head}">
+
+			<p:messages id="info" showDetail="true" closeable="true" for="info"
+				escape="false">
+				<p:autoUpdate />
+			</p:messages>
+			<p:messages id="warn" showDetail="true" closeable="true" for="warn"
+				escape="false">
+				<p:autoUpdate />
+			</p:messages>
+			<p:messages id="error" showDetail="true" closeable="true" for="error"
+				escape="false">
+				<p:autoUpdate />
+			</p:messages>
+			<p:messages id="fatal" showDetail="true" closeable="true" for="fatal"
+				escape="false">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/images/loading.gif" />
+			</p:dialog>
+
+			<h:panelGrid columns="2" cellpadding="4" styleClass="pan_grid">
+				<h:outputText value="#{labels.password}" />
+				<p:password id="pw" value="#{login.password}" />
+
+				<div />
+				<p:commandButton id="btnLogin" value="#{labels.login}"
+					action="#{login.doLogin}" />
+			</h:panelGrid>
+
+			<ui:include id="uincl_dataPanel" src="#{login.nullString}" />
+
+		</p:panel>
+
+	</h:form>
+
+</h:body>
+
+</html>

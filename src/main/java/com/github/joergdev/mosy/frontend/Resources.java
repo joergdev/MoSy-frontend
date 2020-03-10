@@ -1,0 +1,105 @@
+package com.github.joergdev.mosy.frontend;
+
+import java.util.ResourceBundle;
+
+public class Resources
+{
+  private static final ResourceBundle MOSY_FRONTEND = ResourceBundle.getBundle("mosy_frontend");
+
+  private static final ResourceBundle LABELS = ResourceBundle.getBundle("labels");
+
+  private static final ResourceBundle INFO_MESSAGES = ResourceBundle.getBundle("info_messages");
+  private static final ResourceBundle WARN_MESSAGES = ResourceBundle.getBundle("warn_messages");
+  private static final ResourceBundle ERROR_MESSAGES = ResourceBundle.getBundle("error_messages");
+  private static final ResourceBundle FATAL_ERROR_MESSAGES = ResourceBundle.getBundle("fatal_error_messages");
+
+  public static final String SITE_LOGIN = "login.xhtml";
+  public static final String SITE_GOODBUY = "goodbye.xhtml";
+
+  public static final String SITE_MAIN = "main.xhtml";
+  public static final String SITE_MAIN_BASEDATA = "main_basedata.xhtml";
+  public static final String SITE_MAIN_INTERFACES = "main_interfaces.xhtml";
+  public static final String SITE_MAIN_MOCK_SESSIONS = "main_mocksessions.xhtml";
+  public static final String SITE_MAIN_RECORDS = "main_records.xhtml";
+  public static final String SITE_MAIN_RECORD = "main_record.xhtml";
+
+  public static final String SITE_INTERFACE = "interface.xhtml";
+  public static final String SITE_INTERFACE_BASEDATA = "interface_basedata.xhtml";
+  public static final String SITE_INTERFACE_METHODS = "interface_methods.xhtml";
+  public static final String SITE_INTERFACE_METHOD_BASEDATA = "interface_method-basedata.xhtml";
+  public static final String SITE_INTERFACE_METHOD_MOCKDATA_OVERVIEW = "interface_method-mockdata-overview.xhtml";
+  public static final String SITE_INTERFACE_METHOD_MOCKDATA = "interface_method-mockdata.xhtml";
+  public static final String SITE_INTERFACE_METHOD_RECORDCONF_OVERVIEW = "interface_method-recordconfig-overview.xhtml";
+  public static final String SITE_INTERFACE_METHOD_RECORDCONF = "interface_method-recordconfig.xhtml";
+
+  public static final String SITE_RECORD_AS_MOCKDATA = "recordAsMockdata.xhtml";
+
+  public static final String SITE_UPLOAD_MOCKDATA = "uploadMockdata.xhtml";
+
+  public static final String PREFIX_MOCKDATA_IN_EXPORT_REQUEST = ">>>>>>REQUEST>";
+  public static final String PREFIX_MOCKDATA_IN_EXPORT_RESPONSE = ">>>>>>RESPONSE>";
+
+  public static String getProperty(String key)
+  {
+    return MOSY_FRONTEND.getString(key);
+  }
+
+  public static String getMessage(MessageLevel level, String key, String... details)
+  {
+    if (MessageLevel.INFO.equals(level))
+    {
+      return getInfoMessage(key, details);
+    }
+    else if (MessageLevel.WARN.equals(level))
+    {
+      return getWarnMessage(key, details);
+    }
+    else if (MessageLevel.ERROR.equals(level))
+    {
+      return getErrorMessage(key, details);
+    }
+    else if (MessageLevel.FATAL.equals(level))
+    {
+      return getFatalErrorMessage(key, details);
+    }
+
+    throw new IllegalArgumentException("unknown level: " + level);
+  }
+
+  public static String getInfoMessage(String key, String... details)
+  {
+    return getMessage(INFO_MESSAGES, key, details);
+  }
+
+  public static String getWarnMessage(String key, String... details)
+  {
+    return getMessage(WARN_MESSAGES, key, details);
+  }
+
+  public static String getErrorMessage(String key, String... details)
+  {
+    return getMessage(ERROR_MESSAGES, key, details);
+  }
+
+  public static String getFatalErrorMessage(String key, String... details)
+  {
+    return getMessage(FATAL_ERROR_MESSAGES, key, details);
+  }
+
+  private static String getMessage(ResourceBundle rb, String key, String... details)
+  {
+    String msg = rb.getString(key);
+
+    if (details != null && details.length > 0)
+    {
+      msg = String.format(msg, (Object[]) details);
+    }
+
+    return msg;
+  }
+
+  public static String getLabel(String key)
+  {
+    return LABELS.getString(key);
+  }
+}

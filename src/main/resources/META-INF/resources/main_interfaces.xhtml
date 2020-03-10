@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+	<title>MoSy Interfaces</title>
+</h:head>
+
+
+<h:body>
+
+	<p:panel id="pnl_ifcs" header="#{labels.interfaces}">
+
+		<p:dataTable id="tblInterfaces" value="#{main.tblInterfaces}"
+			var="ifc" emptyMessage="#{labels.no_data}" rowKey="#{ifc.name}"
+			selectionMode="multiple" selection="#{main.selectedInterfaces}">
+
+			<p:columns value="#{main.tblInterfacesColumns}" var="col"
+				width="#{col.widthFull}">
+				<f:facet name="header">
+					<h:outputText value="#{col.header}" />
+				</f:facet>
+				<h:outputText value="#{ifc[col.property]}" />
+			</p:columns>
+
+			<p:ajax event="rowSelect" listener="#{main.onInterfacesRowSelect}"
+				update=":form:pnl_ifcs" />
+
+			<p:ajax event="rowUnselect"
+				listener="#{main.onInterfacesRowUnselect}" update=":form:pnl_ifcs" />
+
+			<p:ajax event="rowDblselect"
+				listener="#{main.onInterfacesRowDoubleClick}" />
+
+		</p:dataTable>
+
+
+		<p:commandButton value="#{labels._new}"
+			action="#{main.newInterface()}" process="@this" />
+
+		<p:commandButton value="#{labels.show_edit}"
+			action="#{main.editInterface()}"
+			disabled="#{main.editInterfaceDisabled}" process="@this" />
+
+		<p:commandButton value="#{labels.delete}"
+			action="#{main.deleteInterfaces()}"
+			disabled="#{main.deleteInterfaceDisabled}" process="@this"
+			update=":form" />
+
+	</p:panel>
+
+</h:body>
+
+</html>

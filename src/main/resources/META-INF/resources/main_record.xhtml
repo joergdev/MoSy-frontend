@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+	<title>Record</title>
+</h:head>
+
+
+<h:body>
+	<p:panel id="panRecord">
+
+		<h:panelGrid id="pangr_rec" columns="4" cellpadding="4">
+
+			<h:outputText for="recInterface" value="#{labels._interface}" />
+			<p:inputText id="recInterface" value="#{main.recInterface}"
+				readonly="true" />
+
+			<h:outputText for="recMethod" value="#{labels.method}" />
+			<p:inputText id="recMethod" value="#{main.recMethod}" readonly="true" />
+
+			<h:outputText for="recCreated" value="#{labels.created}" />
+			<p:inputText id="recCreated" value="#{main.recCreated}"
+				readonly="true" />
+			<div />
+			<div />
+
+		</h:panelGrid>
+
+		<h:panelGrid id="pangr_rec_req_resp" columns="1" cellpadding="4">
+
+			<h:outputText value="#{labels.request}" />
+			<p:inputTextarea id="recRequest" rows="10" cols="80"
+				value="#{main.recRequest}" readonly="true" />
+
+			<h:outputText value="#{labels.response}" />
+			<p:inputTextarea id="recResponse" rows="10" cols="80"
+				value="#{main.recResponse}" readonly="true" />
+
+		</h:panelGrid>
+
+		<p:commandButton value="#{labels.use_as_mockdata}"
+			action="#{main.useRecordsAsMockdata()}" process="@this" />
+
+		<p:commandButton id="btnDeleteRecord" value="#{labels.delete}"
+			action="#{main.deleteRecord()}" process="@this" update=":form" />
+
+	</p:panel>
+
+</h:body>
+
+</html>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+	<title>Interface basedata</title>
+</h:head>
+
+
+<h:body>
+
+	<p:panel id="panIfBasedata">
+
+		<h:panelGrid columns="2" cellpadding="4">
+			<h:outputText for="name" value="#{labels.name}" />
+			<p:inputText id="name" value="#{_interface.name}" />
+
+			<h:outputText for="type" value="#{labels.type}" />
+			<p:selectOneMenu id="type"
+				value="#{_interface.interfaceTypeSelected}">
+				<p:ajax listener="#{_interface.onInterfaceTypeSelect}"
+					update="panIfBasedata" process="panIfBasedata" />
+				<f:selectItem itemLabel="#{labels.select_type}" itemValue=""
+					noSelectionOption="true" />
+				<f:selectItems value="#{_interface.interfaceTypes}" />
+			</p:selectOneMenu>
+
+
+			<h:outputText id="lblServicePath" for="servicePath"
+				value="#{labels.service_path}"
+				rendered="#{_interface.servicePathRendered}" />
+			<p:inputText id="servicePath" value="#{_interface.servicePath}"
+				rendered="#{_interface.servicePathRendered}" />
+
+
+			<p:selectBooleanCheckbox value="#{_interface.mockDisabled}"
+				itemLabel="#{labels.mock_disabled}">
+				<p:ajax update="panIfBasedata"
+					listener="#{_interface.handleMockDisabled}" process="panIfBasedata" />
+			</p:selectBooleanCheckbox>
+
+			<p:selectBooleanCheckbox value="#{_interface.mockDisabledOnStartup}"
+				itemLabel="#{labels.on_startup}">
+				<p:ajax update="panIfBasedata"
+					listener="#{_interface.handleMockDisabled}" process="panIfBasedata" />
+			</p:selectBooleanCheckbox>
+
+
+			<p:selectBooleanCheckbox id="chk_routing_on_no_mockdata"
+				value="#{_interface.routingOnNoMockData}"
+				itemLabel="#{labels.routing_on_no_mockdata}"
+				disabled="#{_interface.routingOnNoMockDataDisabled}"
+				rendered="#{_interface.routingRendered}">
+				<p:ajax update="panIfBasedata"
+					listener="#{_interface.handleRoutingOnNoMockData}"
+					process="panIfBasedata" />
+			</p:selectBooleanCheckbox>
+
+			<h:outputText id="div_chk_routing_on_no_mockdata" value=""
+				rendered="#{_interface.routingRendered}" />
+
+
+			<h:outputText for="routingUrl" value="#{labels.routing_URL}"
+				rendered="#{_interface.routingRendered}" />
+			<p:inputText id="routingUrl" value="#{_interface.routingUrl}"
+				rendered="#{_interface.routingRendered}" style="width:30em" />
+
+
+			<p:selectBooleanCheckbox id="chk_record" value="#{_interface.record}"
+				itemLabel="#{labels.record}" disabled="#{_interface.recordDisabled}">
+			</p:selectBooleanCheckbox>
+			<div />
+		</h:panelGrid>
+
+	</p:panel>
+
+
+</h:body>
+
+</html>

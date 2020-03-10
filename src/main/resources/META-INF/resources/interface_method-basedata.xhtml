@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+	<title>Interface method basedata</title>
+</h:head>
+
+
+<h:body>
+
+	<p:panel id="panIfMethBasedata">
+
+		<h:panelGrid id="pangr_meth" columns="2" cellpadding="4">
+
+			<h:outputText for="name" value="#{labels.name}" />
+			<p:inputText id="name" value="#{_interface.methodVS.name}" />
+
+			<h:outputText id="lblServicePath" for="servicePath"
+				value="#{labels.service_path}"
+				rendered="#{_interface.methodVS.servicePathRendered}" />
+			<p:inputText id="servicePath"
+				value="#{_interface.methodVS.servicePath}"
+				rendered="#{_interface.methodVS.servicePathRendered}" />
+
+
+			<p:selectBooleanCheckbox value="#{_interface.methodVS.mockDisabled}"
+				itemLabel="#{labels.mock_disabled}">
+				<p:ajax update="panIfMethBasedata"
+					listener="#{_interface.methodVS.handleMockDisabled}"
+					process="panIfMethBasedata" />
+			</p:selectBooleanCheckbox>
+
+			<p:selectBooleanCheckbox
+				value="#{_interface.methodVS.mockDisabledOnStartup}"
+				itemLabel="#{labels.on_startup}">
+				<p:ajax update="panIfMethBasedata"
+					listener="#{_interface.methodVS.handleMockDisabled}"
+					process="panIfMethBasedata" />
+			</p:selectBooleanCheckbox>
+
+
+			<p:selectBooleanCheckbox id="chk_routing_on_no_mockdata"
+				value="#{_interface.methodVS.routingOnNoMockData}"
+				itemLabel="#{labels.routing_on_no_mockdata}"
+				disabled="#{_interface.methodVS.routingOnNoMockDataDisabled}"
+				rendered="#{_interface.methodVS.routingRendered}">
+				<p:ajax update="panIfMethBasedata"
+					listener="#{_interface.methodVS.handleRoutingOnNoMockData}"
+					process="panIfMethBasedata" />
+			</p:selectBooleanCheckbox>
+
+			<h:outputText id="div_chk_routing_on_no_mockdata" value=""
+				rendered="#{_interface.methodVS.routingRendered}" />
+
+
+			<p:selectBooleanCheckbox id="chk_record"
+				value="#{_interface.methodVS.record}" itemLabel="#{labels.record}"
+				disabled="#{_interface.methodVS.recordDisabled}">
+			</p:selectBooleanCheckbox>
+			<div />
+
+			<h:outputText id="lblCountCalls" for="countCalls"
+				value="#{labels.count_calls}" />
+			<p:inputText id="countCalls"
+				value="#{_interface.methodVS.countCalls}" readonly="true" />
+
+		</h:panelGrid>
+
+		<p:commandButton id="btnConfirmMethod" value="#{labels.confirm}"
+			action="#{_interface.methodVS.saveMethod()}"
+			process="panIfMethBasedata" update=":form" />
+
+		<p:commandButton id="btnDeleteMethod" value="#{labels.delete}"
+			action="#{_interface.methodVS.deleteMethod()}"
+			disabled="#{_interface.methodVS.deleteMethodDisabled}"
+			process="@this" update=":form" />
+
+	</p:panel>
+
+</h:body>
+
+</html>
