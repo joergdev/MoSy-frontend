@@ -1,6 +1,7 @@
 package com.github.joergdev.mosy.frontend.view.controller;
 
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.List;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
@@ -176,11 +177,19 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
     }
     else
     {
+      String ifcName = ifc.getName();
+
+      ifc = view.getInterfaces().stream().filter(ifcList -> Utils.isEqual(ifcList.getName(), ifcName))
+          .findAny()
+          .orElseThrow(() -> new IllegalArgumentException("no interface found with name " + ifcName));
+
       if (ifc.getMethods().isEmpty())
       {
+        Integer ifcID = ifc.getInterfaceId();
+
         // load methods
-        List<InterfaceMethod> methods = invokeApiCall(
-            apiClient -> apiClient.loadInterface(ifc.getInterfaceId())).getInterface().getMethods();
+        List<InterfaceMethod> methods = invokeApiCall(apiClient -> apiClient.loadInterface(ifcID))
+            .getInterface().getMethods();
 
         ifc.getMethods().addAll(methods);
       }
@@ -196,29 +205,32 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
       else if (methods.size() > 1)
       {
         InterfaceMethod methodSelected = view.getMethodSelected();
-        Integer methodID = null;
 
         if (methodSelected != null)
         {
-          methodID = methodSelected.getInterfaceMethodId();
+          String methodName = methodSelected.getName();
+
+          view.setMethodSelected(
+              methods.stream().filter(m -> methodName.equals(m.getName())).findAny().orElse(null));
         }
         else if (!Utils.isEmpty(view.getMethodID())
                  && Integer.valueOf(view.getInterfaceID()).equals(ifc.getInterfaceId()))
         {
-          methodID = Integer.valueOf(view.getMethodID());
-        }
-
-        if (methodID != null)
-        {
-          Integer mID = methodID;
+          Integer methodID = Integer.valueOf(view.getMethodID());
 
           view.setMethodSelected(
-              methods.stream().filter(m -> mID.equals(m.getInterfaceMethodId())).findAny().orElse(null));
+              methods.stream().filter(m -> methodID.equals(m.getInterfaceMethodId())).findAny().orElse(null));
+
         }
       }
     }
 
     updateComponents();
+  }
+
+  public void uploadMockData(FileUploadEvent event)
+  {
+    view.getMockDataUploadedEvents().add(event);
   }
 
   public void useUploadedMockData()
@@ -229,6 +241,7 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
   private class UseUploadedMockDataExecution extends Execution
   {
     private List<FileUploadEvent> mockDataUploadedEvents = view.getMockDataUploadedEvents();
+    private int countUploaded = 0;
 
     @Override
     protected void createPreValidations()
@@ -244,7 +257,7 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
     @Override
     public Message getGrowlMessageOnSuccess()
     {
-      String detail = String.valueOf(mockDataUploadedEvents.size()) + " " + Resources.getLabel("mockdata");
+      String detail = String.valueOf(countUploaded) + " " + Resources.getLabel("mockdata");
 
       return new Message(MessageLevel.INFO, "uploaded_var", detail);
     }
@@ -253,8 +266,11 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
     protected void _execute()
       throws Exception
     {
-      for (FileUploadEvent e : mockDataUploadedEvents)
+      Iterator<FileUploadEvent> itFiles = mockDataUploadedEvents.iterator();
+
+      while (itFiles.hasNext())
       {
+        FileUploadEvent e = itFiles.next();
         UploadedFile upFile = e.getFile();
         String filename = upFile.getFileName();
         String content = new String(upFile.getContents(), "UTF-8");
@@ -304,12 +320,20 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
         // Save
         invokeApiCall(apiClient -> apiClient.saveMockData(apiMockData));
 
-        mockDataUploadedEvents.remove(e);
+        countUploaded++;
+
+        itFiles.remove();
       }
     }
 
     private void setMockDataTitle(String filenameNew, MockData apiMockData)
     {
+      int idxLastPoint = filenameNew.lastIndexOf(".");
+      if (idxLastPoint > 0)
+      {
+        filenameNew = filenameNew.substring(0, idxLastPoint);
+      }
+
       StringBuilder buiTitle = new StringBuilder();
       buiTitle.append(Utils.nvl(view.getTitlePrefix(), ""));
       buiTitle.append(filenameNew);
@@ -347,20 +371,19 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
     {
       try
       {
-        String request = fileContent
-            .substring(idxPrefix + Resources.PREFIX_MOCKDATA_IN_EXPORT_REQUEST.length(), idxEnd).trim();
+        String reqResp = fileContent.substring(idxPrefix + prefix.length(), idxEnd).trim();
 
-        if (request.startsWith("\n"))
+        if (reqResp.startsWith("\n"))
         {
-          request = request.substring(1);
+          reqResp = reqResp.substring(1);
         }
 
-        if (request.endsWith("\n"))
+        if (reqResp.endsWith("\n"))
         {
-          request = request.substring(0, request.length() - 1);
+          reqResp = reqResp.substring(0, reqResp.length() - 1);
         }
 
-        return request;
+        return reqResp;
       }
       catch (IndexOutOfBoundsException ex)
       {

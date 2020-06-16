@@ -117,10 +117,11 @@
 
 					</h:panelGrid>
 
-					<h:outputText
-						value="#{labels.mockdata_upload_hint_no_interface_method_selected}"
-						rendered="#{uploadMockdata.hintNoInterfaceMethodSelectedVisible}" />
-
+					<p:panel>
+						<h:outputText
+							value="#{labels.mockdata_upload_hint_no_interface_method_selected}"
+							rendered="#{uploadMockdata.hintNoInterfaceMethodSelectedVisible}" />
+					</p:panel>
 
 					<p:panel header="#{labels.upload}" style="margin-top: 30px">
 

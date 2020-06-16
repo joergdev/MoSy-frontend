@@ -4,14 +4,15 @@ import java.util.ResourceBundle;
 
 public class Resources
 {
-  private static final ResourceBundle MOSY_FRONTEND = ResourceBundle.getBundle("mosy_frontend");
+  private static final ResourceBundle MOSY_FRONTEND = ResourceBundle.getBundle("mosy_web_frontend");
 
-  private static final ResourceBundle LABELS = ResourceBundle.getBundle("labels");
+  private static final ResourceBundle LABELS = ResourceBundle.getBundle("mosy_web_labels");
 
-  private static final ResourceBundle INFO_MESSAGES = ResourceBundle.getBundle("info_messages");
-  private static final ResourceBundle WARN_MESSAGES = ResourceBundle.getBundle("warn_messages");
-  private static final ResourceBundle ERROR_MESSAGES = ResourceBundle.getBundle("error_messages");
-  private static final ResourceBundle FATAL_ERROR_MESSAGES = ResourceBundle.getBundle("fatal_error_messages");
+  private static final ResourceBundle INFO_MESSAGES = ResourceBundle.getBundle("mosy_web_info_messages");
+  private static final ResourceBundle WARN_MESSAGES = ResourceBundle.getBundle("mosy_web_warn_messages");
+  private static final ResourceBundle ERROR_MESSAGES = ResourceBundle.getBundle("mosy_web_error_messages");
+  private static final ResourceBundle FATAL_ERROR_MESSAGES = ResourceBundle
+      .getBundle("mosy_web_fatal_error_messages");
 
   public static final String SITE_LOGIN = "login.xhtml";
   public static final String SITE_GOODBUY = "goodbye.xhtml";

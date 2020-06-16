@@ -39,7 +39,6 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
   private boolean routingOnNoMockDataDisabled;
   private boolean recordDisabled;
   private boolean servicePathRendered = true;
-  private boolean routingRendered = true;
   private boolean deleteMethodDisabled = true;
 
   // --- End Method data --------------------------------
@@ -532,16 +531,6 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
   public void setServicePathRendered(boolean servicePathRendered)
   {
     this.servicePathRendered = servicePathRendered;
-  }
-
-  public boolean isRoutingRendered()
-  {
-    return routingRendered;
-  }
-
-  public void setRoutingRendered(boolean routingRendered)
-  {
-    this.routingRendered = routingRendered;
   }
 
   public boolean isDeleteMethodDisabled()

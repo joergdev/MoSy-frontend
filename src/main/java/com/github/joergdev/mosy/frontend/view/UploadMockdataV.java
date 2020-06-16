@@ -71,7 +71,7 @@ public class UploadMockdataV extends AbstractView<UploadMockdataVC>
 
   public void uploadMockData(FileUploadEvent event)
   {
-    mockDataUploadedEvents.add(event);
+    controller.uploadMockData(event);
   }
 
   public void useUploadedMockData()

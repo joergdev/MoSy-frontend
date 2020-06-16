@@ -68,7 +68,7 @@ public class InterfaceV extends AbstractView<InterfaceVC>
   private boolean recordDisabled;
   private boolean deleteInterfaceDisabled = true;
   private boolean servicePathRendered = true;
-  private boolean routingRendered = true;
+  private boolean routingUrlRendered = true;
   private boolean saveDeleteInterfaceRendered = true;
 
   // -----------------------------------
@@ -502,14 +502,14 @@ public class InterfaceV extends AbstractView<InterfaceVC>
     this.servicePathRendered = servicePathRendered;
   }
 
-  public boolean isRoutingRendered()
+  public boolean isRoutingUrlRendered()
   {
-    return routingRendered;
+    return routingUrlRendered;
   }
 
-  public void setRoutingRendered(boolean routingRendered)
+  public void setRoutingUrlRendered(boolean routingUrlRendered)
   {
-    this.routingRendered = routingRendered;
+    this.routingUrlRendered = routingUrlRendered;
   }
 
   public boolean isRefreshDisabled()

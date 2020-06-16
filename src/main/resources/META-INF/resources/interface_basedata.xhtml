@@ -53,21 +53,19 @@
 			<p:selectBooleanCheckbox id="chk_routing_on_no_mockdata"
 				value="#{_interface.routingOnNoMockData}"
 				itemLabel="#{labels.routing_on_no_mockdata}"
-				disabled="#{_interface.routingOnNoMockDataDisabled}"
-				rendered="#{_interface.routingRendered}">
+				disabled="#{_interface.routingOnNoMockDataDisabled}">
 				<p:ajax update="panIfBasedata"
 					listener="#{_interface.handleRoutingOnNoMockData}"
 					process="panIfBasedata" />
 			</p:selectBooleanCheckbox>
 
-			<h:outputText id="div_chk_routing_on_no_mockdata" value=""
-				rendered="#{_interface.routingRendered}" />
+			<h:outputText id="div_chk_routing_on_no_mockdata" value="" />
 
 
 			<h:outputText for="routingUrl" value="#{labels.routing_URL}"
-				rendered="#{_interface.routingRendered}" />
+				rendered="#{_interface.routingUrlRendered}" />
 			<p:inputText id="routingUrl" value="#{_interface.routingUrl}"
-				rendered="#{_interface.routingRendered}" style="width:30em" />
+				rendered="#{_interface.routingUrlRendered}" style="width:30em" />
 
 
 			<p:selectBooleanCheckbox id="chk_record" value="#{_interface.record}"

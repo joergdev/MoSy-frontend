@@ -224,13 +224,12 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
       view.setServicePath(null);
     }
 
-    // routing rendered
-    view.setRoutingRendered(
-        view.getInterfaceTypeSelected() == null || view.getInterfaceTypeSelected().routingPossible);
+    // RoutingURL rendererd
+    view.setRoutingUrlRendered(
+        view.getInterfaceTypeSelected() != null && view.getInterfaceTypeSelected().directRoutingPossible);
 
-    if (!view.isRoutingRendered())
+    if (!view.isRoutingUrlRendered())
     {
-      view.setRoutingOnNoMockData(false);
       view.setRoutingUrl(null);
     }
 
@@ -378,6 +377,8 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
         {
           view.setDataPanel(viewPage);
         }
+
+        updateComponentsSaveDeleteInterfaceRendered();
       }
     }
   }
@@ -430,7 +431,8 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
       addValidation(new NotNull(view.getInterfaceTypeSelected(), "type"));
 
       addValidation(new StringNotEmpty(view.getRoutingUrl(), "routing_URL")
-          .addCondition(() -> view.isRoutingOnNoMockData()));
+          .addCondition(() -> view.isRoutingOnNoMockData() && view.getInterfaceTypeSelected() != null
+                              && view.getInterfaceTypeSelected().directRoutingPossible));
     }
 
     @Override
@@ -820,15 +822,6 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
     if (!methodVS.isServicePathRendered())
     {
       methodVS.setServicePath(null);
-    }
-
-    // routing rendered
-    methodVS.setRoutingRendered(
-        view.getInterfaceTypeSelected() == null || view.getInterfaceTypeSelected().routingPossible);
-
-    if (!methodVS.isRoutingRendered())
-    {
-      methodVS.setRoutingOnNoMockData(false);
     }
 
     // delete method disabled if new
@@ -1391,7 +1384,10 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
     @Override
     protected void createPreValidations()
     {
-      addValidation(new NotNull(apiMethodSelected, "method"));
+      addValidation(new NotNull(apiInterface, "interface"))
+          .addValidation(new NotNull(() -> apiInterface.getInterfaceId(), "interface"));
+      addValidation(new NotNull(apiMethodSelected, "method"))
+          .addValidation(new NotNull(() -> apiMethodSelected.getInterfaceMethodId(), "method"));
     }
 
     @Override
@@ -1405,8 +1401,7 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
       throws Exception
     {
       Map<String, Object> queryParams = new HashMap<>();
-      queryParams.put(UploadMockdataV.VIEW_PARAM_INTERFACE_ID,
-          apiMethodSelected.getMockInterface().getInterfaceId());
+      queryParams.put(UploadMockdataV.VIEW_PARAM_INTERFACE_ID, apiInterface.getInterfaceId());
       queryParams.put(UploadMockdataV.VIEW_PARAM_METHOD_ID, apiMethodSelected.getInterfaceMethodId());
 
       JsfUtils.redirect(Resources.SITE_UPLOAD_MOCKDATA, queryParams);

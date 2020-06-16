@@ -6,7 +6,7 @@
 
 	<application>
 		<resource-bundle>
-			<base-name>labels</base-name>
+			<base-name>mosy_web_labels</base-name>
 			<var>labels</var>
 		</resource-bundle>
 	</application>
