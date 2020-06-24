@@ -7,7 +7,7 @@
 		################ Appender default ###############
 	-->
 	<appender name="Protokoll" class="org.apache.log4j.RollingFileAppender">
-		<param name="File" value="MoSyFrontend.log" />
+		<param name="File" value="${mosy.log.dir}MoSyFrontend.log" />
 		<param name="Append" value="true" />
 		<param name="MaxFileSize" value="3000KB" />
 		<param name="MaxBackupIndex" value="20" />
