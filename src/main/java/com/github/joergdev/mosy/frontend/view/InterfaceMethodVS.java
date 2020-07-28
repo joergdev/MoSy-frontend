@@ -1,6 +1,7 @@
 package com.github.joergdev.mosy.frontend.view;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
@@ -8,6 +9,7 @@ import com.github.joergdev.mosy.api.model.MockData;
 import com.github.joergdev.mosy.api.model.MockSession;
 import com.github.joergdev.mosy.api.model.RecordConfig;
 import com.github.joergdev.mosy.frontend.Resources;
+import com.github.joergdev.mosy.frontend.model.YesNoGlobalOrRecordConfigIndividuallyType;
 import com.github.joergdev.mosy.frontend.utils.ColumnModel;
 import com.github.joergdev.mosy.frontend.utils.WidthUnit;
 import com.github.joergdev.mosy.frontend.view.controller.InterfaceVC;
@@ -26,12 +28,15 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
 
   private String servicePath;
 
-  private boolean mockDisabled;
-  private boolean mockDisabledOnStartup;
+  private boolean mockActive;
+  private boolean mockActiveOnStartup;
 
   private boolean routingOnNoMockData;
 
-  private boolean record;
+  private final List<YesNoGlobalOrRecordConfigIndividuallyType> yesNoGlobalTypes = Arrays
+      .asList(YesNoGlobalOrRecordConfigIndividuallyType.values());
+
+  private YesNoGlobalOrRecordConfigIndividuallyType record;
 
   private Integer countCalls;
 
@@ -288,26 +293,6 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
     this.servicePath = servicePath;
   }
 
-  public boolean isMockDisabled()
-  {
-    return mockDisabled;
-  }
-
-  public void setMockDisabled(boolean mockDisabled)
-  {
-    this.mockDisabled = mockDisabled;
-  }
-
-  public boolean isMockDisabledOnStartup()
-  {
-    return mockDisabledOnStartup;
-  }
-
-  public void setMockDisabledOnStartup(boolean mockDisabledOnStartup)
-  {
-    this.mockDisabledOnStartup = mockDisabledOnStartup;
-  }
-
   public boolean isRoutingOnNoMockData()
   {
     return routingOnNoMockData;
@@ -318,12 +303,12 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
     this.routingOnNoMockData = routingOnNoMockData;
   }
 
-  public boolean isRecord()
+  public YesNoGlobalOrRecordConfigIndividuallyType getRecord()
   {
     return record;
   }
 
-  public void setRecord(boolean record)
+  public void setRecord(YesNoGlobalOrRecordConfigIndividuallyType record)
   {
     this.record = record;
   }
@@ -611,5 +596,30 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
   public void setMockSessionSelected(MockSession mockSessionSelected)
   {
     this.mockSessionSelected = mockSessionSelected;
+  }
+
+  public boolean isMockActive()
+  {
+    return mockActive;
+  }
+
+  public void setMockActive(boolean mockActive)
+  {
+    this.mockActive = mockActive;
+  }
+
+  public boolean isMockActiveOnStartup()
+  {
+    return mockActiveOnStartup;
+  }
+
+  public void setMockActiveOnStartup(boolean mockActiveOnStartup)
+  {
+    this.mockActiveOnStartup = mockActiveOnStartup;
+  }
+
+  public List<YesNoGlobalOrRecordConfigIndividuallyType> getYesNoGlobalTypes()
+  {
+    return yesNoGlobalTypes;
   }
 }

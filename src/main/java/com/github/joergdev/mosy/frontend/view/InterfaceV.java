@@ -17,6 +17,7 @@ import org.primefaces.model.TreeNode;
 import com.github.joergdev.mosy.api.model.InterfaceMethod;
 import com.github.joergdev.mosy.api.model.InterfaceType;
 import com.github.joergdev.mosy.frontend.Resources;
+import com.github.joergdev.mosy.frontend.model.YesNoGlobalOrInterfaceMethodIndividuallyType;
 import com.github.joergdev.mosy.frontend.utils.ColumnModel;
 import com.github.joergdev.mosy.frontend.utils.JsfUtils;
 import com.github.joergdev.mosy.frontend.utils.TreeData;
@@ -55,13 +56,16 @@ public class InterfaceV extends AbstractView<InterfaceVC>
 
   private String servicePath;
 
-  private boolean mockDisabled;
-  private boolean mockDisabledOnStartup;
+  private final List<YesNoGlobalOrInterfaceMethodIndividuallyType> yesNoGlobalTypes = Arrays
+      .asList(YesNoGlobalOrInterfaceMethodIndividuallyType.values());
 
-  private boolean routingOnNoMockData;
+  private YesNoGlobalOrInterfaceMethodIndividuallyType mockActive;
+  private YesNoGlobalOrInterfaceMethodIndividuallyType mockActiveOnStartup;
+
+  private YesNoGlobalOrInterfaceMethodIndividuallyType routingOnNoMockData;
   private String routingUrl;
 
-  private boolean record;
+  private YesNoGlobalOrInterfaceMethodIndividuallyType record;
 
   // component states
   private boolean routingOnNoMockDataDisabled;
@@ -108,7 +112,7 @@ public class InterfaceV extends AbstractView<InterfaceVC>
     colName.setWidth(50, WidthUnit.PERCENT);
     tblMethodsColumns.add(colName);
 
-    ColumnModel colMockDisabled = new ColumnModel(Resources.getLabel("mock_disabled"), "mockDisabled");
+    ColumnModel colMockDisabled = new ColumnModel(Resources.getLabel("mock_active"), "mockActive");
     colMockDisabled.setWidth(10, WidthUnit.PERCENT);
     tblMethodsColumns.add(colMockDisabled);
 
@@ -237,7 +241,7 @@ public class InterfaceV extends AbstractView<InterfaceVC>
     controller.updateComponents();
   }
 
-  public void handleMockDisabled()
+  public void handleMockActive()
   {
     controller.updateComponents();
   }
@@ -392,36 +396,6 @@ public class InterfaceV extends AbstractView<InterfaceVC>
     this.servicePath = servicePath;
   }
 
-  public boolean isMockDisabled()
-  {
-    return mockDisabled;
-  }
-
-  public void setMockDisabled(boolean mockDisabled)
-  {
-    this.mockDisabled = mockDisabled;
-  }
-
-  public boolean isMockDisabledOnStartup()
-  {
-    return mockDisabledOnStartup;
-  }
-
-  public void setMockDisabledOnStartup(boolean mockDisabledOnStartup)
-  {
-    this.mockDisabledOnStartup = mockDisabledOnStartup;
-  }
-
-  public boolean isRoutingOnNoMockData()
-  {
-    return routingOnNoMockData;
-  }
-
-  public void setRoutingOnNoMockData(boolean routingOnNoMockData)
-  {
-    this.routingOnNoMockData = routingOnNoMockData;
-  }
-
   public String getRoutingUrl()
   {
     return routingUrl;
@@ -430,16 +404,6 @@ public class InterfaceV extends AbstractView<InterfaceVC>
   public void setRoutingUrl(String routingUrl)
   {
     this.routingUrl = routingUrl;
-  }
-
-  public boolean isRecord()
-  {
-    return record;
-  }
-
-  public void setRecord(boolean record)
-  {
-    this.record = record;
   }
 
   public List<InterfaceMethod> getTblMethods()
@@ -570,5 +534,50 @@ public class InterfaceV extends AbstractView<InterfaceVC>
   public void setSaveDeleteInterfaceRendered(boolean saveDeleteInterfaceRendered)
   {
     this.saveDeleteInterfaceRendered = saveDeleteInterfaceRendered;
+  }
+
+  public YesNoGlobalOrInterfaceMethodIndividuallyType getMockActive()
+  {
+    return mockActive;
+  }
+
+  public void setMockActive(YesNoGlobalOrInterfaceMethodIndividuallyType mockActive)
+  {
+    this.mockActive = mockActive;
+  }
+
+  public YesNoGlobalOrInterfaceMethodIndividuallyType getMockActiveOnStartup()
+  {
+    return mockActiveOnStartup;
+  }
+
+  public void setMockActiveOnStartup(YesNoGlobalOrInterfaceMethodIndividuallyType mockActiveOnStartup)
+  {
+    this.mockActiveOnStartup = mockActiveOnStartup;
+  }
+
+  public YesNoGlobalOrInterfaceMethodIndividuallyType getRoutingOnNoMockData()
+  {
+    return routingOnNoMockData;
+  }
+
+  public void setRoutingOnNoMockData(YesNoGlobalOrInterfaceMethodIndividuallyType routingOnNoMockData)
+  {
+    this.routingOnNoMockData = routingOnNoMockData;
+  }
+
+  public YesNoGlobalOrInterfaceMethodIndividuallyType getRecord()
+  {
+    return record;
+  }
+
+  public void setRecord(YesNoGlobalOrInterfaceMethodIndividuallyType record)
+  {
+    this.record = record;
+  }
+
+  public List<YesNoGlobalOrInterfaceMethodIndividuallyType> getYesNoGlobalTypes()
+  {
+    return yesNoGlobalTypes;
   }
 }

@@ -15,35 +15,44 @@
 
 	<p:panel>
 
-		<div>
-			<p:selectBooleanCheckbox value="#{main.mockActive}"
-				itemLabel="#{labels.mock_active}">
-				<p:ajax update="chk_routing_on_no_mockdata chk_record"
-					listener="#{main.baseDataChanged}" />
-			</p:selectBooleanCheckbox>
+		<h:panelGrid columns="4" cellpadding="4">
 
-			<p:selectBooleanCheckbox value="#{main.mockActiveOnStartup}"
-				itemLabel="#{labels.on_startup}">
-				<p:ajax update="chk_routing_on_no_mockdata"
-					listener="#{main.baseDataChanged}" />
-			</p:selectBooleanCheckbox>
-		</div>
+			<h:outputText for="mockActive" value="#{labels.mock_active}" />
+			<p:selectOneMenu id="mockActive" value="#{main.mockActive}">
+				<p:ajax listener="#{main.baseDataChanged}"
+					update="chk_routing_on_no_mockdata chk_record" />
+				<f:selectItems value="#{main.yesNoGlobalTypes}" />
+			</p:selectOneMenu>
 
-		<div>
-			<p:selectBooleanCheckbox id="chk_routing_on_no_mockdata"
+			<h:outputText for="mockActiveOnStartup" value="#{labels.on_startup}" />
+			<p:selectOneMenu id="mockActiveOnStartup"
+				value="#{main.mockActiveOnStartup}">
+				<p:ajax listener="#{main.baseDataChanged}"
+					update="chk_routing_on_no_mockdata chk_record" />
+				<f:selectItems value="#{main.yesNoGlobalTypes}" />
+			</p:selectOneMenu>
+
+			<h:outputText for="chk_routing_on_no_mockdata"
+				value="#{labels.routing_on_no_mockdata}" />
+			<p:selectOneMenu id="chk_routing_on_no_mockdata"
 				value="#{main.routingOnNoMockData}"
-				itemLabel="#{labels.routing_on_no_mockdata}"
 				disabled="#{main.routingOnNoMockDataDisabled}">
-				<p:ajax update="chk_record" listener="#{main.baseDataChanged}" />
-			</p:selectBooleanCheckbox>
-		</div>
+				<p:ajax listener="#{main.baseDataChanged}" update="chk_record" />
+				<f:selectItems value="#{main.yesNoGlobalTypes}" />
+			</p:selectOneMenu>
+			<h:outputText for="chk_routing_on_no_mockdata_rigid1" value="" />
+			<h:outputText for="chk_routing_on_no_mockdata_rigid2" value="" />
 
-		<div>
-			<p:selectBooleanCheckbox id="chk_record" value="#{main.record}"
-				itemLabel="#{labels.record}" disabled="#{main.recordDisabled}">
+			<h:outputText for="chk_record" value="#{labels.record}" />
+			<p:selectOneMenu id="chk_record" value="#{main.record}"
+				disabled="#{main.recordDisabled}">
 				<p:ajax listener="#{main.baseDataChanged}" />
-			</p:selectBooleanCheckbox>
-		</div>
+				<f:selectItems value="#{main.yesNoGlobalTypes}" />
+			</p:selectOneMenu>
+			<h:outputText for="chk_record_rigid1" value="" />
+			<h:outputText for="chk_record_rigid2" value="" />
+
+		</h:panelGrid>
 
 		<p:commandButton id="btnBoot" value="#{labels.reset_system}"
 			action="#{main.boot()}" process="@this" />

@@ -28,15 +28,15 @@
 				rendered="#{_interface.methodVS.servicePathRendered}" />
 
 
-			<p:selectBooleanCheckbox value="#{_interface.methodVS.mockDisabled}"
-				itemLabel="#{labels.mock_disabled}">
+			<p:selectBooleanCheckbox value="#{_interface.methodVS.mockActive}"
+				itemLabel="#{labels.mock_active}">
 				<p:ajax update="panIfMethBasedata"
 					listener="#{_interface.methodVS.handleMockDisabled}"
 					process="panIfMethBasedata" />
 			</p:selectBooleanCheckbox>
 
 			<p:selectBooleanCheckbox
-				value="#{_interface.methodVS.mockDisabledOnStartup}"
+				value="#{_interface.methodVS.mockActiveOnStartup}"
 				itemLabel="#{labels.on_startup}">
 				<p:ajax update="panIfMethBasedata"
 					listener="#{_interface.methodVS.handleMockDisabled}"
@@ -56,11 +56,15 @@
 			<h:outputText id="div_chk_routing_on_no_mockdata" value="" />
 
 
-			<p:selectBooleanCheckbox id="chk_record"
-				value="#{_interface.methodVS.record}" itemLabel="#{labels.record}"
+
+			<h:outputText for="chk_record" value="#{labels.record}" />
+			<p:selectOneMenu id="chk_record"
+				value="#{_interface.methodVS.record}"
 				disabled="#{_interface.methodVS.recordDisabled}">
-			</p:selectBooleanCheckbox>
-			<div />
+				<f:selectItems value="#{_interface.methodVS.yesNoGlobalTypes}" />
+			</p:selectOneMenu>
+
+
 
 			<h:outputText id="lblCountCalls" for="countCalls"
 				value="#{labels.count_calls}" />

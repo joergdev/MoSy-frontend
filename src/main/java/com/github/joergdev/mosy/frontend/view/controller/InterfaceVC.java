@@ -16,6 +16,8 @@ import com.github.joergdev.mosy.api.model.RecordConfig;
 import com.github.joergdev.mosy.frontend.Message;
 import com.github.joergdev.mosy.frontend.MessageLevel;
 import com.github.joergdev.mosy.frontend.Resources;
+import com.github.joergdev.mosy.frontend.model.YesNoGlobalOrInterfaceMethodIndividuallyType;
+import com.github.joergdev.mosy.frontend.model.YesNoGlobalOrRecordConfigIndividuallyType;
 import com.github.joergdev.mosy.frontend.utils.JsfUtils;
 import com.github.joergdev.mosy.frontend.utils.TreeData;
 import com.github.joergdev.mosy.frontend.validation.NotNull;
@@ -110,13 +112,16 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
       view.setInterfaceTypeSelected(apiInterfaceClone.getType());
       view.setServicePath(apiInterfaceClone.getServicePath());
 
-      view.setMockDisabled(Boolean.TRUE.equals(apiInterfaceClone.getMockDisabled()));
-      view.setMockDisabledOnStartup(Boolean.TRUE.equals(apiInterfaceClone.getMockDisabledOnStartup()));
+      view.setMockActive(
+          YesNoGlobalOrInterfaceMethodIndividuallyType.fromBoolean(apiInterfaceClone.getMockActive()));
+      view.setMockActiveOnStartup(YesNoGlobalOrInterfaceMethodIndividuallyType
+          .fromBoolean(apiInterfaceClone.getMockActiveOnStartup()));
 
-      view.setRoutingOnNoMockData(Boolean.TRUE.equals(apiInterfaceClone.getRoutingOnNoMockData()));
+      view.setRoutingOnNoMockData(YesNoGlobalOrInterfaceMethodIndividuallyType
+          .fromBoolean(apiInterfaceClone.getRoutingOnNoMockData()));
       view.setRoutingUrl(apiInterfaceClone.getRoutingUrl());
 
-      view.setRecord(Boolean.TRUE.equals(apiInterfaceClone.getRecord()));
+      view.setRecord(YesNoGlobalOrInterfaceMethodIndividuallyType.fromBoolean(apiInterfaceClone.getRecord()));
     }
 
     private void buildTreeData()
@@ -193,24 +198,31 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
   {
     view.setRefreshDisabled(view.getInterfaceId() == null);
 
-    boolean mockEnabled = !Boolean.TRUE.equals(view.isMockDisabled());
-    boolean mockEnabledOnStartup = !Boolean.TRUE.equals(view.isMockDisabledOnStartup());
+    boolean mockDisabled = YesNoGlobalOrInterfaceMethodIndividuallyType.NO.equals(view.getMockActive());
+    boolean mockDisabledOnStartup = YesNoGlobalOrInterfaceMethodIndividuallyType.NO
+        .equals(view.getMockActiveOnStartup());
 
-    boolean routinOnNoMockDataEnabled = mockEnabled || mockEnabledOnStartup;
+    boolean routinOnNoMockDataEnabled = !mockDisabled || !mockDisabledOnStartup;
 
     // only if mock (onStartup)
     view.setRoutingOnNoMockDataDisabled(!routinOnNoMockDataEnabled);
     if (!routinOnNoMockDataEnabled)
     {
-      view.setRoutingOnNoMockData(false);
+      view.setRoutingOnNoMockData(YesNoGlobalOrInterfaceMethodIndividuallyType.NO);
     }
+
+    boolean enableRecord = !YesNoGlobalOrInterfaceMethodIndividuallyType.YES.equals(view.getMockActive())
+                           || !YesNoGlobalOrInterfaceMethodIndividuallyType.YES
+                               .equals(view.getMockActiveOnStartup())
+                           || !YesNoGlobalOrInterfaceMethodIndividuallyType.NO
+                               .equals(view.getRoutingOnNoMockData());
 
     // disable record if not mock
     //    or mock + no routing
-    view.setRecordDisabled((!mockEnabled || !mockEnabledOnStartup) || !view.isRoutingOnNoMockData());
-    if (view.isRecordDisabled())
+    view.setRecordDisabled(!enableRecord);
+    if (!enableRecord)
     {
-      view.setRecord(false);
+      view.setRecord(YesNoGlobalOrInterfaceMethodIndividuallyType.NO);
     }
 
     view.setDeleteInterfaceDisabled(apiInterfaceClone.getInterfaceId() == null);
@@ -430,9 +442,10 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
 
       addValidation(new NotNull(view.getInterfaceTypeSelected(), "type"));
 
-      addValidation(new StringNotEmpty(view.getRoutingUrl(), "routing_URL")
-          .addCondition(() -> view.isRoutingOnNoMockData() && view.getInterfaceTypeSelected() != null
-                              && view.getInterfaceTypeSelected().directRoutingPossible));
+      addValidation(new StringNotEmpty(view.getRoutingUrl(), "routing_URL").addCondition(
+          () -> !YesNoGlobalOrInterfaceMethodIndividuallyType.NO.equals(view.getRoutingOnNoMockData())
+                && view.getInterfaceTypeSelected() != null
+                && view.getInterfaceTypeSelected().directRoutingPossible));
     }
 
     @Override
@@ -449,11 +462,14 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
       apiInterfaceClone.setName(view.getName());
       apiInterfaceClone.setType(view.getInterfaceTypeSelected());
       apiInterfaceClone.setServicePath(view.getServicePath());
-      apiInterfaceClone.setMockDisabled(view.isMockDisabled());
-      apiInterfaceClone.setMockDisabledOnStartup(view.isMockDisabledOnStartup());
-      apiInterfaceClone.setRoutingOnNoMockData(view.isRoutingOnNoMockData());
+      apiInterfaceClone
+          .setMockActive(YesNoGlobalOrInterfaceMethodIndividuallyType.toBoolean(view.getMockActive()));
+      apiInterfaceClone.setMockActiveOnStartup(
+          YesNoGlobalOrInterfaceMethodIndividuallyType.toBoolean(view.getMockActiveOnStartup()));
+      apiInterfaceClone.setRoutingOnNoMockData(
+          YesNoGlobalOrInterfaceMethodIndividuallyType.toBoolean(view.getRoutingOnNoMockData()));
       apiInterfaceClone.setRoutingUrl(view.getRoutingUrl());
-      apiInterfaceClone.setRecord(view.isRecord());
+      apiInterfaceClone.setRecord(YesNoGlobalOrInterfaceMethodIndividuallyType.toBoolean(view.getRecord()));
 
       // save
       Interface apiInterfaceSaved = invokeApiCall(apiClient -> apiClient.saveInterface(apiInterfaceClone))
@@ -664,12 +680,12 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
 
     methodVS.setServicePath(apiMethod.getServicePath());
 
-    methodVS.setMockDisabled(Boolean.TRUE.equals(apiMethod.getMockDisabled()));
-    methodVS.setMockDisabledOnStartup(Boolean.TRUE.equals(apiMethod.getMockDisabledOnStartup()));
+    methodVS.setMockActive(Boolean.TRUE.equals(apiMethod.getMockActive()));
+    methodVS.setMockActiveOnStartup(Boolean.TRUE.equals(apiMethod.getMockActiveOnStartup()));
 
     methodVS.setRoutingOnNoMockData(Boolean.TRUE.equals(apiMethod.getRoutingOnNoMockData()));
 
-    methodVS.setRecord(Boolean.TRUE.equals(apiMethod.getRecord()));
+    methodVS.setRecord(YesNoGlobalOrRecordConfigIndividuallyType.fromBoolean(apiMethod.getRecord()));
 
     methodVS.setCountCalls(apiMethod.getCountCalls());
 
@@ -795,8 +811,8 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
   {
     InterfaceMethodVS methodVS = view.getMethodVS();
 
-    boolean mockEnabled = !Boolean.TRUE.equals(methodVS.isMockDisabled());
-    boolean mockEnabledOnStartup = !Boolean.TRUE.equals(methodVS.isMockDisabledOnStartup());
+    boolean mockEnabled = methodVS.isMockActive();
+    boolean mockEnabledOnStartup = methodVS.isMockActiveOnStartup();
 
     boolean routinOnNoMockDataEnabled = mockEnabled || mockEnabledOnStartup;
 
@@ -807,12 +823,13 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
       methodVS.setRoutingOnNoMockData(false);
     }
 
-    // disable record if not mock
-    //    or mock + no routing
-    methodVS.setRecordDisabled((!mockEnabled || !mockEnabledOnStartup) || !methodVS.isRoutingOnNoMockData());
+    boolean enableRecord = !mockEnabled || !mockEnabledOnStartup || methodVS.isRoutingOnNoMockData();
+
+    // en/disable record
+    methodVS.setRecordDisabled(!enableRecord);
     if (methodVS.isRecordDisabled())
     {
-      methodVS.setRecord(false);
+      methodVS.setRecord(YesNoGlobalOrRecordConfigIndividuallyType.NO);
     }
 
     // servicePath rendered
@@ -893,10 +910,10 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
 
       // update copyModel
       apiMethodSelected.setServicePath(methodVS.getServicePath());
-      apiMethodSelected.setMockDisabled(methodVS.isMockDisabled());
-      apiMethodSelected.setMockDisabledOnStartup(methodVS.isMockDisabledOnStartup());
+      apiMethodSelected.setMockActive(methodVS.isMockActive());
+      apiMethodSelected.setMockActiveOnStartup(methodVS.isMockActiveOnStartup());
       apiMethodSelected.setRoutingOnNoMockData(methodVS.isRoutingOnNoMockData());
-      apiMethodSelected.setRecord(methodVS.isRecord());
+      apiMethodSelected.setRecord(YesNoGlobalOrRecordConfigIndividuallyType.toBoolean(methodVS.getRecord()));
 
       // updateComponents
       updateComponentsMethod();

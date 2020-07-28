@@ -1,6 +1,7 @@
 package com.github.joergdev.mosy.frontend.view;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
@@ -17,6 +18,7 @@ import com.github.joergdev.mosy.api.model.MockSession;
 import com.github.joergdev.mosy.api.model.Record;
 import com.github.joergdev.mosy.frontend.Resources;
 import com.github.joergdev.mosy.frontend.model.RecordsLazyDataModel;
+import com.github.joergdev.mosy.frontend.model.YesNoGlobalOrInterfaceIndividuallyType;
 import com.github.joergdev.mosy.frontend.utils.ColumnModel;
 import com.github.joergdev.mosy.frontend.utils.TreeData;
 import com.github.joergdev.mosy.frontend.utils.WidthUnit;
@@ -40,10 +42,13 @@ public class MainV extends AbstractView<MainVC>
   private String dataPanel;
 
   // --- Basedata ----------------------
-  private boolean mockActive;
-  private boolean mockActiveOnStartup;
-  private boolean routingOnNoMockData;
-  private boolean record;
+  private final List<YesNoGlobalOrInterfaceIndividuallyType> yesNoGlobalTypes = Arrays
+      .asList(YesNoGlobalOrInterfaceIndividuallyType.values());
+
+  private YesNoGlobalOrInterfaceIndividuallyType mockActive;
+  private YesNoGlobalOrInterfaceIndividuallyType mockActiveOnStartup;
+  private YesNoGlobalOrInterfaceIndividuallyType routingOnNoMockData;
+  private YesNoGlobalOrInterfaceIndividuallyType record;
 
   private boolean routingOnNoMockDataDisabled;
   private boolean recordDisabled;
@@ -111,7 +116,7 @@ public class MainV extends AbstractView<MainVC>
     colName.setWidth(70, WidthUnit.PERCENT);
     tblInterfacesColumns.add(colName);
 
-    ColumnModel colMockDisabled = new ColumnModel(Resources.getLabel("mock_disabled"), "mockDisabled");
+    ColumnModel colMockDisabled = new ColumnModel(Resources.getLabel("mock_active"), "mockActive");
     colMockDisabled.setWidth(10, WidthUnit.PERCENT);
     tblInterfacesColumns.add(colMockDisabled);
 
@@ -492,42 +497,42 @@ public class MainV extends AbstractView<MainVC>
     this.treeDataList = treeDataList;
   }
 
-  public boolean isMockActive()
+  public YesNoGlobalOrInterfaceIndividuallyType getMockActive()
   {
     return mockActive;
   }
 
-  public void setMockActive(boolean mockActive)
+  public void setMockActive(YesNoGlobalOrInterfaceIndividuallyType mockActive)
   {
     this.mockActive = mockActive;
   }
 
-  public boolean isMockActiveOnStartup()
+  public YesNoGlobalOrInterfaceIndividuallyType getMockActiveOnStartup()
   {
     return mockActiveOnStartup;
   }
 
-  public void setMockActiveOnStartup(boolean mockActiveOnStartup)
+  public void setMockActiveOnStartup(YesNoGlobalOrInterfaceIndividuallyType mockActiveOnStartup)
   {
     this.mockActiveOnStartup = mockActiveOnStartup;
   }
 
-  public boolean isRoutingOnNoMockData()
+  public YesNoGlobalOrInterfaceIndividuallyType getRoutingOnNoMockData()
   {
     return routingOnNoMockData;
   }
 
-  public void setRoutingOnNoMockData(boolean routingOnNoMockData)
+  public void setRoutingOnNoMockData(YesNoGlobalOrInterfaceIndividuallyType routingOnNoMockData)
   {
     this.routingOnNoMockData = routingOnNoMockData;
   }
 
-  public boolean isRecord()
+  public YesNoGlobalOrInterfaceIndividuallyType getRecord()
   {
     return record;
   }
 
-  public void setRecord(boolean record)
+  public void setRecord(YesNoGlobalOrInterfaceIndividuallyType record)
   {
     this.record = record;
   }
@@ -630,5 +635,10 @@ public class MainV extends AbstractView<MainVC>
   public List<ColumnModel> getTblMockSessionsColumns()
   {
     return tblMockSessionsColumns;
+  }
+
+  public List<YesNoGlobalOrInterfaceIndividuallyType> getYesNoGlobalTypes()
+  {
+    return yesNoGlobalTypes;
   }
 }

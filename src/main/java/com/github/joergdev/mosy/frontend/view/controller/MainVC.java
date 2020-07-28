@@ -21,6 +21,7 @@ import com.github.joergdev.mosy.api.response.mocksession.LoadSessionsResponse;
 import com.github.joergdev.mosy.frontend.Message;
 import com.github.joergdev.mosy.frontend.MessageLevel;
 import com.github.joergdev.mosy.frontend.Resources;
+import com.github.joergdev.mosy.frontend.model.YesNoGlobalOrInterfaceIndividuallyType;
 import com.github.joergdev.mosy.frontend.utils.JsfUtils;
 import com.github.joergdev.mosy.frontend.utils.TreeData;
 import com.github.joergdev.mosy.frontend.validation.NotNull;
@@ -111,10 +112,12 @@ public class MainVC extends AbstractViewController<MainV>
 
       buildTreeData();
 
-      view.setMockActive(Boolean.TRUE.equals(basedata.getMockActive()));
-      view.setMockActiveOnStartup(Boolean.TRUE.equals(basedata.getMockActiveOnStartup()));
-      view.setRoutingOnNoMockData(Boolean.TRUE.equals(basedata.getRoutingOnNoMockData()));
-      view.setRecord(Boolean.TRUE.equals(basedata.getRecord()));
+      view.setMockActive(YesNoGlobalOrInterfaceIndividuallyType.fromBoolean(basedata.getMockActive()));
+      view.setMockActiveOnStartup(
+          YesNoGlobalOrInterfaceIndividuallyType.fromBoolean(basedata.getMockActiveOnStartup()));
+      view.setRoutingOnNoMockData(
+          YesNoGlobalOrInterfaceIndividuallyType.fromBoolean(basedata.getRoutingOnNoMockData()));
+      view.setRecord(YesNoGlobalOrInterfaceIndividuallyType.fromBoolean(basedata.getRecord()));
 
       view.getTblInterfaces().clear();
       view.getTblInterfaces().addAll(basedata.getInterfaces());
@@ -307,15 +310,19 @@ public class MainVC extends AbstractViewController<MainV>
     protected void _execute()
       throws Exception
     {
-      boolean savedMockActive = Boolean.TRUE.equals(basedata.getMockActive());
-      boolean savedMockActiveOnStartup = Boolean.TRUE.equals(basedata.getMockActiveOnStartup());
-      boolean savedRoutingOnNoMockdata = Boolean.TRUE.equals(basedata.getRoutingOnNoMockData());
-      boolean savedRecord = Boolean.TRUE.equals(basedata.getRecord());
+      YesNoGlobalOrInterfaceIndividuallyType savedMockActive = YesNoGlobalOrInterfaceIndividuallyType
+          .fromBoolean(basedata.getMockActive());
+      YesNoGlobalOrInterfaceIndividuallyType savedMockActiveOnStartup = YesNoGlobalOrInterfaceIndividuallyType
+          .fromBoolean(basedata.getMockActiveOnStartup());
+      YesNoGlobalOrInterfaceIndividuallyType savedRoutingOnNoMockdata = YesNoGlobalOrInterfaceIndividuallyType
+          .fromBoolean(basedata.getRoutingOnNoMockData());
+      YesNoGlobalOrInterfaceIndividuallyType savedRecord = YesNoGlobalOrInterfaceIndividuallyType
+          .fromBoolean(basedata.getRecord());
 
-      boolean viewMockActive = view.isMockActive();
-      boolean viewMockActiveOnStartup = view.isMockActiveOnStartup();
-      boolean viewRoutingOnNoMockData = view.isRoutingOnNoMockData();
-      boolean viewRecord = view.isRecord();
+      YesNoGlobalOrInterfaceIndividuallyType viewMockActive = view.getMockActive();
+      YesNoGlobalOrInterfaceIndividuallyType viewMockActiveOnStartup = view.getMockActiveOnStartup();
+      YesNoGlobalOrInterfaceIndividuallyType viewRoutingOnNoMockData = view.getRoutingOnNoMockData();
+      YesNoGlobalOrInterfaceIndividuallyType viewRecord = view.getRecord();
 
       // Check for changes
       if (savedMockActive == viewMockActive && savedMockActiveOnStartup == viewMockActiveOnStartup
@@ -325,30 +332,36 @@ public class MainVC extends AbstractViewController<MainV>
       }
 
       // updateComponents enabled / disabled state
-      boolean enableRoutingOnNoMockdata = viewMockActive || viewMockActiveOnStartup;
-      boolean enableRecord = !viewMockActive || !viewMockActiveOnStartup || viewRoutingOnNoMockData;
+      boolean enableRoutingOnNoMockdata = !YesNoGlobalOrInterfaceIndividuallyType.NO.equals(viewMockActive)
+                                          || !YesNoGlobalOrInterfaceIndividuallyType.NO
+                                              .equals(viewMockActiveOnStartup);
+      boolean enableRecord = !YesNoGlobalOrInterfaceIndividuallyType.YES.equals(viewMockActive)
+                             || !YesNoGlobalOrInterfaceIndividuallyType.YES.equals(viewMockActiveOnStartup)
+                             || !YesNoGlobalOrInterfaceIndividuallyType.NO.equals(viewRoutingOnNoMockData);
 
       view.setRoutingOnNoMockDataDisabled(!enableRoutingOnNoMockdata);
       view.setRecordDisabled(!enableRecord);
 
       if (!enableRoutingOnNoMockdata)
       {
-        viewRoutingOnNoMockData = false;
-        view.setRoutingOnNoMockData(false);
+        viewRoutingOnNoMockData = YesNoGlobalOrInterfaceIndividuallyType.NO;
+        view.setRoutingOnNoMockData(viewRoutingOnNoMockData);
       }
 
       if (!enableRecord)
       {
-        viewRecord = false;
-        view.setRecord(false);
+        viewRecord = YesNoGlobalOrInterfaceIndividuallyType.NO;
+        view.setRecord(viewRecord);
       }
 
       // save
       BaseData basedataSave = new BaseData();
-      basedataSave.setMockActive(viewMockActive);
-      basedataSave.setMockActiveOnStartup(viewMockActiveOnStartup);
-      basedataSave.setRoutingOnNoMockData(viewRoutingOnNoMockData);
-      basedataSave.setRecord(viewRecord);
+      basedataSave.setMockActive(YesNoGlobalOrInterfaceIndividuallyType.toBoolean(viewMockActive));
+      basedataSave
+          .setMockActiveOnStartup(YesNoGlobalOrInterfaceIndividuallyType.toBoolean(viewMockActiveOnStartup));
+      basedataSave
+          .setRoutingOnNoMockData(YesNoGlobalOrInterfaceIndividuallyType.toBoolean(viewRoutingOnNoMockData));
+      basedataSave.setRecord(YesNoGlobalOrInterfaceIndividuallyType.toBoolean(viewRecord));
 
       invokeApiCall(apiClient -> apiClient.globalConfigSave(basedataSave));
 

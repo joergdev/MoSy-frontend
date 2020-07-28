@@ -15,64 +15,118 @@
 
 	<p:panel id="panIfBasedata">
 
-		<h:panelGrid columns="2" cellpadding="4">
-			<h:outputText for="name" value="#{labels.name}" />
-			<p:inputText id="name" value="#{_interface.name}" style="width:30em" />
-
-			<h:outputText for="type" value="#{labels.type}" />
-			<p:selectOneMenu id="type"
-				value="#{_interface.interfaceTypeSelected}">
-				<p:ajax listener="#{_interface.onInterfaceTypeSelect}"
-					update="panIfBasedata" process="panIfBasedata" />
-				<f:selectItem itemLabel="#{labels.select_type}" itemValue=""
-					noSelectionOption="true" />
-				<f:selectItems value="#{_interface.interfaceTypes}" />
-			</p:selectOneMenu>
+		<p:panelGrid styleClass="ui-noborder">
+			<p:row>
+				<p:column>
+					<h:outputText for="name" value="#{labels.name}" />
+				</p:column>
+				<p:column colspan="2">
+					<p:inputText id="name" value="#{_interface.name}"
+						style="width:100%" />
+				</p:column>
+			</p:row>
 
 
-			<h:outputText id="lblServicePath" for="servicePath"
-				value="#{labels.service_path}"
-				rendered="#{_interface.servicePathRendered}" />
-			<p:inputText id="servicePath" value="#{_interface.servicePath}"
-				rendered="#{_interface.servicePathRendered}" style="width:30em" />
+			<p:row>
+				<p:column>
+					<h:outputText for="type" value="#{labels.type}" />
+				</p:column>
+				<p:column>
+					<p:selectOneMenu id="type"
+						value="#{_interface.interfaceTypeSelected}">
+						<p:ajax listener="#{_interface.onInterfaceTypeSelect}"
+							update="panIfBasedata" process="panIfBasedata" />
+						<f:selectItem itemLabel="#{labels.select_type}" itemValue=""
+							noSelectionOption="true" />
+						<f:selectItems value="#{_interface.interfaceTypes}" />
+					</p:selectOneMenu>
+				</p:column>
+			</p:row>
 
 
-			<p:selectBooleanCheckbox value="#{_interface.mockDisabled}"
-				itemLabel="#{labels.mock_disabled}">
-				<p:ajax update="panIfBasedata"
-					listener="#{_interface.handleMockDisabled}" process="panIfBasedata" />
-			</p:selectBooleanCheckbox>
-
-			<p:selectBooleanCheckbox value="#{_interface.mockDisabledOnStartup}"
-				itemLabel="#{labels.on_startup}">
-				<p:ajax update="panIfBasedata"
-					listener="#{_interface.handleMockDisabled}" process="panIfBasedata" />
-			</p:selectBooleanCheckbox>
-
-
-			<p:selectBooleanCheckbox id="chk_routing_on_no_mockdata"
-				value="#{_interface.routingOnNoMockData}"
-				itemLabel="#{labels.routing_on_no_mockdata}"
-				disabled="#{_interface.routingOnNoMockDataDisabled}">
-				<p:ajax update="panIfBasedata"
-					listener="#{_interface.handleRoutingOnNoMockData}"
-					process="panIfBasedata" />
-			</p:selectBooleanCheckbox>
-
-			<h:outputText id="div_chk_routing_on_no_mockdata" value="" />
+			<p:row>
+				<p:column>
+					<h:outputText id="lblServicePath" for="servicePath"
+						value="#{labels.service_path}"
+						rendered="#{_interface.servicePathRendered}" />
+				</p:column>
+				<p:column colspan="2">
+					<p:inputText id="servicePath" value="#{_interface.servicePath}"
+						rendered="#{_interface.servicePathRendered}" style="width:100%" />
+				</p:column>
+			</p:row>
 
 
-			<h:outputText for="routingUrl" value="#{labels.routing_URL}"
-				rendered="#{_interface.routingUrlRendered}" />
-			<p:inputText id="routingUrl" value="#{_interface.routingUrl}"
-				rendered="#{_interface.routingUrlRendered}" style="width:45em" />
+			<p:row>
+				<p:column>
+					<h:outputText for="mockActive" value="#{labels.mock_active}" />
+				</p:column>
+				<p:column>
+					<p:selectOneMenu id="mockActive" value="#{_interface.mockActive}">
+						<p:ajax listener="#{_interface.handleMockActive}"
+							update="panIfBasedata" process="panIfBasedata" />
+						<f:selectItems value="#{_interface.yesNoGlobalTypes}" />
+					</p:selectOneMenu>
+				</p:column>
+
+				<p:column>
+					<h:outputText for="mockActiveOnStartup"
+						value="#{labels.on_startup}" />
+				</p:column>
+				<p:column>
+					<p:selectOneMenu id="mockActiveOnStartup"
+						value="#{_interface.mockActiveOnStartup}">
+						<p:ajax listener="#{_interface.handleMockActive}"
+							update="panIfBasedata" process="panIfBasedata" />
+						<f:selectItems value="#{_interface.yesNoGlobalTypes}" />
+					</p:selectOneMenu>
+				</p:column>
+			</p:row>
 
 
-			<p:selectBooleanCheckbox id="chk_record" value="#{_interface.record}"
-				itemLabel="#{labels.record}" disabled="#{_interface.recordDisabled}">
-			</p:selectBooleanCheckbox>
-			<div />
-		</h:panelGrid>
+			<p:row>
+				<p:column>
+					<h:outputText for="chk_routing_on_no_mockdata"
+						value="#{labels.routing_on_no_mockdata}" />
+				</p:column>
+				<p:column>
+					<p:selectOneMenu id="chk_routing_on_no_mockdata"
+						value="#{_interface.routingOnNoMockData}"
+						disabled="#{_interface.routingOnNoMockDataDisabled}">
+						<p:ajax update="panIfBasedata"
+							listener="#{_interface.handleRoutingOnNoMockData}"
+							process="panIfBasedata" />
+						<f:selectItems value="#{_interface.yesNoGlobalTypes}" />
+					</p:selectOneMenu>
+				</p:column>
+			</p:row>
+
+
+			<p:row>
+				<p:column>
+					<h:outputText for="routingUrl" value="#{labels.routing_URL}"
+						rendered="#{_interface.routingUrlRendered}" />
+				</p:column>
+				<p:column colspan="3">
+					<p:inputText id="routingUrl" value="#{_interface.routingUrl}"
+						rendered="#{_interface.routingUrlRendered}" style="width:45em" />
+				</p:column>
+			</p:row>
+
+
+			<p:row>
+				<p:column>
+					<h:outputText for="chk_record" value="#{labels.record}" />
+				</p:column>
+				<p:column>
+					<p:selectOneMenu id="chk_record" value="#{_interface.record}"
+						disabled="#{_interface.recordDisabled}">
+						<f:selectItems value="#{_interface.yesNoGlobalTypes}" />
+					</p:selectOneMenu>
+				</p:column>
+			</p:row>
+
+		</p:panelGrid>
 
 	</p:panel>
 
