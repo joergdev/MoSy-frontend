@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+	<title>MoSy Records</title>
+</h:head>
+
+<script type="text/javascript">
+function startDlRecords() {
+    PF('statusDialogDlRecords').show();
+}
+ 
+function stopDlRecords() {
+    PF('statusDialogDlRecords').hide();
+}
+</script>
+
+<h:body>
+
+	<p:dialog modal="true" widgetVar="statusDialogDlRecords"
+		header="#{labels.download}" draggable="false" closable="false"
+		resizable="false">
+		<p:graphicImage name="/images/loading.gif" />
+	</p:dialog>
+
+
+	<p:panel id="panRecords" header="#{labels.records}">
+
+		<p:dataTable id="tblRecords" widgetVar="tblRecords"
+			value="#{main.tblRecords}" var="rec" emptyMessage="#{labels.no_data}"
+			selectionMode="multiple" selection="#{main.selectedRecords}"
+			rowKey="#{rec.recordId}" paginator="true" rows="15" lazy="true"
+			paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+			currentPageReportTemplate="#{labels.current_page_template}">
+
+			<p:columns value="#{main.tblRecordsColumns}" var="col"
+				width="#{col.widthFull}">
+				<f:facet name="header">
+					<h:outputText value="#{col.header}" />
+				</f:facet>
+				<h:outputText value="#{rec[col.property]}" />
+			</p:columns>
+
+			<p:ajax event="rowSelect" listener="#{main.onRecordsRowSelect}"
+				update=":form:panRecords" />
+
+			<p:ajax event="rowUnselect" listener="#{main.onRecordsRowUnselect}"
+				update=":form:panRecords" />
+
+			<p:ajax event="rowDblselect"
+				listener="#{main.onRecordsRowDoubleClick}" process="@this"
+				update=":form" />
+
+		</p:dataTable>
+
+		<p:panel>
+
+			<p:commandButton value="#{labels.download}"
+				onclick="PrimeFaces.monitorDownload(startDlRecords, stopDlRecords);"
+				icon="pi pi-arrow-down" disabled="#{main.downloadRecordsDisabled}"
+				process="@this" ajax="false">
+				<p:fileDownload value="#{main.fileRecords}" />
+			</p:commandButton>
+
+			<p:commandButton value="#{labels.use_as_mockdata}"
+				action="#{main.useRecordsAsMockdata()}"
+				disabled="#{main.downloadRecordsDisabled}" process="@this"
+				update=":form" />
+
+		</p:panel>
+
+		<p:commandButton value="#{labels.show}" action="#{main.showRecord()}"
+			disabled="#{main.showRecordsDisabled}" process="@this" update=":form" />
+
+		<p:commandButton value="#{labels.delete}"
+			action="#{main.deleteRecords()}"
+			disabled="#{main.deleteRecordsDisabled}" process="@this"
+			update=":form:panRecords" />
+
+	</p:panel>
+
+</h:body>
+
+</html>

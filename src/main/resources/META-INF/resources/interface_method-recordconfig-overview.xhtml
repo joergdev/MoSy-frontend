@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+	<title>MoSy Recordconfigs</title>
+</h:head>
+
+
+<h:body>
+
+	<p:panel id="pnl_rc_ov" header="#{labels.recordconfigs}">
+
+		<p:dataTable id="tblRecordConfigs"
+			value="#{_interface.methodVS.tblRecordConfigs}" var="rc"
+			emptyMessage="#{labels.no_data}" rowKey="#{rc.title}"
+			selectionMode="multiple"
+			selection="#{_interface.methodVS.selectedRecordConfigs}">
+
+			<p:columns value="#{_interface.methodVS.tblRecordConfigsColumns}"
+				var="col" width="#{col.widthFull}">
+				<f:facet name="header">
+					<h:outputText value="#{col.header}" />
+				</f:facet>
+				<h:outputText value="#{rc[col.property]}" />
+			</p:columns>
+
+			<p:ajax event="rowSelect"
+				listener="#{_interface.methodVS.onRecordConfigsRowSelect}"
+				update="form:pnl_rc_ov" />
+
+			<p:ajax event="rowUnselect"
+				listener="#{_interface.methodVS.onRecordConfigsRowUnselect}"
+				update="form:pnl_rc_ov" />
+
+			<p:ajax event="rowDblselect"
+				listener="#{_interface.methodVS.onRecordConfigsRowDoubleClick}"
+				update="form" />
+
+		</p:dataTable>
+
+
+		<p:commandButton value="#{labels._new}"
+			action="#{_interface.methodVS.newRecordConfig()}"
+			disabled="#{_interface.methodVS.newRecordConfigDisabled}"
+			process="@this" update=":form" />
+
+		<p:commandButton value="#{labels.show_edit}"
+			action="#{_interface.methodVS.editRecordConfig()}"
+			disabled="#{_interface.methodVS.editRecordConfigDisabled}"
+			process="@this" update=":form" />
+
+		<p:commandButton value="#{labels.delete}"
+			action="#{_interface.methodVS.deleteRecordConfigs()}"
+			disabled="#{_interface.methodVS.deleteRecordConfigsDisabled}"
+			process="@this" update=":form" />
+
+	</p:panel>
+
+</h:body>
+
+</html>

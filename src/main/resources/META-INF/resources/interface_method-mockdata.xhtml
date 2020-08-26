@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+	<title>Mockdata</title>
+</h:head>
+
+
+<h:body>
+
+	<p:panel id="panMockData">
+
+		<h:panelGrid id="pangr_md" columns="2" cellpadding="4">
+
+			<h:outputText for="mockSessionSelected"
+				value="#{labels.mock_session}" />
+			<p:selectOneMenu id="mockSessionSelected"
+				value="#{_interface.methodVS.mockSessionSelected}"
+				converter="MockSessionConverter">
+				<f:selectItem itemLabel="#{labels.select_mock_session}" itemValue=""
+					noSelectionOption="true" />
+				<f:selectItems value="#{_interface.methodVS.mockSessions}" />
+			</p:selectOneMenu>
+
+			<h:outputText for="mdTitle" value="#{labels.title}" />
+			<p:inputText id="mdTitle" value="#{_interface.methodVS.mdTitle}" />
+
+			<p:selectBooleanCheckbox value="#{_interface.methodVS.mdActive}"
+				itemLabel="#{labels.active}" />
+			<div />
+
+		</h:panelGrid>
+
+		<h:panelGrid id="pangr_md_req_resp" columns="1" cellpadding="4">
+
+			<h:outputText value="#{labels.request}" />
+			<p:inputTextarea id="mdRequest" rows="10" cols="80"
+				value="#{_interface.methodVS.mdRequest}" />
+
+			<h:outputText value="#{labels.response}" />
+			<p:inputTextarea id="mdResponse" rows="10" cols="80"
+				value="#{_interface.methodVS.mdResponse}" />
+
+		</h:panelGrid>
+
+		<h:panelGrid id="pangr_md2" columns="4" cellpadding="4">
+
+			<h:outputText for="mdCreated" value="#{labels.created}" />
+			<p:inputText id="mdCreated" value="#{_interface.methodVS.mdCreated}"
+				readonly="true" />
+
+			<h:outputText for="mdCountCalls" value="#{labels.count_calls}" />
+			<p:inputText id="mdCountCalls"
+				value="#{_interface.methodVS.mdCountCalls}" readonly="true" />
+
+		</h:panelGrid>
+
+		<p:commandButton id="btnSaveMockData" value="#{labels.save}"
+			action="#{_interface.methodVS.saveMockData()}" process="panMockData"
+			update=":form" />
+
+		<p:commandButton id="btnDeleteMockData" value="#{labels.delete}"
+			action="#{_interface.methodVS.deleteMockData()}"
+			disabled="#{_interface.methodVS.deleteMockDataDisabled}"
+			process="@this" update=":form" />
+
+	</p:panel>
+
+
+</h:body>
+
+</html>
