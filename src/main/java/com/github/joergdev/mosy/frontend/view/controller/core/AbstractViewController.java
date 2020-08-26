@@ -51,6 +51,11 @@ public abstract class AbstractViewController<T extends AbstractView<?>>
     showMessage(MessageLevel.FATAL, message);
   }
 
+  public void showGrowlMessage(Message msg)
+  {
+    showGrowlMessage(msg.getLevel(), msg.getMsg(), msg.getMessageDetails());
+  }
+
   public void showGrowlMessage(MessageLevel level, String message, String... details)
   {
     JsfUtils.showMessage("common_growl", level.getFacesSeverity(), Resources.getLabel(level.getLabel()),
@@ -237,8 +242,7 @@ public abstract class AbstractViewController<T extends AbstractView<?>>
       Message growlMsgOnSuccess = getGrowlMessageOnSuccess();
       if (growlMsgOnSuccess != null)
       {
-        showGrowlMessage(growlMsgOnSuccess.getLevel(), growlMsgOnSuccess.getMsg(),
-            growlMsgOnSuccess.getMessageDetails());
+        showGrowlMessage(growlMsgOnSuccess);
       }
     }
 

@@ -1,6 +1,8 @@
 package com.github.joergdev.mosy.frontend.view.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import org.primefaces.event.FileUploadEvent;
@@ -23,6 +25,8 @@ import com.github.joergdev.mosy.shared.Utils;
 
 public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
 {
+  private final List<FileUploadEvent> mockDataUploadedEvents = new ArrayList<>();
+
   @Override
   public void refresh()
   {
@@ -230,23 +234,61 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
 
   public void uploadMockData(FileUploadEvent event)
   {
-    view.getMockDataUploadedEvents().add(event);
+    mockDataUploadedEvents.add(event);
+
+    useUploadedMockData(true, event);
   }
 
   public void useUploadedMockData()
   {
-    new UseUploadedMockDataExecution().execute();
+    useUploadedMockData(false, null);
+  }
+
+  private void useUploadedMockData(boolean singlemode, FileUploadEvent event)
+  {
+    boolean singlemodeEnabled = Boolean.TRUE
+        .equals(Boolean.valueOf(Resources.getProperty(Resources.PROPERTY_UPLOAD_MOCKDATA_SINGLEMODE)));
+
+    if (singlemode == singlemodeEnabled)
+    {
+      new UseUploadedMockDataExecution(singlemode, event).execute();
+    }
+
+    // Called when upload finished, if singlemode then show sucess message
+    // because message in UseUploadedMockDataExecution ist not showing in this case.
+    if (!singlemode && singlemodeEnabled)
+    {
+      showGrowlMessage(new Message(MessageLevel.INFO, "uploaded_var",
+          mockDataUploadedEvents.size() + " " + Resources.getLabel("mockdata")));
+
+      mockDataUploadedEvents.clear();
+    }
   }
 
   private class UseUploadedMockDataExecution extends Execution
   {
-    private List<FileUploadEvent> mockDataUploadedEvents = view.getMockDataUploadedEvents();
+    private final boolean singlemode;
+    private final FileUploadEvent event;
+
     private int countUploaded = 0;
+
+    public UseUploadedMockDataExecution(boolean singlemode, FileUploadEvent event)
+    {
+      this.singlemode = singlemode;
+      this.event = event;
+    }
 
     @Override
     protected void createPreValidations()
     {
-      addValidation(new SelectionValidation(mockDataUploadedEvents, "mockdata"));
+      if (singlemode)
+      {
+        addValidation(new NotNull(event, "mockdata"));
+      }
+      else
+      {
+        addValidation(new SelectionValidation(mockDataUploadedEvents, "mockdata"));
+      }
 
       if (view.getInterfaceSelected() != null)
       {
@@ -257,16 +299,23 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
     @Override
     public Message getGrowlMessageOnSuccess()
     {
-      String detail = String.valueOf(countUploaded) + " " + Resources.getLabel("mockdata");
+      if (!singlemode)
+      {
+        String detail = String.valueOf(countUploaded) + " " + Resources.getLabel("mockdata");
 
-      return new Message(MessageLevel.INFO, "uploaded_var", detail);
+        return new Message(MessageLevel.INFO, "uploaded_var", detail);
+      }
+
+      return null;
     }
 
     @Override
     protected void _execute()
       throws Exception
     {
-      Iterator<FileUploadEvent> itFiles = mockDataUploadedEvents.iterator();
+      Iterator<FileUploadEvent> itFiles = singlemode
+          ? Arrays.asList(event).iterator()
+          : mockDataUploadedEvents.iterator();
 
       while (itFiles.hasNext())
       {

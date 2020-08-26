@@ -4,15 +4,7 @@ import java.util.ResourceBundle;
 
 public class Resources
 {
-  private static final ResourceBundle MOSY_FRONTEND = ResourceBundle.getBundle("mosy_web_frontend");
-
-  private static final ResourceBundle LABELS = ResourceBundle.getBundle("mosy_web_labels");
-
-  private static final ResourceBundle INFO_MESSAGES = ResourceBundle.getBundle("mosy_web_info_messages");
-  private static final ResourceBundle WARN_MESSAGES = ResourceBundle.getBundle("mosy_web_warn_messages");
-  private static final ResourceBundle ERROR_MESSAGES = ResourceBundle.getBundle("mosy_web_error_messages");
-  private static final ResourceBundle FATAL_ERROR_MESSAGES = ResourceBundle
-      .getBundle("mosy_web_fatal_error_messages");
+  public static final String PROPERTY_UPLOAD_MOCKDATA_SINGLEMODE = "upload_mockdata_singlemode";
 
   public static final String SITE_LOGIN = "login.xhtml";
   public static final String SITE_GOODBUY = "goodbye.xhtml";
@@ -39,6 +31,16 @@ public class Resources
 
   public static final String PREFIX_MOCKDATA_IN_EXPORT_REQUEST = ">>>>>>REQUEST>";
   public static final String PREFIX_MOCKDATA_IN_EXPORT_RESPONSE = ">>>>>>RESPONSE>";
+
+  private static final ResourceBundle MOSY_FRONTEND = ResourceBundle.getBundle("mosy_frontend");
+
+  private static final ResourceBundle LABELS = ResourceBundle.getBundle("mosy_web_labels");
+
+  private static final ResourceBundle INFO_MESSAGES = ResourceBundle.getBundle("mosy_web_info_messages");
+  private static final ResourceBundle WARN_MESSAGES = ResourceBundle.getBundle("mosy_web_warn_messages");
+  private static final ResourceBundle ERROR_MESSAGES = ResourceBundle.getBundle("mosy_web_error_messages");
+  private static final ResourceBundle FATAL_ERROR_MESSAGES = ResourceBundle
+      .getBundle("mosy_web_fatal_error_messages");
 
   public static String getProperty(String key)
   {

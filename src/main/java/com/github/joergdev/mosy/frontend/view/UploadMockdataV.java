@@ -38,8 +38,6 @@ public class UploadMockdataV extends AbstractView<UploadMockdataVC>
 
   private boolean hintNoInterfaceMethodSelectedVisible;
 
-  private final List<FileUploadEvent> mockDataUploadedEvents = new ArrayList<>();
-
   @PostConstruct
   public void init()
   {
@@ -182,10 +180,5 @@ public class UploadMockdataV extends AbstractView<UploadMockdataVC>
   public List<InterfaceMethod> getMethods()
   {
     return methods;
-  }
-
-  public List<FileUploadEvent> getMockDataUploadedEvents()
-  {
-    return mockDataUploadedEvents;
   }
 }
