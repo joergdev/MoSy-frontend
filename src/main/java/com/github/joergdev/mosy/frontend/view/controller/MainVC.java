@@ -15,9 +15,11 @@ import org.primefaces.model.StreamedContent;
 import com.github.joergdev.mosy.api.model.BaseData;
 import com.github.joergdev.mosy.api.model.Interface;
 import com.github.joergdev.mosy.api.model.InterfaceType;
-import com.github.joergdev.mosy.api.model.MockSession;
+import com.github.joergdev.mosy.api.model.MockProfile;
 import com.github.joergdev.mosy.api.model.Record;
-import com.github.joergdev.mosy.api.response.mocksession.LoadSessionsResponse;
+import com.github.joergdev.mosy.api.model.RecordSession;
+import com.github.joergdev.mosy.api.response.mockprofile.LoadProfilesResponse;
+import com.github.joergdev.mosy.api.response.record.session.LoadSessionsResponse;
 import com.github.joergdev.mosy.frontend.Message;
 import com.github.joergdev.mosy.frontend.MessageLevel;
 import com.github.joergdev.mosy.frontend.Resources;
@@ -29,6 +31,7 @@ import com.github.joergdev.mosy.frontend.validation.SelectionValidation;
 import com.github.joergdev.mosy.frontend.validation.UniqueSelectionValidation;
 import com.github.joergdev.mosy.frontend.view.InterfaceV;
 import com.github.joergdev.mosy.frontend.view.MainV;
+import com.github.joergdev.mosy.frontend.view.MockProfileV;
 import com.github.joergdev.mosy.frontend.view.RecordAsMockdataV;
 import com.github.joergdev.mosy.frontend.view.controller.core.AbstractViewController;
 import com.github.joergdev.mosy.shared.ObjectUtils;
@@ -84,26 +87,58 @@ public class MainVC extends AbstractViewController<MainV>
         loadedMessageDetail = Resources.getLabel("records");
 
         loadRefreshRecords();
+        loadAndTransferRecordSessionsToView();
       }
-      else if (Resources.SITE_MAIN_MOCK_SESSIONS.equals(dataPanel))
+      else if (Resources.SITE_MAIN_MOCK_PROFILES.equals(dataPanel))
       {
-        loadedMessageDetail = Resources.getLabel("mock_sessions");
+        loadedMessageDetail = Resources.getLabel("mock_profiles");
 
-        loadRefreshMockSessions();
+        loadRefreshMockProfiles();
+      }
+      else if (Resources.SITE_MAIN_RECORDSESSIONS.equals(dataPanel))
+      {
+        loadedMessageDetail = Resources.getLabel("record_sessions");
+
+        loadRefreshRecordSessions();
       }
     }
 
-    private void loadRefreshMockSessions()
+    private void loadRefreshRecordSessions()
     {
-      LoadSessionsResponse response = invokeApiCall(apiClient -> apiClient.loadMocksessions());
+      LoadSessionsResponse response = invokeApiCall(apiClient -> apiClient.loadRecordSessions());
 
-      view.getTblMockSessions().clear();
-      view.getTblMockSessions().addAll(response.getMockSessions());
+      view.getTblRecordSessions().clear();
+      view.getTblRecordSessions().addAll(response.getRecordSessions());
+    }
+
+    private void loadRefreshMockProfiles()
+    {
+      LoadProfilesResponse response = invokeApiCall(apiClient -> apiClient.loadMockProfiles());
+
+      view.getTblMockProfiles().clear();
+      view.getTblMockProfiles().addAll(response.getMockProfiles());
     }
 
     private void loadRefreshRecords()
     {
       view.getTblRecords().reset();
+    }
+
+    private void loadAndTransferRecordSessionsToView()
+    {
+      List<RecordSession> recordSessions = invokeApiCall(apiClient -> apiClient.loadRecordSessions())
+          .getRecordSessions();
+
+      view.getRecordSessions().clear();
+      view.getRecordSessions().addAll(recordSessions);
+
+      RecordSession recordSessionSelected = view.getRecordSessionOvSelected();
+      if (recordSessionSelected != null)
+      {
+        view.setRecordSessionOvSelected(recordSessions.stream()
+            .filter(rs -> recordSessionSelected.getRecordSessionID().equals(rs.getRecordSessionID()))
+            .findAny().orElse(null));
+      }
     }
 
     private void loadRefreshBasedata()
@@ -135,11 +170,11 @@ public class MainVC extends AbstractViewController<MainV>
       // interfaces
       buildTreeDataInterfaces(basedata, treeDataList);
 
-      // MockSessions
-      if (Utils.isPositive(basedata.getCountMockSessions()))
+      // MockProfiles
+      if (Utils.isPositive(basedata.getCountMockProfiles()))
       {
         treeDataList
-            .add(new TreeData(Resources.getLabel("mock_sessions"), Resources.SITE_MAIN_MOCK_SESSIONS));
+            .add(new TreeData(Resources.getLabel("mock_profiles"), Resources.SITE_MAIN_MOCK_PROFILES));
       }
 
       // Records
@@ -147,6 +182,10 @@ public class MainVC extends AbstractViewController<MainV>
       {
         treeDataList.add(new TreeData(Resources.getLabel("records"), Resources.SITE_MAIN_RECORDS));
       }
+
+      // RecordSessions
+      treeDataList
+          .add(new TreeData(Resources.getLabel("record_sessions"), Resources.SITE_MAIN_RECORDSESSIONS));
 
       view.setTreeDataList(treeDataList);
     }
@@ -234,12 +273,14 @@ public class MainVC extends AbstractViewController<MainV>
 
       // page in main view
       if (Arrays.asList(Resources.SITE_MAIN_BASEDATA, Resources.SITE_MAIN_INTERFACES,
-          Resources.SITE_MAIN_MOCK_SESSIONS, Resources.SITE_MAIN_RECORDS).contains(viewPage))
+          Resources.SITE_MAIN_MOCK_PROFILES, Resources.SITE_MAIN_RECORDSESSIONS, Resources.SITE_MAIN_RECORDS)
+          .contains(viewPage))
       {
         view.setDataPanel(viewPage);
 
-        if ((Resources.SITE_MAIN_MOCK_SESSIONS.equals(viewPage))
-            || (Resources.SITE_MAIN_RECORDS.equals(viewPage)))
+        if (Resources.SITE_MAIN_MOCK_PROFILES.equals(viewPage)
+            || Resources.SITE_MAIN_RECORDSESSIONS.equals(viewPage)
+            || Resources.SITE_MAIN_RECORDS.equals(viewPage))
         {
           loadRefresh();
         }
@@ -548,26 +589,27 @@ public class MainVC extends AbstractViewController<MainV>
 
   // --- End Interfaces ----------------------
 
-  //--- MockSessions --------------------------
+  //--- MockProfiles --------------------------
 
-  public void handleMockSessionsSelection()
+  public void handleMockProfilesSelection()
   {
-    updateComponentsMockSessions();
+    updateComponentsMockProfiles();
   }
 
-  private void updateComponentsMockSessions()
+  private void updateComponentsMockProfiles()
   {
-    int cntSelected = view.getSelectedMockSessions().size();
+    int cntSelected = view.getSelectedMockProfiles().size();
 
-    view.setDeleteMockSessionDisabled(cntSelected == 0);
+    view.setEditMockProfileDisabled(cntSelected != 1);
+    view.setDeleteMockProfileDisabled(cntSelected == 0);
   }
 
-  public void newMockSession()
+  public void newMockProfile()
   {
-    new NewMockSessionExecution().execute();
+    new NewMockProfileExecution().execute();
   }
 
-  private class NewMockSessionExecution extends Execution
+  private class NewMockProfileExecution extends Execution
   {
     @Override
     protected void createPreValidations()
@@ -579,56 +621,80 @@ public class MainVC extends AbstractViewController<MainV>
     protected void _execute()
       throws Exception
     {
-      MockSession apiMockSession = invokeApiCall(apiClient -> apiClient.createMocksession()).getMockSession();
-
-      view.getTblMockSessions().add(apiMockSession);
+      JsfUtils.redirect(Resources.SITE_MOCK_PROFILE);
     }
   }
 
-  public void deleteMockSessions()
+  public void deleteMockProfiles()
   {
-    new DeleteMockSessionsExecution().execute();
+    new DeleteMockProfilesExecution().execute();
   }
 
-  private class DeleteMockSessionsExecution extends Execution
+  private class DeleteMockProfilesExecution extends Execution
   {
     private final List<Integer> idsDeleted = new ArrayList<>();
 
     @Override
     protected void createPreValidations()
     {
-      addValidation(new SelectionValidation(view.getSelectedMockSessions(), "mock_session"));
+      addValidation(new SelectionValidation(view.getSelectedMockProfiles(), "mock_profile"));
     }
 
     @Override
     public Message getGrowlMessageOnSuccess()
     {
       return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(idsDeleted.size() > 1
-          ? "mock_sessions"
-          : "mock_session"));
+          ? "mock_profiles"
+          : "mock_profile"));
     }
 
     @Override
     protected void _execute()
       throws Exception
     {
-      List<MockSession> mockSessionsToDelete = new ArrayList<>(view.getSelectedMockSessions());
+      List<MockProfile> mockProfilesToDelete = new ArrayList<>(view.getSelectedMockProfiles());
 
-      for (MockSession apiMockSession : mockSessionsToDelete)
+      for (MockProfile apiMockProfile : mockProfilesToDelete)
       {
-        invokeApiCall(apiClient -> apiClient.deleteMocksession(apiMockSession.getMockSessionID()));
+        invokeApiCall(apiClient -> apiClient.deleteMockProfile(apiMockProfile.getMockProfileID()));
 
-        idsDeleted.add(apiMockSession.getMockSessionID());
+        idsDeleted.add(apiMockProfile.getMockProfileID());
 
-        view.getTblMockSessions().remove(apiMockSession);
-        view.getSelectedMockSessions().remove(apiMockSession);
+        view.getTblMockProfiles().remove(apiMockProfile);
+        view.getSelectedMockProfiles().remove(apiMockProfile);
       }
 
-      updateComponentsMockSessions();
+      updateComponentsMockProfiles();
     }
   }
 
-  //--- End MockSessions ----------------------
+  public void editMockProfile()
+  {
+    new EditMockProfileExecution().execute();
+  }
+
+  private class EditMockProfileExecution extends Execution
+  {
+    @Override
+    protected void createPreValidations()
+    {
+      addValidation(
+          new UniqueSelectionValidation(view.getSelectedMockProfiles(), Resources.getLabel("mock_profile")));
+    }
+
+    @Override
+    protected void _execute()
+      throws Exception
+    {
+      Map<String, Object> queryParams = new HashMap<>();
+      queryParams.put(MockProfileV.VIEW_PARAM_MOCK_PROFILE_ID,
+          Utils.getFirstElementOfCollection(view.getSelectedMockProfiles()).getMockProfileID());
+
+      JsfUtils.redirect(Resources.SITE_MOCK_PROFILE, queryParams);
+    }
+  }
+
+  //--- End MockProfiles ----------------------
 
   // --- Records -------------------------------
 
@@ -658,6 +724,9 @@ public class MainVC extends AbstractViewController<MainV>
       getView().setDataPanel(Resources.SITE_MAIN_RECORD);
 
       // Transfer Model->View
+      view.setRecRecordSession(apiRecordLoaded.getRecordSession() == null
+          ? null
+          : apiRecordLoaded.getRecordSession().toString());
       view.setRecInterface(apiRecordLoaded.getInterfaceName());
       view.setRecMethod(apiRecordLoaded.getMethodName());
       view.setRecCreated(apiRecordLoaded.getCreatedAsString());
@@ -943,6 +1012,13 @@ public class MainVC extends AbstractViewController<MainV>
     }
   }
 
+  public void handleRecordOverviewSessionSelected()
+  {
+    view.getTblRecords().reset();
+
+    view.getTblRecords().setFilterSession(view.getRecordSessionOvSelected());
+  }
+
   // --- End Records ---------------------------
 
   //--- Record --------------------------------- 
@@ -985,4 +1061,93 @@ public class MainVC extends AbstractViewController<MainV>
   }
 
   // --- End Record ----------------------------
+
+  //--- RecordSessions -------------------------------
+
+  public void handleRecordSessionsSelection()
+  {
+    updateComponentsRecordSessions();
+  }
+
+  private void updateComponentsRecordSessions()
+  {
+    int cntSelected = view.getSelectedRecordSessions().size();
+
+    view.setDeleteRecordSessionDisabled(cntSelected == 0);
+  }
+
+  public void newRecordSession()
+  {
+    new NewRecordSessionExecution().execute();
+  }
+
+  private class NewRecordSessionExecution extends Execution
+  {
+    @Override
+    protected void createPreValidations()
+    {
+      // no validation
+    }
+
+    @Override
+    public Message getGrowlMessageOnSuccess()
+    {
+      return new Message(MessageLevel.INFO, "saved_var", Resources.getLabel("record_session"));
+    }
+
+    @Override
+    protected void _execute()
+      throws Exception
+    {
+      RecordSession apiRecordSession = invokeApiCall(apiClient -> apiClient.createRecordSession())
+          .getRecordSession();
+
+      view.getTblRecordSessions().add(apiRecordSession);
+    }
+  }
+
+  public void deleteRecordSessions()
+  {
+    new DeleteRecordSessionsExecution().execute();
+  }
+
+  private class DeleteRecordSessionsExecution extends Execution
+  {
+    private final List<Integer> idsDeleted = new ArrayList<>();
+
+    @Override
+    protected void createPreValidations()
+    {
+      addValidation(new SelectionValidation(view.getSelectedRecordSessions(), "record_session"));
+    }
+
+    @Override
+    public Message getGrowlMessageOnSuccess()
+    {
+      return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(idsDeleted.size() > 1
+          ? "record_sessions"
+          : "record_session"));
+    }
+
+    @Override
+    protected void _execute()
+      throws Exception
+    {
+      List<RecordSession> recordSessionsToDelete = new ArrayList<>(view.getSelectedRecordSessions());
+
+      for (RecordSession apiRecordSession : recordSessionsToDelete)
+      {
+        invokeApiCall(apiClient -> apiClient.deleteRecordSession(apiRecordSession.getRecordSessionID()));
+
+        idsDeleted.add(apiRecordSession.getRecordSessionID());
+
+        view.getTblRecordSessions().remove(apiRecordSession);
+        view.getSelectedRecordSessions().remove(apiRecordSession);
+      }
+
+      updateComponentsRecordSessions();
+    }
+  }
+
+  //--- End RecordSessions -------------------------------
 }

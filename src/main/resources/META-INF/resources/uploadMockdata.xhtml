@@ -49,6 +49,31 @@
 				<p:graphicImage name="/images/loading.gif" />
 			</p:dialog>
 
+			<p:dialog header="#{labels.mock_profile}"
+				id="mockProfileSelectionDlg" widgetVar="mockProfileSelectionDlg"
+				resizable="false" modal="true">
+				<h:panelGrid columns="2" cellpadding="4">
+
+					<h:outputLabel for="mdMockProfile" value="#{labels.mock_profile}" />
+					<p:selectOneMenu id="mdMockProfile"
+						value="#{uploadMockdata.mdMockProfile}"
+						converter="MockProfileConverter">
+						<f:selectItem itemLabel="#{labels.select_mock_profile}"
+							itemValue="" noSelectionOption="true" />
+						<f:selectItems value="#{uploadMockdata.mockProfiles}" />
+					</p:selectOneMenu>
+
+
+					<f:facet name="footer">
+						<p:commandButton value="#{labels.confirm}"
+							update="panMockProfiles"
+							action="#{uploadMockdata.addSelectedMockProfile}" />
+						<p:commandButton value="#{labels.cancel}"
+							oncomplete="PF('mockProfileSelectionDlg').hide();" />
+					</f:facet>
+				</h:panelGrid>
+			</p:dialog>
+
 			<div class="ui-g">
 
 				<div class="ui-g-12">
@@ -67,20 +92,49 @@
 
 				<div class="ui-g-12">
 
+					<p:panel id="panMockProfiles">
+
+						<h:outputText value="#{labels.mock_profiles}" />
+
+						<p:dataTable id="tblMockProfiles"
+							value="#{uploadMockdata.tblMockProfiles}" var="mp"
+							emptyMessage="#{labels.no_data}" selectionMode="multiple"
+							selection="#{uploadMockdata.selectedMockProfiles}"
+							rowKey="#{mp.mockProfileID}">
+
+							<p:columns value="#{uploadMockdata.tblMockProfilesColumns}"
+								var="col" width="#{col.widthFull}">
+								<f:facet name="header">
+									<h:outputText value="#{col.header}" />
+								</f:facet>
+								<h:outputText value="#{mp[col.property]}" />
+							</p:columns>
+
+							<p:ajax event="rowSelect"
+								listener="#{uploadMockdata.onMockProfilesRowSelect}"
+								update=":form:panMockProfiles" />
+
+							<p:ajax event="rowUnselect"
+								listener="#{uploadMockdata.onMockProfilesRowUnselect}"
+								update=":form:panMockProfiles" />
+
+						</p:dataTable>
+
+
+						<p:commandButton value="#{labels.add}"
+							action="#{uploadMockdata.addMockProfile()}"
+							update=":form:mockProfileSelectionDlg" />
+
+						<p:commandButton value="#{labels.delete}"
+							action="#{uploadMockdata.deleteMockProfiles()}"
+							disabled="#{uploadMockdata.deleteMockProfileDisabled}"
+							process="@this" update=":form:panMockProfiles" />
+
+					</p:panel>
+
+					<p:separator />
+
 					<h:panelGrid id="pangr_um" columns="2" cellpadding="4">
-
-						<h:outputText for="mockSessionSelected"
-							value="#{labels.mock_session}" />
-						<p:selectOneMenu id="mockSessionSelected"
-							value="#{uploadMockdata.mockSessionSelected}"
-							converter="MockSessionConverter">
-							<f:selectItem itemLabel="#{labels.select_mock_session}"
-								itemValue="" noSelectionOption="true" />
-							<f:selectItems value="#{uploadMockdata.mockSessions}" />
-						</p:selectOneMenu>
-
-						<p:separator />
-						<p:separator />
 
 						<h:outputText for="mdTitle"
 							value="#{labels.mockdata_title_prefix}" />

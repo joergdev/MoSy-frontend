@@ -2,8 +2,9 @@ package com.github.joergdev.mosy.frontend.view.controller;
 
 import java.util.Arrays;
 import java.util.List;
+import org.primefaces.PrimeFaces;
 import com.github.joergdev.mosy.api.model.MockData;
-import com.github.joergdev.mosy.api.model.MockSession;
+import com.github.joergdev.mosy.api.model.MockProfile;
 import com.github.joergdev.mosy.api.model.Record;
 import com.github.joergdev.mosy.api.response.record.LoadResponse;
 import com.github.joergdev.mosy.frontend.Message;
@@ -62,28 +63,9 @@ public class RecordAsMockdataVC extends AbstractViewController<RecordAsMockdataV
     protected void _execute()
       throws Exception
     {
-      loadAndTransferMockSessionsToView();
-
       List<String> recordIDs = Arrays.asList(view.getRecordIds().split(";"));
 
       loadRefreshRecords(recordIDs);
-    }
-
-    private void loadAndTransferMockSessionsToView()
-    {
-      List<MockSession> mockSessions = invokeApiCall(apiClient -> apiClient.loadMocksessions())
-          .getMockSessions();
-
-      view.getMockSessions().clear();
-      view.getMockSessions().addAll(mockSessions);
-
-      MockSession mockSessionSelected = view.getMockSessionSelected();
-      if (mockSessionSelected != null)
-      {
-        view.setMockSessionSelected(mockSessions.stream()
-            .filter(ms -> mockSessionSelected.getMockSessionID().equals(ms.getMockSessionID())).findAny()
-            .orElse(null));
-      }
     }
 
     private void loadRefreshRecords(List<String> recordIDs)
@@ -128,8 +110,6 @@ public class RecordAsMockdataVC extends AbstractViewController<RecordAsMockdataV
     protected void _execute()
       throws Exception
     {
-      MockSession apiMockSession = view.getMockSessionSelected();
-
       StringBuilder buiTitle = new StringBuilder();
       buiTitle.append(Utils.nvl(view.getTitlePrefix(), ""));
 
@@ -145,7 +125,7 @@ public class RecordAsMockdataVC extends AbstractViewController<RecordAsMockdataV
       for (Record apiRecord : view.getTblRecords())
       {
         MockData apiMockData = new MockData();
-        apiMockData.setMockSession(apiMockSession);
+        apiMockData.getMockProfiles().addAll(view.getTblMockProfiles());
         apiMockData.setInterfaceMethod(apiRecord.getInterfaceMethod());
         apiMockData.setTitle(buiTitle.toString() + "_" + countRecord);
         apiMockData.setActive(true);
@@ -158,4 +138,79 @@ public class RecordAsMockdataVC extends AbstractViewController<RecordAsMockdataV
       }
     }
   }
+
+  //--- MockProfiles ---
+
+  public void handleMockProfilesSelection()
+  {
+    updateComponentsMockDataMockProfiles();
+  }
+
+  public void addMockProfile()
+  {
+    List<MockProfile> mockProfiles = invokeApiCall(apiClient -> apiClient.loadMockProfiles())
+        .getMockProfiles();
+
+    mockProfiles.removeAll(view.getTblMockProfiles());
+
+    view.setMockProfiles(mockProfiles);
+
+    PrimeFaces.current().executeScript("PF('mockProfileSelectionDlg').show();");
+  }
+
+  public void deleteMockProfiles()
+  {
+    new DeleteMockProfilesExecution().execute();
+  }
+
+  private class DeleteMockProfilesExecution extends Execution
+  {
+    private List<MockProfile> selectedMockProfiles;
+    private int countSelected = 0;
+
+    @Override
+    protected void createPreValidations()
+    {
+      selectedMockProfiles = view.getSelectedMockProfiles();
+      countSelected = selectedMockProfiles.size();
+
+      addValidation(new SelectionValidation(selectedMockProfiles, "mock_profile"));
+    }
+
+    @Override
+    public Message getGrowlMessageOnSuccess()
+    {
+      return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(countSelected > 1
+          ? "mock_profiles"
+          : "mock_profile"));
+    }
+
+    @Override
+    protected void _execute()
+      throws Exception
+    {
+      for (MockProfile mp2del : selectedMockProfiles)
+      {
+        view.getTblMockProfiles().remove(mp2del);
+      }
+    }
+  }
+
+  private void updateComponentsMockDataMockProfiles()
+  {
+    view.setDeleteMockProfileDisabled(view.getSelectedMockProfiles().isEmpty());
+  }
+
+  public void addSelectedMockProfile()
+  {
+    MockProfile mpSelected = view.getMdMockProfile();
+    if (mpSelected != null)
+    {
+      view.getTblMockProfiles().add(mpSelected);
+    }
+
+    PrimeFaces.current().executeScript("PF('mockProfileSelectionDlg').hide();");
+  }
+
+  //--- End MockProfiles ---
 }

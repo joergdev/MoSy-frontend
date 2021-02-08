@@ -8,6 +8,7 @@ import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 import com.github.joergdev.mosy.api.model.Record;
+import com.github.joergdev.mosy.api.model.RecordSession;
 import com.github.joergdev.mosy.frontend.utils.JsfUtils;
 import com.github.joergdev.mosy.frontend.view.controller.core.AbstractViewController;
 import com.github.joergdev.mosy.shared.Utils;
@@ -16,6 +17,8 @@ public class RecordsLazyDataModel extends LazyDataModel<Record>
 {
   private final String uiPath;
   private final AbstractViewController<?> viewController;
+
+  private RecordSession filterSession;
 
   private final List<Record> allRecordsLoaded = new ArrayList<>();
   private Integer lastLoadedId;
@@ -44,8 +47,11 @@ public class RecordsLazyDataModel extends LazyDataModel<Record>
   {
     if (!allLoaded && first >= allRecordsLoaded.size())
     {
-      List<Record> records = viewController
-          .invokeApiCall(apiClient -> apiClient.loadRecords(pageSize, lastLoadedId)).getRecords();
+      List<Record> records = viewController.invokeApiCall(apiClient -> apiClient.loadRecords(pageSize,
+          lastLoadedId, filterSession == null
+              ? null
+              : filterSession.getRecordSessionID()))
+          .getRecords();
 
       if (!Utils.isCollectionEmpty(records))
       {
@@ -107,5 +113,15 @@ public class RecordsLazyDataModel extends LazyDataModel<Record>
     {
       uiDataTable.setFirst(0);
     }
+  }
+
+  public RecordSession getFilterSession()
+  {
+    return filterSession;
+  }
+
+  public void setFilterSession(RecordSession filterSession)
+  {
+    this.filterSession = filterSession;
   }
 }

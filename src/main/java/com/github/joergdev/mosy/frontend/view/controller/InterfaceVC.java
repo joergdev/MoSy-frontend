@@ -6,12 +6,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
+import org.primefaces.PrimeFaces;
 import com.github.joergdev.mosy.api.model.Interface;
 import com.github.joergdev.mosy.api.model.InterfaceMethod;
 import com.github.joergdev.mosy.api.model.MockData;
-import com.github.joergdev.mosy.api.model.MockSession;
+import com.github.joergdev.mosy.api.model.MockProfile;
 import com.github.joergdev.mosy.api.model.RecordConfig;
 import com.github.joergdev.mosy.frontend.Message;
 import com.github.joergdev.mosy.frontend.MessageLevel;
@@ -20,6 +20,7 @@ import com.github.joergdev.mosy.frontend.model.YesNoGlobalOrInterfaceMethodIndiv
 import com.github.joergdev.mosy.frontend.model.YesNoGlobalOrRecordConfigIndividuallyType;
 import com.github.joergdev.mosy.frontend.utils.JsfUtils;
 import com.github.joergdev.mosy.frontend.utils.TreeData;
+import com.github.joergdev.mosy.frontend.validation.NotFalse;
 import com.github.joergdev.mosy.frontend.validation.NotNull;
 import com.github.joergdev.mosy.frontend.validation.SelectionValidation;
 import com.github.joergdev.mosy.frontend.validation.StringNotEmpty;
@@ -38,6 +39,8 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
 
   private InterfaceMethod apiMethodSelected;
   private Set<Integer> methodsDetailDataLoaded = new HashSet<>();
+
+  private List<MockProfile> apiMethodMockDataMockProfiles;
 
   private RecordConfig apiRecordConfigSelected;
 
@@ -1449,9 +1452,6 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
   {
     InterfaceMethodVS methodVS = view.getMethodVS();
 
-    // load mocksessions
-    loadAndTransferMockSessionsToView(execution, methodVS);
-
     getView().setDataPanel(Resources.SITE_INTERFACE_METHOD_MOCKDATA);
 
     // get mockData selected
@@ -1463,69 +1463,81 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
       MockData apiMockDataLoaded = execution
           .invokeApiCall(apiClient -> apiClient.loadMockData(apiMockData.getMockDataId())).getMockData();
 
-      ObjectUtils.copyValues(apiMockDataLoaded, apiMockData, "interfaceMethod", "mockSession");
-      apiMockData.setMockSession(getMockSessionFromComboList(apiMockDataLoaded.getMockSession()));
+      ObjectUtils.copyValues(apiMockDataLoaded, apiMockData, "interfaceMethod", "mockProfiles");
     }
 
     // Transfer Model->View
-    methodVS.setMockSessionSelected(apiMockData.getMockSession());
     methodVS.setMdTitle(apiMockData.getTitle());
     methodVS.setMdActive(Boolean.TRUE.equals(apiMockData.getActive()));
+    methodVS.setMdCommon(Boolean.TRUE.equals(apiMockData.getCommon()));
     methodVS.setMdRequest(apiMockData.getRequest());
     methodVS.setMdResponse(apiMockData.getResponse());
     methodVS.setMdCreated(apiMockData.getCreatedAsString());
     methodVS.setMdCountCalls(apiMockData.getCountCalls());
 
+    apiMethodMockDataMockProfiles = new ArrayList<>(apiMockData.getMockProfiles());
+    methodVS.setTblMockDataMockProfiles(apiMethodMockDataMockProfiles);
+
     // UpdateComponents
     updateComponentsMockData();
-  }
-
-  private void loadAndTransferMockSessionsToView(AbstractViewController<InterfaceV>.Execution execution,
-                                                 InterfaceMethodVS methodVS)
-  {
-    List<MockSession> mockSessions = execution.invokeApiCall(apiClient -> apiClient.loadMocksessions())
-        .getMockSessions();
-
-    methodVS.getMockSessions().clear();
-    methodVS.getMockSessions().addAll(mockSessions);
-
-    MockSession mockSessionSelected = methodVS.getMockSessionSelected();
-    if (mockSessionSelected != null)
-    {
-      methodVS.setMockSessionSelected(mockSessions.stream()
-          .filter(ms -> mockSessionSelected.getMockSessionID().equals(ms.getMockSessionID())).findAny()
-          .orElse(null));
-    }
-  }
-
-  private MockSession getMockSessionFromComboList(MockSession mockSession)
-  {
-    if (mockSession != null && mockSession.getMockSessionID() != null)
-    {
-      Optional<MockSession> optMockSession = view.getMethodVS().getMockSessions().stream()
-          .filter(ms -> mockSession.getMockSessionID().equals(ms.getMockSessionID())).findAny();
-
-      if (optMockSession.isPresent())
-      {
-        return optMockSession.get();
-      }
-      else
-      {
-        view.getMethodVS().getMockSessions().add(mockSession);
-
-        return mockSession;
-      }
-    }
-
-    return null;
   }
 
   public void updateComponentsMockData()
   {
     // delete mockData disabled if new
     view.getMethodVS().setDeleteMockDataDisabled(apiMockDataSelected == null);
+    updateComponentsMockDataMockProfiles();
 
     updateComponentsSaveDeleteInterfaceRendered();
+  }
+
+  private void updateComponentsMockDataMockProfiles()
+  {
+    view.getMethodVS()
+        .setDeleteMockDataMockProfileDisabled(view.getMethodVS().getSelectedMockDataMockProfiles().isEmpty());
+  }
+
+  public void handleMockDataMockProfilesSelection()
+  {
+    updateComponentsMockDataMockProfiles();
+  }
+
+  public void deleteMockDataMockProfiles()
+  {
+    new DeleteMockDataMockProfilesExecution().execute();
+  }
+
+  private class DeleteMockDataMockProfilesExecution extends Execution
+  {
+    private List<MockProfile> selectedMockProfiles;
+    private int countSelected = 0;
+
+    @Override
+    protected void createPreValidations()
+    {
+      selectedMockProfiles = view.getMethodVS().getSelectedMockDataMockProfiles();
+      countSelected = selectedMockProfiles.size();
+
+      addValidation(new SelectionValidation(selectedMockProfiles, "mock_profile"));
+    }
+
+    @Override
+    public Message getGrowlMessageOnSuccess()
+    {
+      return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(countSelected > 1
+          ? "mock_profiles"
+          : "mock_profile"));
+    }
+
+    @Override
+    protected void _execute()
+      throws Exception
+    {
+      for (MockProfile mp2del : selectedMockProfiles)
+      {
+        apiMethodMockDataMockProfiles.remove(mp2del);
+      }
+    }
   }
 
   public void saveMockData()
@@ -1552,6 +1564,11 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
                   md -> apiMockDataSelected != md && title.equalsIgnoreCase(md.getTitle()))));
 
       addValidation(new StringNotEmpty(methodVS.getMdResponse(), "response"));
+
+      if (apiMethodMockDataMockProfiles.isEmpty())
+      {
+        addValidation(new NotFalse(methodVS.isMdCommon(), "common"));
+      }
     }
 
     @Override
@@ -1588,13 +1605,16 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
 
       // update copyModel
       apiMockDataSelected.setTitle(titleNew);
-      apiMockDataSelected.setMockSession(methodVS.getMockSessionSelected());
       apiMockDataSelected.setActive(methodVS.isMdActive());
+      apiMockDataSelected.setCommon(methodVS.isMdCommon());
       apiMockDataSelected.setRequest(methodVS.getMdRequest());
       apiMockDataSelected.setResponse(methodVS.getMdResponse());
 
       apiMockDataSelected.setInterfaceMethod(new InterfaceMethod());
       apiMockDataSelected.getInterfaceMethod().setInterfaceMethodId(apiMethodSelected.getInterfaceMethodId());
+
+      apiMockDataSelected.getMockProfiles().clear();
+      apiMockDataSelected.getMockProfiles().addAll(apiMethodMockDataMockProfiles);
 
       // save
       MockData apiMockDataSaved = invokeApiCall(apiClient -> apiClient.saveMockData(apiMockDataSelected))
@@ -1682,6 +1702,80 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
       updateComponents();
 
       getView().updateTree();
+    }
+  }
+
+  public void addMockDataMockProfile()
+  {
+    new AddMockDataMockProfileExecution().execute();
+  }
+
+  private class AddMockDataMockProfileExecution extends Execution
+  {
+    @Override
+    protected void createPreValidations()
+    {
+      // no validation
+    }
+
+    @Override
+    public Message getGrowlMessageOnSuccess()
+    {
+      return null;
+    }
+
+    @Override
+    protected void _execute()
+      throws Exception
+    {
+      List<MockProfile> mockProfiles = invokeApiCall(apiClient -> apiClient.loadMockProfiles())
+          .getMockProfiles();
+
+      mockProfiles.removeAll(apiMethodMockDataMockProfiles);
+
+      view.getMethodVS().setMockProfiles(mockProfiles);
+
+      view.getMethodVS().setMdMockProfile(null);
+
+      PrimeFaces.current().executeScript("PF('mockProfileSelectionDlg').show();");
+    }
+  }
+
+  public void addMockDataSelectedMockProfile()
+  {
+    new AddMockDataSelectedMockProfileExecution().execute();
+  }
+
+  private class AddMockDataSelectedMockProfileExecution extends Execution
+  {
+    private MockProfile mockProfileSelected;
+
+    @Override
+    protected void createPreValidations()
+    {
+      mockProfileSelected = view.getMethodVS().getMdMockProfile();
+
+      addValidation(new NotNull(mockProfileSelected, "mock_profile") //
+          .addSubValidation( //
+              new UniqueData<>(apiMethodMockDataMockProfiles, m -> m.equals(mockProfileSelected))));
+    }
+
+    @Override
+    public Message getGrowlMessageOnSuccess()
+    {
+      return new Message(MessageLevel.INFO, "added_var", Resources.getLabel("mock_profile"));
+    }
+
+    @Override
+    protected void _execute()
+      throws Exception
+    {
+      if (mockProfileSelected != null)
+      {
+        apiMethodMockDataMockProfiles.add(mockProfileSelected);
+      }
+
+      PrimeFaces.current().executeScript("PF('mockProfileSelectionDlg').hide();");
     }
   }
 

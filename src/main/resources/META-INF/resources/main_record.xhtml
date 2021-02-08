@@ -14,7 +14,20 @@
 <h:body>
 	<p:panel id="panRecord">
 
+		<h:panelGrid id="pangr_rs" columns="2" cellpadding="4">
+
+
+
+		</h:panelGrid>
+
 		<h:panelGrid id="pangr_rec" columns="4" cellpadding="4">
+
+			<h:outputText for="recRecordSession" value="#{labels.record_session}" />
+			<p:inputText id="recRecordSession" value="#{main.recRecordSession}"
+				readonly="true" />
+
+			<h:outputText value="" />
+			<h:outputText value="" />
 
 			<h:outputText for="recInterface" value="#{labels._interface}" />
 			<p:inputText id="recInterface" value="#{main.recInterface}"

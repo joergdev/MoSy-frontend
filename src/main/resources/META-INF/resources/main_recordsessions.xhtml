@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+	<title>MoSy Recordsessions</title>
+</h:head>
+
+
+<h:body>
+
+	<p:panel id="panRecordSessions" header="#{labels.record_sessions}">
+
+		<p:dataTable id="tblRecordSessions" value="#{main.tblRecordSessions}"
+			var="rs" emptyMessage="#{labels.no_data}" selectionMode="multiple"
+			selection="#{main.selectedRecordSessions}"
+			rowKey="#{rs.recordSessionID}">
+
+			<p:columns value="#{main.tblRecordSessionsColumns}" var="col"
+				width="#{col.widthFull}">
+				<f:facet name="header">
+					<h:outputText value="#{col.header}" />
+				</f:facet>
+				<h:outputText value="#{rs[col.property]}" />
+			</p:columns>
+
+			<p:ajax event="rowSelect"
+				listener="#{main.onRecordSessionsRowSelect}"
+				update=":form:panRecordSessions" />
+			<p:ajax event="rowUnselect"
+				listener="#{main.onRecordSessionsRowUnselect}"
+				update=":form:panRecordSessions" />
+
+		</p:dataTable>
+
+
+		<p:commandButton value="#{labels._new}"
+			action="#{main.newRecordSession()}" process="@this"
+			update=":form:panRecordSessions" />
+
+		<p:commandButton value="#{labels.delete}"
+			action="#{main.deleteRecordSessions()}"
+			disabled="#{main.deleteRecordSessionDisabled}" process="@this"
+			update=":form:panRecordSessions" />
+
+	</p:panel>
+
+</h:body>
+
+</html>

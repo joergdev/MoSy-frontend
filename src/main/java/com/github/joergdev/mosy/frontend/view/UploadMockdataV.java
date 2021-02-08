@@ -8,8 +8,11 @@ import javax.faces.view.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import com.github.joergdev.mosy.api.model.Interface;
 import com.github.joergdev.mosy.api.model.InterfaceMethod;
-import com.github.joergdev.mosy.api.model.MockSession;
+import com.github.joergdev.mosy.api.model.MockProfile;
+import com.github.joergdev.mosy.frontend.Resources;
+import com.github.joergdev.mosy.frontend.utils.ColumnModel;
 import com.github.joergdev.mosy.frontend.utils.JsfUtils;
+import com.github.joergdev.mosy.frontend.utils.WidthUnit;
 import com.github.joergdev.mosy.frontend.view.controller.UploadMockdataVC;
 import com.github.joergdev.mosy.frontend.view.core.AbstractView;
 
@@ -24,8 +27,19 @@ public class UploadMockdataV extends AbstractView<UploadMockdataVC>
   private String methodID;
   private String source;
 
-  private final List<MockSession> mockSessions = new ArrayList<>();
-  private MockSession mockSessionSelected;
+  // --- MockProfiles ---
+  // Dialog (choose mockprofile for add)
+  private List<MockProfile> mockProfiles = new ArrayList<>();
+  private MockProfile mdMockProfile;
+
+  private List<MockProfile> tblMockProfiles = new ArrayList<>();
+
+  private List<MockProfile> selectedMockProfiles;
+
+  private List<ColumnModel> tblMockProfilesColumns = new ArrayList<>();
+
+  private boolean deleteMockProfileDisabled = true;
+  // --------------------
 
   private String titlePrefix = "Uploaded_";
   private boolean titlePostfixTimestamp = true;
@@ -44,6 +58,8 @@ public class UploadMockdataV extends AbstractView<UploadMockdataVC>
     interfaceID = JsfUtils.getViewParameter(VIEW_PARAM_INTERFACE_ID);
     methodID = JsfUtils.getViewParameter(VIEW_PARAM_METHOD_ID);
     source = JsfUtils.getPreviousPage();
+
+    initTblMockProfiles();
 
     controller.loadRefresh();
   }
@@ -77,6 +93,46 @@ public class UploadMockdataV extends AbstractView<UploadMockdataVC>
     controller.useUploadedMockData();
   }
 
+  // --- MockProfiles ---
+
+  private void initTblMockProfiles()
+  {
+    ColumnModel colName = new ColumnModel(Resources.getLabel("name"), "name");
+    colName.setWidth(67, WidthUnit.PERCENT);
+    tblMockProfilesColumns.add(colName);
+
+    ColumnModel colPersistent = new ColumnModel(Resources.getLabel("persistent"), "persistent");
+    colPersistent.setWidth(33, WidthUnit.PERCENT);
+    tblMockProfilesColumns.add(colPersistent);
+  }
+
+  public void onMockProfilesRowSelect()
+  {
+    controller.handleMockProfilesSelection();
+  }
+
+  public void onMockProfilesRowUnselect()
+  {
+    controller.handleMockProfilesSelection();
+  }
+
+  public void addMockProfile()
+  {
+    controller.addMockProfile();
+  }
+
+  public void addSelectedMockProfile()
+  {
+    controller.addSelectedMockProfile();
+  }
+
+  public void deleteMockProfiles()
+  {
+    controller.deleteMockProfiles();
+  }
+
+  // --------------------
+
   public String getInterfaceID()
   {
     return interfaceID;
@@ -107,16 +163,6 @@ public class UploadMockdataV extends AbstractView<UploadMockdataVC>
     this.source = source;
   }
 
-  public MockSession getMockSessionSelected()
-  {
-    return mockSessionSelected;
-  }
-
-  public void setMockSessionSelected(MockSession mockSessionSelected)
-  {
-    this.mockSessionSelected = mockSessionSelected;
-  }
-
   public String getTitlePrefix()
   {
     return titlePrefix;
@@ -125,11 +171,6 @@ public class UploadMockdataV extends AbstractView<UploadMockdataVC>
   public void setTitlePrefix(String titlePrefix)
   {
     this.titlePrefix = titlePrefix;
-  }
-
-  public List<MockSession> getMockSessions()
-  {
-    return mockSessions;
   }
 
   public boolean isTitlePostfixTimestamp()
@@ -180,5 +221,101 @@ public class UploadMockdataV extends AbstractView<UploadMockdataVC>
   public List<InterfaceMethod> getMethods()
   {
     return methods;
+  }
+
+  /**
+   * @return the tblMockProfiles
+   */
+  public List<MockProfile> getTblMockProfiles()
+  {
+    return tblMockProfiles;
+  }
+
+  /**
+   * @param tblMockProfiles the tblMockProfiles to set
+   */
+  public void setTblMockProfiles(List<MockProfile> tblMockProfiles)
+  {
+    this.tblMockProfiles = tblMockProfiles;
+  }
+
+  /**
+   * @return the selectedMockProfiles
+   */
+  public List<MockProfile> getSelectedMockProfiles()
+  {
+    return selectedMockProfiles;
+  }
+
+  /**
+   * @param selectedMockProfiles the selectedMockProfiles to set
+   */
+  public void setSelectedMockProfiles(List<MockProfile> selectedMockProfiles)
+  {
+    this.selectedMockProfiles = selectedMockProfiles;
+  }
+
+  /**
+   * @return the tblMockProfilesColumns
+   */
+  public List<ColumnModel> getTblMockProfilesColumns()
+  {
+    return tblMockProfilesColumns;
+  }
+
+  /**
+   * @param tblMockProfilesColumns the tblMockProfilesColumns to set
+   */
+  public void setTblMockProfilesColumns(List<ColumnModel> tblMockProfilesColumns)
+  {
+    this.tblMockProfilesColumns = tblMockProfilesColumns;
+  }
+
+  /**
+   * @return the deleteMockProfileDisabled
+   */
+  public boolean isDeleteMockProfileDisabled()
+  {
+    return deleteMockProfileDisabled;
+  }
+
+  /**
+   * @param deleteMockProfileDisabled the deleteMockProfileDisabled to set
+   */
+  public void setDeleteMockProfileDisabled(boolean deleteMockProfileDisabled)
+  {
+    this.deleteMockProfileDisabled = deleteMockProfileDisabled;
+  }
+
+  /**
+   * @return the mockProfiles
+   */
+  public List<MockProfile> getMockProfiles()
+  {
+    return mockProfiles;
+  }
+
+  /**
+   * @param mockProfiles the mockProfiles to set
+   */
+  public void setMockProfiles(List<MockProfile> mockProfiles)
+  {
+    this.mockProfiles = mockProfiles;
+  }
+
+  /**
+   * @return the mdMockProfile
+   */
+  public MockProfile getMdMockProfile()
+  {
+    return mdMockProfile;
+  }
+
+  /**
+   * @param mdMockProfile the mdMockProfile to set
+   */
+  public void setMdMockProfile(MockProfile mdMockProfile)
+  {
+    this.mdMockProfile = mdMockProfile;
   }
 }

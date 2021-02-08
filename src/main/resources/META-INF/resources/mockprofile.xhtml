@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+	<title>MoSy Mockprofile</title>
+</h:head>
+
+<h:outputStylesheet name="primeicons/primeicons.css"
+	library="primefaces" />
+
+<h:body>
+
+	<h:form id="form">
+
+		<p:growl id="common_growl" for="common_growl" showDetail="true"
+			life="1000">
+			<p:autoUpdate />
+		</p:growl>
+
+		<p:panel id="pan_mp">
+
+			<p:messages id="info" showDetail="true" closeable="true" for="info"
+				escape="false">
+				<p:autoUpdate />
+			</p:messages>
+			<p:messages id="warn" showDetail="true" closeable="true" for="warn"
+				escape="false">
+				<p:autoUpdate />
+			</p:messages>
+			<p:messages id="error" showDetail="true" closeable="true" for="error"
+				escape="false">
+				<p:autoUpdate />
+			</p:messages>
+			<p:messages id="fatal" showDetail="true" closeable="true" for="fatal"
+				escape="false">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/images/loading.gif" />
+			</p:dialog>
+
+			<div class="ui-g">
+
+				<div class="ui-g-12">
+					<p:menubar>
+						<p:menuitem id="men_refresh" value="#{labels.refresh}"
+							action="#{mockprofile.refresh}" icon="pi pi-refresh"
+							update=":form" />
+
+						<f:facet name="options">
+							<p:commandButton id="btnLogout" value="#{labels.logout}"
+								icon="pi pi-home" action="#{mockprofile.logout()}"
+								process="@this" />
+						</f:facet>
+					</p:menubar>
+				</div>
+
+				<div class="ui-g-12">
+
+					<p:panelGrid styleClass="ui-noborder">
+
+						<p:row>
+							<p:column>
+								<h:outputText for="name" value="#{labels.name}" />
+							</p:column>
+							<p:column colspan="2">
+								<p:inputText id="name" value="#{mockprofile.name}"
+									style="width:100%" />
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox value="#{mockprofile.persistent}"
+									itemLabel="#{labels.persistent}" />
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column>
+								<p:selectBooleanCheckbox value="#{mockprofile.useCommonMocks}"
+									itemLabel="#{labels.use_common_mocks}" />
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column>
+								<h:outputText value="#{labels.description}"
+									style="margin-top: 30px" />
+							</p:column>
+							<p:column>
+								<p:inputTextarea id="description" rows="10" cols="80"
+									value="#{mockprofile.description}" style="margin-top: 30px" />
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column>
+								<h:outputText />
+							</p:column>
+						</p:row>
+
+						<p:row>
+							<p:column>
+								<h:outputText for="created" value="#{labels.created}" />
+							</p:column>
+							<p:column>
+								<p:inputText id="created" value="#{mockprofile.created}"
+									readonly="true" />
+							</p:column>
+						</p:row>
+
+					</p:panelGrid>
+
+					<p:commandButton value="#{labels.save}"
+						action="#{mockprofile.save()}" update=":form"
+						style="margin-top: 50px" />
+
+					<p:commandButton value="#{labels.delete}"
+						action="#{mockprofile.delete()}"
+						disabled="#{mockprofile.deleteDisabled}" style="margin-top: 50px" />
+
+					<p:commandButton value="#{labels.cancel}"
+						action="#{mockprofile.cancel()}" style="margin-top: 50px" />
+
+				</div>
+
+				<div class="ui-g-12"></div>
+
+			</div>
+
+		</p:panel>
+
+	</h:form>
+
+</h:body>
+
+</html>
