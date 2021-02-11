@@ -12,9 +12,10 @@ public class Resources
   public static final String SITE_MAIN = "main.xhtml";
   public static final String SITE_MAIN_BASEDATA = "main_basedata.xhtml";
   public static final String SITE_MAIN_INTERFACES = "main_interfaces.xhtml";
-  public static final String SITE_MAIN_MOCK_SESSIONS = "main_mocksessions.xhtml";
+  public static final String SITE_MAIN_MOCK_PROFILES = "main_mockprofiles.xhtml";
   public static final String SITE_MAIN_RECORDS = "main_records.xhtml";
   public static final String SITE_MAIN_RECORD = "main_record.xhtml";
+  public static final String SITE_MAIN_RECORDSESSIONS = "main_recordsessions.xhtml";
 
   public static final String SITE_INTERFACE = "interface.xhtml";
   public static final String SITE_INTERFACE_BASEDATA = "interface_basedata.xhtml";
@@ -24,6 +25,8 @@ public class Resources
   public static final String SITE_INTERFACE_METHOD_MOCKDATA = "interface_method-mockdata.xhtml";
   public static final String SITE_INTERFACE_METHOD_RECORDCONF_OVERVIEW = "interface_method-recordconfig-overview.xhtml";
   public static final String SITE_INTERFACE_METHOD_RECORDCONF = "interface_method-recordconfig.xhtml";
+
+  public static final String SITE_MOCK_PROFILE = "mockprofile.xhtml";
 
   public static final String SITE_RECORD_AS_MOCKDATA = "recordAsMockdata.xhtml";
 

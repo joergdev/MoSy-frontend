@@ -31,6 +31,23 @@ function stopDlRecords() {
 
 	<p:panel id="panRecords" header="#{labels.records}">
 
+		<h:panelGrid id="pangr_rs" columns="2" cellpadding="4">
+
+			<h:outputText for="recordSessionOvSelected"
+				value="#{labels.record_session}" />
+
+			<p:selectOneMenu id="recordSessionOvSelected"
+				value="#{main.recordSessionOvSelected}"
+				converter="RecordSessionConverter">
+				<f:selectItem itemLabel="#{labels.select_record_session}"
+					itemValue="" noSelectionOption="true" />
+				<f:selectItems value="#{main.recordSessions}" />
+				<p:ajax listener="#{main.onRecordSessionOvSelect}"
+					update="panRecords" process="panRecords" />
+			</p:selectOneMenu>
+
+		</h:panelGrid>
+
 		<p:dataTable id="tblRecords" widgetVar="tblRecords"
 			value="#{main.tblRecords}" var="rec" emptyMessage="#{labels.no_data}"
 			selectionMode="multiple" selection="#{main.selectedRecords}"

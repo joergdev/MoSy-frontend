@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import com.github.joergdev.mosy.api.model.Interface;
 import com.github.joergdev.mosy.api.model.InterfaceMethod;
 import com.github.joergdev.mosy.api.model.MockData;
-import com.github.joergdev.mosy.api.model.MockSession;
+import com.github.joergdev.mosy.api.model.MockProfile;
 import com.github.joergdev.mosy.frontend.Message;
 import com.github.joergdev.mosy.frontend.MessageLevel;
 import com.github.joergdev.mosy.frontend.Resources;
@@ -62,7 +63,6 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
     protected void _execute()
       throws Exception
     {
-      loadAndTransferMockSessionsToView();
       loadAndTransferInterfacesToView();
 
       updateComponents();
@@ -98,23 +98,6 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
         handleInterfaceSelection(false);
       }
     }
-
-    private void loadAndTransferMockSessionsToView()
-    {
-      List<MockSession> mockSessions = invokeApiCall(apiClient -> apiClient.loadMocksessions())
-          .getMockSessions();
-
-      view.getMockSessions().clear();
-      view.getMockSessions().addAll(mockSessions);
-
-      MockSession mockSessionSelected = view.getMockSessionSelected();
-      if (mockSessionSelected != null)
-      {
-        view.setMockSessionSelected(mockSessions.stream()
-            .filter(ms -> mockSessionSelected.getMockSessionID().equals(ms.getMockSessionID())).findAny()
-            .orElse(null));
-      }
-    }
   }
 
   public void cancel()
@@ -141,6 +124,8 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
   private void updateComponents()
   {
     view.setHintNoInterfaceMethodSelectedVisible(view.getInterfaceSelected() == null);
+
+    updateComponentsMockDataMockProfiles();
   }
 
   public void handleInterfaceSelection()
@@ -356,7 +341,7 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
         }
 
         MockData apiMockData = new MockData();
-        apiMockData.setMockSession(view.getMockSessionSelected());
+        apiMockData.getMockProfiles().addAll(view.getTblMockProfiles());
         apiMockData.setInterfaceMethod(methodSelected);
         apiMockData.setActive(true);
 
@@ -459,4 +444,80 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
       return idxStartRequest;
     }
   }
+
+  //--- MockProfiles ---
+
+  public void handleMockProfilesSelection()
+  {
+    updateComponentsMockDataMockProfiles();
+  }
+
+  public void addMockProfile()
+  {
+    List<MockProfile> mockProfiles = invokeApiCall(apiClient -> apiClient.loadMockProfiles())
+        .getMockProfiles();
+
+    mockProfiles.removeAll(view.getTblMockProfiles());
+
+    view.setMockProfiles(mockProfiles);
+
+    PrimeFaces.current().executeScript("PF('mockProfileSelectionDlg').show();");
+  }
+
+  public void deleteMockProfiles()
+  {
+    new DeleteMockProfilesExecution().execute();
+  }
+
+  private class DeleteMockProfilesExecution extends Execution
+  {
+    private List<MockProfile> selectedMockProfiles;
+    private int countSelected = 0;
+
+    @Override
+    protected void createPreValidations()
+    {
+      selectedMockProfiles = view.getSelectedMockProfiles();
+      countSelected = selectedMockProfiles.size();
+
+      addValidation(new SelectionValidation(selectedMockProfiles, "mock_profile"));
+    }
+
+    @Override
+    public Message getGrowlMessageOnSuccess()
+    {
+      return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(countSelected > 1
+          ? "mock_profiles"
+          : "mock_profile"));
+    }
+
+    @Override
+    protected void _execute()
+      throws Exception
+    {
+      for (MockProfile mp2del : selectedMockProfiles)
+      {
+        view.getTblMockProfiles().remove(mp2del);
+      }
+    }
+  }
+
+  private void updateComponentsMockDataMockProfiles()
+  {
+    view.setDeleteMockProfileDisabled(Utils.nvlCollection(view.getSelectedMockProfiles()).isEmpty());
+  }
+
+  public void addSelectedMockProfile()
+  {
+    MockProfile mpSelected = view.getMdMockProfile();
+
+    if (mpSelected != null)
+    {
+      view.getTblMockProfiles().add(mpSelected);
+    }
+
+    PrimeFaces.current().executeScript("PF('mockProfileSelectionDlg').hide();");
+  }
+
+  //--- End MockProfiles ---
 }

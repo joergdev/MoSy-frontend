@@ -13,25 +13,84 @@
 
 <h:body>
 
+	<p:dialog header="#{labels.mock_profile}" id="mockProfileSelectionDlg"
+		widgetVar="mockProfileSelectionDlg" resizable="false" modal="true">
+		<h:panelGrid columns="2" cellpadding="4" id="panDlgMpSel">
+
+			<h:outputLabel for="mdMockProfile" value="#{labels.mock_profile}" />
+			<p:selectOneMenu id="mdMockProfile"
+				value="#{_interface.methodVS.mdMockProfile}"
+				converter="MockProfileConverter">
+				<f:selectItem itemLabel="#{labels.select_mock_profile}" itemValue=""
+					noSelectionOption="true" />
+				<f:selectItems value="#{_interface.methodVS.mockProfiles}" />
+			</p:selectOneMenu>
+
+
+			<f:facet name="footer">
+				<p:commandButton value="#{labels.confirm}"
+					update=":form:panMockData"
+					action="#{_interface.methodVS.addMockDataSelectedMockProfile}" />
+				<p:commandButton value="#{labels.cancel}"
+					oncomplete="PF('mockProfileSelectionDlg').hide();" />
+			</f:facet>
+		</h:panelGrid>
+	</p:dialog>
+
 	<p:panel id="panMockData">
 
-		<h:panelGrid id="pangr_md" columns="2" cellpadding="4">
+		<p:panel id="panMdMockProfiles">
 
-			<h:outputText for="mockSessionSelected"
-				value="#{labels.mock_session}" />
-			<p:selectOneMenu id="mockSessionSelected"
-				value="#{_interface.methodVS.mockSessionSelected}"
-				converter="MockSessionConverter">
-				<f:selectItem itemLabel="#{labels.select_mock_session}" itemValue=""
-					noSelectionOption="true" />
-				<f:selectItems value="#{_interface.methodVS.mockSessions}" />
-			</p:selectOneMenu>
+			<h:outputText value="#{labels.mock_profiles}" />
+
+			<p:dataTable id="tblMockDataMockProfiles"
+				value="#{_interface.methodVS.tblMockDataMockProfiles}" var="mp"
+				emptyMessage="#{labels.no_data}" selectionMode="multiple"
+				selection="#{_interface.methodVS.selectedMockDataMockProfiles}"
+				rowKey="#{mp.mockProfileID}">
+
+				<p:columns
+					value="#{_interface.methodVS.tblMockDataMockProfilesColumns}"
+					var="col" width="#{col.widthFull}">
+					<f:facet name="header">
+						<h:outputText value="#{col.header}" />
+					</f:facet>
+					<h:outputText value="#{mp[col.property]}" />
+				</p:columns>
+
+				<p:ajax event="rowSelect"
+					listener="#{_interface.methodVS.onMockDataMockProfilesRowSelect}"
+					update=":form:panMdMockProfiles" />
+
+				<p:ajax event="rowUnselect"
+					listener="#{_interface.methodVS.onMockDataMockProfilesRowUnselect}"
+					update=":form:panMdMockProfiles" />
+
+			</p:dataTable>
+
+
+			<p:commandButton value="#{labels.add}"
+				action="#{_interface.methodVS.addMockDataMockProfile()}"
+				update=":form:mockProfileSelectionDlg" />
+
+			<p:commandButton value="#{labels.delete}"
+				action="#{_interface.methodVS.deleteMockDataMockProfiles()}"
+				disabled="#{_interface.methodVS.deleteMockDataMockProfileDisabled}"
+				process="@this" update=":form:panMdMockProfiles" />
+
+		</p:panel>
+
+		<h:panelGrid id="pangr_md" columns="2" cellpadding="4">
 
 			<h:outputText for="mdTitle" value="#{labels.title}" />
 			<p:inputText id="mdTitle" value="#{_interface.methodVS.mdTitle}" />
 
 			<p:selectBooleanCheckbox value="#{_interface.methodVS.mdActive}"
 				itemLabel="#{labels.active}" />
+			<div />
+
+			<p:selectBooleanCheckbox value="#{_interface.methodVS.mdCommon}"
+				itemLabel="#{labels.common}" />
 			<div />
 
 		</h:panelGrid>

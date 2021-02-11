@@ -6,7 +6,7 @@ import java.util.List;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import com.github.joergdev.mosy.api.model.MockData;
-import com.github.joergdev.mosy.api.model.MockSession;
+import com.github.joergdev.mosy.api.model.MockProfile;
 import com.github.joergdev.mosy.api.model.RecordConfig;
 import com.github.joergdev.mosy.frontend.Resources;
 import com.github.joergdev.mosy.frontend.model.YesNoGlobalOrRecordConfigIndividuallyType;
@@ -33,12 +33,12 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
 
   private boolean routingOnNoMockData;
 
-  private final List<YesNoGlobalOrRecordConfigIndividuallyType> yesNoGlobalTypes = Arrays
-      .asList(YesNoGlobalOrRecordConfigIndividuallyType.values());
-
   private YesNoGlobalOrRecordConfigIndividuallyType record;
 
   private Integer countCalls;
+
+  private final List<YesNoGlobalOrRecordConfigIndividuallyType> yesNoGlobalTypes = Arrays
+      .asList(YesNoGlobalOrRecordConfigIndividuallyType.values());
 
   // component states
   private boolean routingOnNoMockDataDisabled;
@@ -50,11 +50,11 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
 
   //--- RecordConfig overview data -------------------------------------
 
-  private final List<RecordConfig> tblRecordConfigs = new ArrayList<>();
+  private List<RecordConfig> tblRecordConfigs = new ArrayList<>();
 
   private List<RecordConfig> selectedRecordConfigs;
 
-  private final List<ColumnModel> tblRecordConfigsColumns = new ArrayList<>();
+  private List<ColumnModel> tblRecordConfigsColumns = new ArrayList<>();
 
   //component states
   private boolean newRecordConfigDisabled = true;
@@ -76,11 +76,11 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
 
   //--- MockData overview data ------------------------------------- 
 
-  private final List<MockData> tblMockData = new ArrayList<>();
+  private List<MockData> tblMockData = new ArrayList<>();
 
   private List<MockData> selectedMockDataList;
 
-  private final List<ColumnModel> tblMockDataColumns = new ArrayList<>();
+  private List<ColumnModel> tblMockDataColumns = new ArrayList<>();
 
   //component states
   private boolean newMockDataDisabled = true;
@@ -91,11 +91,19 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
 
   //--- MockData data -------------------------------------
 
-  private final List<MockSession> mockSessions = new ArrayList<>();
-  private MockSession mockSessionSelected;
+  private List<MockProfile> tblMockDataMockProfiles = new ArrayList<>();
+
+  private List<MockProfile> selectedMockDataMockProfiles;
+
+  private List<ColumnModel> tblMockDataMockProfilesColumns = new ArrayList<>();
+
+  // Dialog (choose mockprofile for add)
+  private List<MockProfile> mockProfiles = new ArrayList<>();
+  private MockProfile mdMockProfile;
 
   private String mdTitle;
   private boolean mdActive;
+  private boolean mdCommon;
 
   private String mdRequest;
   private String mdResponse;
@@ -105,6 +113,7 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
 
   // component states
   private boolean deleteMockDataDisabled = true;
+  private boolean deleteMockDataMockProfileDisabled = true;
 
   // --- End MockData data --------------------------------
 
@@ -112,6 +121,7 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
   {
     initTblRecordConfigs();
     initTblMockData();
+    initTblMockDataMockProfiles();
   }
 
   //--- Method data -------------------------------------
@@ -201,7 +211,7 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
 
   private void initTblMockData()
   {
-    ColumnModel colMocksession = new ColumnModel(Resources.getLabel("mock_session"), "mockSessionID");
+    ColumnModel colMocksession = new ColumnModel(Resources.getLabel("mock_profiles"), "mockProfileNames");
     colMocksession.setWidth(10, WidthUnit.PERCENT);
     tblMockDataColumns.add(colMocksession);
 
@@ -260,6 +270,42 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
   //--- End MockData overview data -------------------------------------
 
   //--- MockData data -------------------------------------
+
+  private void initTblMockDataMockProfiles()
+  {
+    ColumnModel colName = new ColumnModel(Resources.getLabel("name"), "name");
+    colName.setWidth(67, WidthUnit.PERCENT);
+    tblMockDataMockProfilesColumns.add(colName);
+
+    ColumnModel colPersistent = new ColumnModel(Resources.getLabel("persistent"), "persistent");
+    colPersistent.setWidth(33, WidthUnit.PERCENT);
+    tblMockDataMockProfilesColumns.add(colPersistent);
+  }
+
+  public void onMockDataMockProfilesRowSelect()
+  {
+    controller.handleMockDataMockProfilesSelection();
+  }
+
+  public void onMockDataMockProfilesRowUnselect()
+  {
+    controller.handleMockDataMockProfilesSelection();
+  }
+
+  public void addMockDataMockProfile()
+  {
+    controller.addMockDataMockProfile();
+  }
+
+  public void addMockDataSelectedMockProfile()
+  {
+    controller.addMockDataSelectedMockProfile();
+  }
+
+  public void deleteMockDataMockProfiles()
+  {
+    controller.deleteMockDataMockProfiles();
+  }
 
   public void saveMockData()
   {
@@ -583,21 +629,6 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
     return tblRecordConfigsColumns;
   }
 
-  public List<MockSession> getMockSessions()
-  {
-    return mockSessions;
-  }
-
-  public MockSession getMockSessionSelected()
-  {
-    return mockSessionSelected;
-  }
-
-  public void setMockSessionSelected(MockSession mockSessionSelected)
-  {
-    this.mockSessionSelected = mockSessionSelected;
-  }
-
   public boolean isMockActive()
   {
     return mockActive;
@@ -618,8 +649,145 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
     this.mockActiveOnStartup = mockActiveOnStartup;
   }
 
+  /**
+   * @return the tblMockDataMockProfiles
+   */
+  public List<MockProfile> getTblMockDataMockProfiles()
+  {
+    return tblMockDataMockProfiles;
+  }
+
+  /**
+   * @param tblMockDataMockProfiles the tblMockDataMockProfiles to set
+   */
+  public void setTblMockDataMockProfiles(List<MockProfile> tblMockDataMockProfiles)
+  {
+    this.tblMockDataMockProfiles = tblMockDataMockProfiles;
+  }
+
+  /**
+   * @return the selectedMockDataMockProfiles
+   */
+  public List<MockProfile> getSelectedMockDataMockProfiles()
+  {
+    if (selectedMockDataMockProfiles == null)
+    {
+      selectedMockDataMockProfiles = new ArrayList<>();
+    }
+
+    return selectedMockDataMockProfiles;
+  }
+
+  /**
+   * @param selectedMockDataMockProfiles the selectedMockDataMockProfiles to set
+   */
+  public void setSelectedMockDataMockProfiles(List<MockProfile> selectedMockDataMockProfiles)
+  {
+    this.selectedMockDataMockProfiles = selectedMockDataMockProfiles;
+  }
+
+  /**
+   * @return the tblMockDataMockProfilesColumns
+   */
+  public List<ColumnModel> getTblMockDataMockProfilesColumns()
+  {
+    return tblMockDataMockProfilesColumns;
+  }
+
+  /**
+   * @param tblMockDataMockProfilesColumns the tblMockDataMockProfilesColumns to set
+   */
+  public void setTblMockDataMockProfilesColumns(List<ColumnModel> tblMockDataMockProfilesColumns)
+  {
+    this.tblMockDataMockProfilesColumns = tblMockDataMockProfilesColumns;
+  }
+
+  /**
+   * @param tblRecordConfigs the tblRecordConfigs to set
+   */
+  public void setTblRecordConfigs(List<RecordConfig> tblRecordConfigs)
+  {
+    this.tblRecordConfigs = tblRecordConfigs;
+  }
+
+  /**
+   * @param tblRecordConfigsColumns the tblRecordConfigsColumns to set
+   */
+  public void setTblRecordConfigsColumns(List<ColumnModel> tblRecordConfigsColumns)
+  {
+    this.tblRecordConfigsColumns = tblRecordConfigsColumns;
+  }
+
+  /**
+   * @param tblMockData the tblMockData to set
+   */
+  public void setTblMockData(List<MockData> tblMockData)
+  {
+    this.tblMockData = tblMockData;
+  }
+
+  /**
+   * @param tblMockDataColumns the tblMockDataColumns to set
+   */
+  public void setTblMockDataColumns(List<ColumnModel> tblMockDataColumns)
+  {
+    this.tblMockDataColumns = tblMockDataColumns;
+  }
+
+  public boolean isDeleteMockDataMockProfileDisabled()
+  {
+    return deleteMockDataMockProfileDisabled;
+  }
+
+  public void setDeleteMockDataMockProfileDisabled(boolean deleteMockDataMockProfileDisabled)
+  {
+    this.deleteMockDataMockProfileDisabled = deleteMockDataMockProfileDisabled;
+  }
+
+  /**
+   * @return the mockProfiles
+   */
+  public List<MockProfile> getMockProfiles()
+  {
+    return mockProfiles;
+  }
+
+  /**
+   * @param mockProfiles the mockProfiles to set
+   */
+  public void setMockProfiles(List<MockProfile> mockProfiles)
+  {
+    this.mockProfiles = mockProfiles;
+  }
+
+  /**
+   * @return the mdMockProfile
+   */
+  public MockProfile getMdMockProfile()
+  {
+    return mdMockProfile;
+  }
+
+  /**
+   * @param mdMockProfile the mdMockProfile to set
+   */
+  public void setMdMockProfile(MockProfile mdMockProfile)
+  {
+    this.mdMockProfile = mdMockProfile;
+  }
+
   public List<YesNoGlobalOrRecordConfigIndividuallyType> getYesNoGlobalTypes()
   {
     return yesNoGlobalTypes;
+  }
+
+  public boolean isMdCommon()
+  {
+    return mdCommon;
+  }
+
+  public void setMdCommon(boolean mdCommon)
+  {
+    this.mdCommon = mdCommon;
   }
 }

@@ -69,7 +69,8 @@ public class RoutingFilter implements Filter
 
     if (Arrays
         .asList(Resources.SITE_MAIN_BASEDATA, Resources.SITE_MAIN_INTERFACES,
-            Resources.SITE_MAIN_MOCK_SESSIONS, Resources.SITE_MAIN_RECORDS, Resources.SITE_MAIN_RECORD)
+            Resources.SITE_MAIN_MOCK_PROFILES, Resources.SITE_MAIN_RECORDSESSIONS,
+            Resources.SITE_MAIN_RECORDS, Resources.SITE_MAIN_RECORD)
         .stream().anyMatch(site -> Utils.nvl(redirectURLSet, url).contains(site)))
     {
       redirectURL = httpRequest.getContextPath() + "/" + Resources.SITE_MAIN;

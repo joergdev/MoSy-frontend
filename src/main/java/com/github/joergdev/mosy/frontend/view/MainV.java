@@ -14,8 +14,9 @@ import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.TreeNode;
 import com.github.joergdev.mosy.api.model.Interface;
-import com.github.joergdev.mosy.api.model.MockSession;
+import com.github.joergdev.mosy.api.model.MockProfile;
 import com.github.joergdev.mosy.api.model.Record;
+import com.github.joergdev.mosy.api.model.RecordSession;
 import com.github.joergdev.mosy.frontend.Resources;
 import com.github.joergdev.mosy.frontend.model.RecordsLazyDataModel;
 import com.github.joergdev.mosy.frontend.model.YesNoGlobalOrInterfaceIndividuallyType;
@@ -64,16 +65,21 @@ public class MainV extends AbstractView<MainVC>
   private boolean deleteInterfaceDisabled = true;
   // -------------------------------------
 
-  // --- MockSessions ----------------------
-  private final List<MockSession> tblMockSessions = new ArrayList<>();
-  private List<MockSession> selectedMockSessions;
+  // --- MockProfiles ----------------------
+  private final List<MockProfile> tblMockProfiles = new ArrayList<>();
+  private List<MockProfile> selectedMockProfiles;
 
-  private final List<ColumnModel> tblMockSessionsColumns = new ArrayList<>();
+  private List<ColumnModel> tblMockProfilesColumns = new ArrayList<>();
 
-  private boolean deleteMockSessionDisabled = true;
+  private boolean editMockProfileDisabled = true;
+  private boolean deleteMockProfileDisabled = true;
   // ---------------------------------------
 
   //--- Records ----------------------------
+
+  private List<RecordSession> recordSessions = new ArrayList<>();
+  private RecordSession recordSessionOvSelected;
+
   private final RecordsLazyDataModel tblRecords = new RecordsLazyDataModel(":form:tblRecords", controller);
   private List<Record> selectedRecords;
 
@@ -87,11 +93,22 @@ public class MainV extends AbstractView<MainVC>
   // ---------------------------------------
 
   //--- Record ----------------------------
+  private String recRecordSession;
   private String recInterface;
   private String recMethod;
   private String recCreated;
+
   private String recRequest;
   private String recResponse;
+  // ---------------------------------------
+
+  //--- RecordSessions ----------------------
+  private List<RecordSession> tblRecordSessions = new ArrayList<>();
+  private List<RecordSession> selectedRecordSessions;
+
+  private List<ColumnModel> tblRecordSessionsColumns = new ArrayList<>();
+
+  private boolean deleteRecordSessionDisabled = true;
   // ---------------------------------------
 
   @PostConstruct
@@ -100,8 +117,9 @@ public class MainV extends AbstractView<MainVC>
     treeRoot = new DefaultTreeNode("MoSy", null);
 
     initTblInterfaces();
-    initTblMockSessions();
+    initTblMockProfiles();
     initTblRecords();
+    initTblRecordSessions();
 
     controller.loadRefresh();
   }
@@ -243,57 +261,112 @@ public class MainV extends AbstractView<MainVC>
 
   // --- End Interfaces ----------------------
 
-  // --- MockSessions ----------------------
+  // --- MockProfiles ----------------------
 
-  private void initTblMockSessions()
+  private void initTblMockProfiles()
   {
-    ColumnModel colID = new ColumnModel(Resources.getLabel("id"), "mockSessionID");
-    colID.setWidth(50, WidthUnit.PERCENT);
-    tblMockSessionsColumns.add(colID);
+    ColumnModel colName = new ColumnModel(Resources.getLabel("name"), "name");
+    colName.setWidth(34, WidthUnit.PERCENT);
+    tblMockProfilesColumns.add(colName);
 
-    ColumnModel colCreated = new ColumnModel(Resources.getLabel("created"), "createdAsString");
-    colCreated.setWidth(50, WidthUnit.PERCENT);
-    tblMockSessionsColumns.add(colCreated);
+    ColumnModel colPersistent = new ColumnModel(Resources.getLabel("persistent"), "persistent");
+    colPersistent.setWidth(33, WidthUnit.PERCENT);
+    tblMockProfilesColumns.add(colPersistent);
+
+    ColumnModel colUseCommonMocks = new ColumnModel(Resources.getLabel("use_common_mocks"), "useCommonMocks");
+    colUseCommonMocks.setWidth(33, WidthUnit.PERCENT);
+    tblMockProfilesColumns.add(colUseCommonMocks);
   }
 
-  public void newMockSession()
+  public void newMockProfile()
   {
-    controller.newMockSession();
+    controller.newMockProfile();
   }
 
-  public void deleteMockSessions()
+  public void deleteMockProfiles()
   {
-    controller.deleteMockSessions();
+    controller.deleteMockProfiles();
   }
 
-  public void onMockSessionsRowSelect()
+  public void onMockProfilesRowSelect()
   {
-    controller.handleMockSessionsSelection();
+    controller.handleMockProfilesSelection();
   }
 
-  public void onMockSessionsRowUnselect()
+  public void onMockProfilesRowUnselect()
   {
-    controller.handleMockSessionsSelection();
+    controller.handleMockProfilesSelection();
   }
 
-  // --- End MockSessions ----------------------
+  public void onMockProfilesRowDoubleClick()
+  {
+    controller.editMockProfile();
+  }
+
+  public void editMockProfile()
+  {
+    controller.editMockProfile();
+  }
+
+  // --- End MockProfiles ----------------------
 
   // --- Records -------------------------------
 
   private void initTblRecords()
   {
+    ColumnModel colRecordsession = new ColumnModel(Resources.getLabel("record_session"), "recordSessionID");
+    colRecordsession.setWidth(10, WidthUnit.PERCENT);
+    tblRecordsColumns.add(colRecordsession);
+
     ColumnModel colInterface = new ColumnModel(Resources.getLabel("interface"), "interfaceName");
-    colInterface.setWidth(35, WidthUnit.PERCENT);
+    colInterface.setWidth(30, WidthUnit.PERCENT);
     tblRecordsColumns.add(colInterface);
 
     ColumnModel colMethod = new ColumnModel(Resources.getLabel("method"), "methodName");
-    colMethod.setWidth(35, WidthUnit.PERCENT);
+    colMethod.setWidth(30, WidthUnit.PERCENT);
     tblRecordsColumns.add(colMethod);
 
     ColumnModel colCreated = new ColumnModel(Resources.getLabel("created"), "createdAsString");
     colCreated.setWidth(30, WidthUnit.PERCENT);
     tblRecordsColumns.add(colCreated);
   }
+
+  //--- End Records -------------------------------
+
+  //--- RecordSessions -------------------------------
+
+  private void initTblRecordSessions()
+  {
+    ColumnModel colID = new ColumnModel(Resources.getLabel("id"), "recordSessionID");
+    colID.setWidth(40, WidthUnit.PERCENT);
+    tblRecordSessionsColumns.add(colID);
+
+    ColumnModel colCreated = new ColumnModel(Resources.getLabel("created"), "createdAsString");
+    colCreated.setWidth(60, WidthUnit.PERCENT);
+    tblRecordSessionsColumns.add(colCreated);
+  }
+
+  public void onRecordSessionsRowSelect()
+  {
+    controller.handleRecordSessionsSelection();
+  }
+
+  public void onRecordSessionsRowUnselect()
+  {
+    controller.handleRecordSessionsSelection();
+  }
+
+  public void newRecordSession()
+  {
+    controller.newRecordSession();
+  }
+
+  public void deleteRecordSessions()
+  {
+    controller.deleteRecordSessions();
+  }
+
+  //--- End RecordSessions -------------------------------
 
   public void showRecord()
   {
@@ -330,6 +403,11 @@ public class MainV extends AbstractView<MainVC>
   public void useRecordsAsMockdata()
   {
     controller.useRecordsAsMockdata();
+  }
+
+  public void onRecordSessionOvSelect()
+  {
+    controller.handleRecordOverviewSessionSelected();
   }
 
   // --- End Records ---------------------------
@@ -607,38 +685,159 @@ public class MainV extends AbstractView<MainVC>
     this.deleteInterfaceDisabled = deleteInterfaceDisabled;
   }
 
-  public List<MockSession> getSelectedMockSessions()
-  {
-    return selectedMockSessions;
-  }
-
-  public void setSelectedMockSessions(List<MockSession> selectedMockSessions)
-  {
-    this.selectedMockSessions = selectedMockSessions;
-  }
-
-  public boolean isDeleteMockSessionDisabled()
-  {
-    return deleteMockSessionDisabled;
-  }
-
-  public void setDeleteMockSessionDisabled(boolean deleteMockSessionDisabled)
-  {
-    this.deleteMockSessionDisabled = deleteMockSessionDisabled;
-  }
-
-  public List<MockSession> getTblMockSessions()
-  {
-    return tblMockSessions;
-  }
-
-  public List<ColumnModel> getTblMockSessionsColumns()
-  {
-    return tblMockSessionsColumns;
-  }
-
   public List<YesNoGlobalOrInterfaceIndividuallyType> getYesNoGlobalTypes()
   {
     return yesNoGlobalTypes;
+  }
+
+  /**
+   * @return the selectedMockProfiles
+   */
+  public List<MockProfile> getSelectedMockProfiles()
+  {
+    return selectedMockProfiles;
+  }
+
+  /**
+   * @param selectedMockProfiles the selectedMockProfiles to set
+   */
+  public void setSelectedMockProfiles(List<MockProfile> selectedMockProfiles)
+  {
+    this.selectedMockProfiles = selectedMockProfiles;
+  }
+
+  /**
+   * @return the tblMockProfilesColumns
+   */
+  public List<ColumnModel> getTblMockProfilesColumns()
+  {
+    return tblMockProfilesColumns;
+  }
+
+  /**
+   * @param tblMockProfilesColumns the tblMockProfilesColumns to set
+   */
+  public void setTblMockProfilesColumns(List<ColumnModel> tblMockProfilesColumns)
+  {
+    this.tblMockProfilesColumns = tblMockProfilesColumns;
+  }
+
+  /**
+   * @return the deleteMockProfileDisabled
+   */
+  public boolean isDeleteMockProfileDisabled()
+  {
+    return deleteMockProfileDisabled;
+  }
+
+  /**
+   * @param deleteMockProfileDisabled the deleteMockProfileDisabled to set
+   */
+  public void setDeleteMockProfileDisabled(boolean deleteMockProfileDisabled)
+  {
+    this.deleteMockProfileDisabled = deleteMockProfileDisabled;
+  }
+
+  public List<MockProfile> getTblMockProfiles()
+  {
+    return tblMockProfiles;
+  }
+
+  public boolean isEditMockProfileDisabled()
+  {
+    return editMockProfileDisabled;
+  }
+
+  public void setEditMockProfileDisabled(boolean editMockProfileDisabled)
+  {
+    this.editMockProfileDisabled = editMockProfileDisabled;
+  }
+
+  public String getRecRecordSession()
+  {
+    return recRecordSession;
+  }
+
+  public void setRecRecordSession(String recRecordSession)
+  {
+    this.recRecordSession = recRecordSession;
+  }
+
+  public List<RecordSession> getRecordSessions()
+  {
+    return recordSessions;
+  }
+
+  public void setRecordSessions(List<RecordSession> recordSessions)
+  {
+    this.recordSessions = recordSessions;
+  }
+
+  public RecordSession getRecordSessionOvSelected()
+  {
+    return recordSessionOvSelected;
+  }
+
+  public void setRecordSessionOvSelected(RecordSession recordSessionOvSelected)
+  {
+    this.recordSessionOvSelected = recordSessionOvSelected;
+  }
+
+  /**
+   * @return the tblRecordSessions
+   */
+  public List<RecordSession> getTblRecordSessions()
+  {
+    return tblRecordSessions;
+  }
+
+  /**
+   * @param tblRecordSessions the tblRecordSessions to set
+   */
+  public void setTblRecordSessions(List<RecordSession> tblRecordSessions)
+  {
+    this.tblRecordSessions = tblRecordSessions;
+  }
+
+  /**
+   * @return the selectedRecordSessions
+   */
+  public List<RecordSession> getSelectedRecordSessions()
+  {
+    return selectedRecordSessions;
+  }
+
+  /**
+   * @param selectedRecordSessions the selectedRecordSessions to set
+   */
+  public void setSelectedRecordSessions(List<RecordSession> selectedRecordSessions)
+  {
+    this.selectedRecordSessions = selectedRecordSessions;
+  }
+
+  /**
+   * @return the deleteRecordSessionDisabled
+   */
+  public boolean isDeleteRecordSessionDisabled()
+  {
+    return deleteRecordSessionDisabled;
+  }
+
+  /**
+   * @param deleteRecordSessionDisabled the deleteRecordSessionDisabled to set
+   */
+  public void setDeleteRecordSessionDisabled(boolean deleteRecordSessionDisabled)
+  {
+    this.deleteRecordSessionDisabled = deleteRecordSessionDisabled;
+  }
+
+  public List<ColumnModel> getTblRecordSessionsColumns()
+  {
+    return tblRecordSessionsColumns;
+  }
+
+  public void setTblRecordSessionsColumns(List<ColumnModel> tblRecordSessionsColumns)
+  {
+    this.tblRecordSessionsColumns = tblRecordSessionsColumns;
   }
 }
