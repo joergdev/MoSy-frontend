@@ -15,6 +15,7 @@ import org.primefaces.model.StreamedContent;
 import de.joergdev.mosy.api.model.BaseData;
 import de.joergdev.mosy.api.model.Interface;
 import de.joergdev.mosy.api.model.InterfaceType;
+import de.joergdev.mosy.api.model.MockData;
 import de.joergdev.mosy.api.model.MockProfile;
 import de.joergdev.mosy.api.model.Record;
 import de.joergdev.mosy.api.model.RecordSession;
@@ -958,11 +959,11 @@ public class MainVC extends AbstractViewController<MainV>
       StringBuilder bui = new StringBuilder(
           apiRecord.getRequestData().length() + apiRecord.getResponse().length() + 30);
 
-      bui.append(Resources.PREFIX_MOCKDATA_IN_EXPORT_REQUEST).append("\n");
+      bui.append(MockData.PREFIX_MOCKDATA_IN_EXPORT_REQUEST).append("\n");
       bui.append(apiRecord.getRequestData());
       bui.append("\n");
 
-      bui.append(Resources.PREFIX_MOCKDATA_IN_EXPORT_RESPONSE).append("\n");
+      bui.append(MockData.PREFIX_MOCKDATA_IN_EXPORT_RESPONSE).append("\n");
       bui.append(apiRecord.getResponse());
 
       return bui.toString();

@@ -21,7 +21,6 @@ import de.joergdev.mosy.frontend.validation.NumberValidator;
 import de.joergdev.mosy.frontend.validation.SelectionValidation;
 import de.joergdev.mosy.frontend.view.UploadMockdataV;
 import de.joergdev.mosy.frontend.view.controller.core.AbstractViewController;
-import de.joergdev.mosy.frontend.view.controller.core.BusinessLevelException;
 import de.joergdev.mosy.shared.Utils;
 
 public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
@@ -349,7 +348,15 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
         setMockDataTitle(filenameNew, apiMockData);
 
         // Request / Response
-        getRequestResponseByFileContent(content, filename, apiMockData);
+        try
+        {
+          apiMockData.setRequestResponseByFileContent(content);
+        }
+        catch (IndexOutOfBoundsException ex)
+        {
+          leaveWithBusinessException("mockdata_file_invalid", filename,
+              Resources.getErrorMessage("mockdata_file_invalid_no_request_response"));
+        }
 
         // Save
         invokeApiCall(apiClient -> apiClient.saveMockData(apiMockData));
@@ -379,69 +386,6 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
       }
 
       apiMockData.setTitle(buiTitle.toString());
-    }
-
-    private void getRequestResponseByFileContent(String fileContent, String filename, MockData apiMockdata)
-      throws BusinessLevelException
-    {
-      // Get Request/Response from file
-      int idxStartRequest = getFileIndexPrefixRequestResponse(fileContent, filename,
-          Resources.PREFIX_MOCKDATA_IN_EXPORT_REQUEST, "mockdata_file_invalid_no_prefix_request");
-      int idxStartResponse = getFileIndexPrefixRequestResponse(fileContent, filename,
-          Resources.PREFIX_MOCKDATA_IN_EXPORT_RESPONSE, "mockdata_file_invalid_no_prefix_response");
-
-      String request = getRequestResponseFromFileContent(fileContent, filename,
-          Resources.PREFIX_MOCKDATA_IN_EXPORT_REQUEST, idxStartRequest, idxStartResponse);
-      String response = getRequestResponseFromFileContent(fileContent, filename,
-          Resources.PREFIX_MOCKDATA_IN_EXPORT_RESPONSE, idxStartResponse, fileContent.length());
-
-      apiMockdata.setRequest(request);
-      apiMockdata.setResponse(response);
-    }
-
-    private String getRequestResponseFromFileContent(String fileContent, String filename, String prefix,
-                                                     int idxPrefix, int idxEnd)
-      throws BusinessLevelException
-    {
-      try
-      {
-        String reqResp = fileContent.substring(idxPrefix + prefix.length(), idxEnd).trim();
-
-        if (reqResp.startsWith("\n"))
-        {
-          reqResp = reqResp.substring(1);
-        }
-
-        if (reqResp.endsWith("\n"))
-        {
-          reqResp = reqResp.substring(0, reqResp.length() - 1);
-        }
-
-        return reqResp;
-      }
-      catch (IndexOutOfBoundsException ex)
-      {
-        leaveWithBusinessException("mockdata_file_invalid", filename,
-            Resources.getErrorMessage("mockdata_file_invalid_no_request_response"));
-
-        // never called
-        return null;
-      }
-    }
-
-    private int getFileIndexPrefixRequestResponse(String fileContent, String filename, String prefix,
-                                                  String errorMsgDetail)
-      throws BusinessLevelException
-    {
-      int idxStartRequest = fileContent.indexOf(prefix);
-
-      if (idxStartRequest < 0)
-      {
-        leaveWithBusinessException("mockdata_file_invalid", filename,
-            Resources.getErrorMessage(errorMsgDetail));
-      }
-
-      return idxStartRequest;
     }
   }
 
