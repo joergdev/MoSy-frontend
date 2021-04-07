@@ -32,9 +32,6 @@ public class Resources
 
   public static final String SITE_UPLOAD_MOCKDATA = "uploadMockdata.xhtml";
 
-  public static final String PREFIX_MOCKDATA_IN_EXPORT_REQUEST = ">>>>>>REQUEST>";
-  public static final String PREFIX_MOCKDATA_IN_EXPORT_RESPONSE = ">>>>>>RESPONSE>";
-
   private static final ResourceBundle MOSY_FRONTEND = ResourceBundle.getBundle("mosy_frontend");
 
   private static final ResourceBundle LABELS = ResourceBundle.getBundle("mosy_web_labels");
