@@ -10,8 +10,10 @@ import java.util.Set;
 import org.primefaces.PrimeFaces;
 import de.joergdev.mosy.api.model.Interface;
 import de.joergdev.mosy.api.model.InterfaceMethod;
+import de.joergdev.mosy.api.model.InterfaceType;
 import de.joergdev.mosy.api.model.MockData;
 import de.joergdev.mosy.api.model.MockProfile;
+import de.joergdev.mosy.api.model.PathParam;
 import de.joergdev.mosy.api.model.RecordConfig;
 import de.joergdev.mosy.frontend.Message;
 import de.joergdev.mosy.frontend.MessageLevel;
@@ -22,6 +24,7 @@ import de.joergdev.mosy.frontend.utils.JsfUtils;
 import de.joergdev.mosy.frontend.utils.TreeData;
 import de.joergdev.mosy.frontend.validation.NotFalse;
 import de.joergdev.mosy.frontend.validation.NotNull;
+import de.joergdev.mosy.frontend.validation.NumberValidator;
 import de.joergdev.mosy.frontend.validation.SelectionValidation;
 import de.joergdev.mosy.frontend.validation.StringNotEmpty;
 import de.joergdev.mosy.frontend.validation.UniqueData;
@@ -41,6 +44,7 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
   private Set<Integer> methodsDetailDataLoaded = new HashSet<>();
 
   private List<MockProfile> apiMethodMockDataMockProfiles;
+  private List<PathParam> apiMethodMockDataPathParams;
 
   private RecordConfig apiRecordConfigSelected;
 
@@ -478,8 +482,9 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
       Interface apiInterfaceSaved = invokeApiCall(apiClient -> apiClient.saveInterface(apiInterfaceClone))
           .getInterface();
 
-      // update model (copyModel=mode, +id's aus save uebertragen)
+      // update model (copyModel=mode, +id's +svcPaths transfer from save)
       apiInterfaceClone.setInterfaceId(apiInterfaceSaved.getInterfaceId());
+      apiInterfaceClone.setServicePath(apiInterfaceSaved.getServicePath());
 
       apiInterfaceClone.getMethods().removeIf(m -> m.isDelete());
 
@@ -488,11 +493,23 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
         InterfaceMethod apiMethodSaved = apiInterfaceSaved.getMethodByName(apiMethod.getName());
 
         apiMethod.setInterfaceMethodId(apiMethodSaved.getInterfaceMethodId());
+        apiMethod.setServicePath(apiMethodSaved.getServicePath());
+
+        if (apiMethodSelected != null
+            && apiMethod.getInterfaceMethodId().equals(apiMethodSelected.getInterfaceMethodId()))
+        {
+          InterfaceMethodVS methodVS = view.getMethodVS();
+          if (methodVS != null)
+          {
+            methodVS.setServicePath(apiMethod.getServicePath());
+          }
+        }
       }
 
       apiInterface = apiInterfaceClone.clone();
 
       view.setInterfaceId(apiInterfaceClone.getInterfaceId());
+      view.setServicePath(apiInterfaceClone.getServicePath());
 
       // updateComponents
       updateComponents();
@@ -683,6 +700,8 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
 
     methodVS.setServicePath(apiMethod.getServicePath());
 
+    methodVS.setHttpMethod(apiMethod.getHttpMethod());
+
     methodVS.setMockActive(Boolean.TRUE.equals(apiMethod.getMockActive()));
     methodVS.setMockActiveOnStartup(Boolean.TRUE.equals(apiMethod.getMockActiveOnStartup()));
 
@@ -844,6 +863,14 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
       methodVS.setServicePath(null);
     }
 
+    // httpMethod rendered
+    methodVS.setHttpMethodRendered(InterfaceType.REST.equals(view.getInterfaceTypeSelected()));
+
+    if (!methodVS.isHttpMethodRendered())
+    {
+      methodVS.setHttpMethod(null);
+    }
+
     // delete method disabled if new
     methodVS.setDeleteMethodDisabled(apiMethodSelected == null);
   }
@@ -858,12 +885,18 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
     @Override
     protected void createPreValidations()
     {
-      final String name = view.getMethodVS().getName();
+      InterfaceMethodVS methodVS = view.getMethodVS();
+      final String name = methodVS.getName();
 
       addValidation(new StringNotEmpty(name, "name") //
           .addSubValidation( //
               new UniqueData<>(apiInterfaceClone.getMethods(),
                   m -> apiMethodSelected != m && name.equalsIgnoreCase(m.getName()))));
+
+      if (InterfaceType.REST.equals(apiInterface.getType()))
+      {
+        addValidation(new NotNull(methodVS.getHttpMethod(), "http_method"));
+      }
     }
 
     @Override
@@ -913,6 +946,7 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
 
       // update copyModel
       apiMethodSelected.setServicePath(methodVS.getServicePath());
+      apiMethodSelected.setHttpMethod(methodVS.getHttpMethod());
       apiMethodSelected.setMockActive(methodVS.isMockActive());
       apiMethodSelected.setMockActiveOnStartup(methodVS.isMockActiveOnStartup());
       apiMethodSelected.setRoutingOnNoMockData(methodVS.isRoutingOnNoMockData());
@@ -1471,12 +1505,16 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
     methodVS.setMdActive(Boolean.TRUE.equals(apiMockData.getActive()));
     methodVS.setMdCommon(Boolean.TRUE.equals(apiMockData.getCommon()));
     methodVS.setMdRequest(apiMockData.getRequest());
+    methodVS.setMdHttpResponseCode(apiMockData.getHttpReturnCode());
     methodVS.setMdResponse(apiMockData.getResponse());
     methodVS.setMdCreated(apiMockData.getCreatedAsString());
     methodVS.setMdCountCalls(apiMockData.getCountCalls());
 
     apiMethodMockDataMockProfiles = new ArrayList<>(apiMockData.getMockProfiles());
     methodVS.setTblMockDataMockProfiles(apiMethodMockDataMockProfiles);
+
+    apiMethodMockDataPathParams = new ArrayList<>(apiMockData.getPathParams());
+    methodVS.setTblMockDataPathParams(apiMethodMockDataPathParams);
 
     // UpdateComponents
     updateComponentsMockData();
@@ -1486,9 +1524,15 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
   {
     // delete mockData disabled if new
     view.getMethodVS().setDeleteMockDataDisabled(apiMockDataSelected == null);
+
     updateComponentsMockDataMockProfiles();
+    updateComponentsMockDataPathParams();
 
     updateComponentsSaveDeleteInterfaceRendered();
+
+    boolean isRestService = InterfaceType.REST.equals(apiInterface.getType());
+    view.getMethodVS().setPathParamsRendered(isRestService);
+    view.getMethodVS().setHttpReturnCodeRendered(isRestService);
   }
 
   private void updateComponentsMockDataMockProfiles()
@@ -1497,47 +1541,10 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
         .setDeleteMockDataMockProfileDisabled(view.getMethodVS().getSelectedMockDataMockProfiles().isEmpty());
   }
 
-  public void handleMockDataMockProfilesSelection()
+  private void updateComponentsMockDataPathParams()
   {
-    updateComponentsMockDataMockProfiles();
-  }
-
-  public void deleteMockDataMockProfiles()
-  {
-    new DeleteMockDataMockProfilesExecution().execute();
-  }
-
-  private class DeleteMockDataMockProfilesExecution extends Execution
-  {
-    private List<MockProfile> selectedMockProfiles;
-    private int countSelected = 0;
-
-    @Override
-    protected void createPreValidations()
-    {
-      selectedMockProfiles = view.getMethodVS().getSelectedMockDataMockProfiles();
-      countSelected = selectedMockProfiles.size();
-
-      addValidation(new SelectionValidation(selectedMockProfiles, "mock_profile"));
-    }
-
-    @Override
-    public Message getGrowlMessageOnSuccess()
-    {
-      return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(countSelected > 1
-          ? "mock_profiles"
-          : "mock_profile"));
-    }
-
-    @Override
-    protected void _execute()
-      throws Exception
-    {
-      for (MockProfile mp2del : selectedMockProfiles)
-      {
-        apiMethodMockDataMockProfiles.remove(mp2del);
-      }
-    }
+    view.getMethodVS()
+        .setDeleteMockDataPathParamDisabled(view.getMethodVS().getSelectedMockDataPathParams().isEmpty());
   }
 
   public void saveMockData()
@@ -1563,7 +1570,15 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
                   : apiMethodSelected.getMockData()),
                   md -> apiMockDataSelected != md && title.equalsIgnoreCase(md.getTitle()))));
 
-      addValidation(new StringNotEmpty(methodVS.getMdResponse(), "response"));
+      if (InterfaceType.REST.equals(view.getInterfaceTypeSelected()))
+      {
+        addValidation(
+            new NumberValidator(methodVS.getMdHttpResponseCode(), "http_status_code", true, 200, 599));
+      }
+      else
+      {
+        addValidation(new StringNotEmpty(methodVS.getMdResponse(), "response"));
+      }
 
       if (apiMethodMockDataMockProfiles.isEmpty())
       {
@@ -1607,7 +1622,14 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
       apiMockDataSelected.setTitle(titleNew);
       apiMockDataSelected.setActive(methodVS.isMdActive());
       apiMockDataSelected.setCommon(methodVS.isMdCommon());
+
+      apiMockDataSelected.getPathParams().clear();
+      apiMockDataSelected.getPathParams().addAll(apiMethodMockDataPathParams);
+
       apiMockDataSelected.setRequest(methodVS.getMdRequest());
+
+      apiMockDataSelected.setHttpReturnCode(methodVS.getMdHttpResponseCode());
+
       apiMockDataSelected.setResponse(methodVS.getMdResponse());
 
       apiMockDataSelected.setInterfaceMethod(new InterfaceMethod());
@@ -1705,6 +1727,49 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
     }
   }
 
+  public void handleMockDataMockProfilesSelection()
+  {
+    updateComponentsMockDataMockProfiles();
+  }
+
+  public void deleteMockDataMockProfiles()
+  {
+    new DeleteMockDataMockProfilesExecution().execute();
+  }
+
+  private class DeleteMockDataMockProfilesExecution extends Execution
+  {
+    private List<MockProfile> selectedMockProfiles;
+    private int countSelected = 0;
+
+    @Override
+    protected void createPreValidations()
+    {
+      selectedMockProfiles = view.getMethodVS().getSelectedMockDataMockProfiles();
+      countSelected = selectedMockProfiles.size();
+
+      addValidation(new SelectionValidation(selectedMockProfiles, "mock_profile"));
+    }
+
+    @Override
+    public Message getGrowlMessageOnSuccess()
+    {
+      return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(countSelected > 1
+          ? "mock_profiles"
+          : "mock_profile"));
+    }
+
+    @Override
+    protected void _execute()
+      throws Exception
+    {
+      for (MockProfile mp2del : selectedMockProfiles)
+      {
+        apiMethodMockDataMockProfiles.remove(mp2del);
+      }
+    }
+  }
+
   public void addMockDataMockProfile()
   {
     new AddMockDataMockProfileExecution().execute();
@@ -1776,6 +1841,120 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
       }
 
       PrimeFaces.current().executeScript("PF('mockProfileSelectionDlg').hide();");
+    }
+  }
+
+  public void handleMockDataPathParamsSelection()
+  {
+    updateComponentsMockDataPathParams();
+  }
+
+  public void deleteMockDataPathParams()
+  {
+    new DeleteMockDataPathParamsExecution().execute();
+  }
+
+  private class DeleteMockDataPathParamsExecution extends Execution
+  {
+    private List<PathParam> selectedPathParams;
+    private int countSelected = 0;
+
+    @Override
+    protected void createPreValidations()
+    {
+      selectedPathParams = view.getMethodVS().getSelectedMockDataPathParams();
+      countSelected = selectedPathParams.size();
+
+      addValidation(new SelectionValidation(selectedPathParams, "path_param"));
+    }
+
+    @Override
+    public Message getGrowlMessageOnSuccess()
+    {
+      return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(countSelected > 1
+          ? "path_params"
+          : "path_param"));
+    }
+
+    @Override
+    protected void _execute()
+      throws Exception
+    {
+      for (PathParam pp2del : selectedPathParams)
+      {
+        apiMethodMockDataPathParams.remove(pp2del);
+      }
+    }
+  }
+
+  public void addMockDataPathParam()
+  {
+    new AddMockDataPathParamExecution().execute();
+  }
+
+  private class AddMockDataPathParamExecution extends Execution
+  {
+    @Override
+    protected void createPreValidations()
+    {
+      // no validation
+    }
+
+    @Override
+    public Message getGrowlMessageOnSuccess()
+    {
+      return null;
+    }
+
+    @Override
+    protected void _execute()
+      throws Exception
+    {
+      view.getMethodVS().setMdPathParamKey(null);
+      view.getMethodVS().setMdPathParamValue(null);
+
+      PrimeFaces.current().executeScript("PF('pathParamDlg').show();");
+    }
+  }
+
+  public void addMockDataGivenPathParam()
+  {
+    new AddMockDataGivenPathParamExecution().execute();
+  }
+
+  private class AddMockDataGivenPathParamExecution extends Execution
+  {
+    private PathParam pathParam;
+
+    @Override
+    protected void createPreValidations()
+    {
+      pathParam = new PathParam(view.getMethodVS().getMdPathParamKey(),
+          view.getMethodVS().getMdPathParamValue());
+
+      addValidation(new StringNotEmpty(pathParam.getKey(), "key") //
+          .addSubValidation( //
+              new UniqueData<>(apiMethodMockDataPathParams, pp -> pp.getKey().equals(pathParam.getKey()))));
+
+      addValidation(new StringNotEmpty(pathParam.getValue(), "value"));
+    }
+
+    @Override
+    public Message getGrowlMessageOnSuccess()
+    {
+      return new Message(MessageLevel.INFO, "added_var", Resources.getLabel("path_param"));
+    }
+
+    @Override
+    protected void _execute()
+      throws Exception
+    {
+      if (pathParam != null)
+      {
+        apiMethodMockDataPathParams.add(pathParam);
+      }
+
+      PrimeFaces.current().executeScript("PF('pathParamDlg').hide();");
     }
   }
 

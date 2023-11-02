@@ -14,12 +14,6 @@
 <h:body>
 	<p:panel id="panRecord">
 
-		<h:panelGrid id="pangr_rs" columns="2" cellpadding="4">
-
-
-
-		</h:panelGrid>
-
 		<h:panelGrid id="pangr_rec" columns="4" cellpadding="4">
 
 			<h:outputText for="recRecordSession" value="#{labels.record_session}" />
@@ -46,9 +40,28 @@
 
 		<h:panelGrid id="pangr_rec_req_resp" columns="1" cellpadding="4">
 
+			<p:panel id="panRecPathParams" style="margin-top: 15px;margin-bottom: 15px;" rendered="#{main.recPathParamsRendered}">
+			
+				<h:outputText value="#{labels.path_params}" />
+
+				<p:dataTable id="tblRecordPathParams" value="#{main.tblRecordPathParams}" var="pp" selectionMode="multiple" rowKey="#{pp.key}">
+					<p:columns value="#{main.tblRecordPathParamsColumns}" var="col" width="#{col.widthFull}">
+						<f:facet name="header">
+							<h:outputText value="#{col.header}" />
+						</f:facet>
+						<h:outputText value="#{pp[col.property]}" />
+					</p:columns>
+				</p:dataTable>
+
+			</p:panel>
+
 			<h:outputText value="#{labels.request}" />
 			<p:inputTextarea id="recRequest" rows="10" cols="80"
 				value="#{main.recRequest}" readonly="true" />
+				
+			<h:outputText value="#{labels.http_status_code}" rendered="#{main.recHttpReturnCodeRendered}" />
+			<p:inputNumber id="recHttpResponseCode" value="#{main.recHttpResponseCode}" rendered="#{main.recHttpReturnCodeRendered}" 
+				thousandSeparator="" decimalSeparator="." decimalPlaces="0" size="1" readonly="true" />
 
 			<h:outputText value="#{labels.response}" />
 			<p:inputTextarea id="recResponse" rows="10" cols="80"

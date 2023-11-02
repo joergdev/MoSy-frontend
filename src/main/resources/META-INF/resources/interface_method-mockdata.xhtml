@@ -36,6 +36,26 @@
 			</f:facet>
 		</h:panelGrid>
 	</p:dialog>
+	
+	<p:dialog header="#{labels.path_param}" id="pathParamDlg"
+		widgetVar="pathParamDlg" resizable="false" modal="true">
+		<h:panelGrid columns="2" cellpadding="4" id="panDlgPP">
+
+			<h:outputLabel for="mdPathParamKey" value="#{labels.key}" />
+			<p:inputText id="mdPathParamKey" value="#{_interface.methodVS.mdPathParamKey}" />
+	
+			<h:outputLabel for="mdPathParamValue" value="#{labels.value}" />
+			<p:inputText id="mdPathParamValue" value="#{_interface.methodVS.mdPathParamValue}" />
+			
+			<f:facet name="footer">
+				<p:commandButton value="#{labels.confirm}"
+					update=":form:panMockData"
+					action="#{_interface.methodVS.addMockDataGivenPathParam}" />
+				<p:commandButton value="#{labels.cancel}"
+					oncomplete="PF('pathParamDlg').hide();" />
+			</f:facet>
+		</h:panelGrid>
+	</p:dialog>
 
 	<p:panel id="panMockData">
 
@@ -80,6 +100,8 @@
 
 		</p:panel>
 
+		<div style="margin-bottom: 15px;" />
+
 		<h:panelGrid id="pangr_md" columns="2" cellpadding="4">
 
 			<h:outputText for="mdTitle" value="#{labels.title}" />
@@ -94,6 +116,47 @@
 			<div />
 
 		</h:panelGrid>
+		
+		<p:panel id="panMdPathParams" style="margin-top: 15px;margin-bottom: 15px;" rendered="#{_interface.methodVS.pathParamsRendered}">
+			
+			<h:outputText value="#{labels.path_params}" />
+
+			<p:dataTable id="tblMockDataPathParams"
+				value="#{_interface.methodVS.tblMockDataPathParams}" var="pp"
+				emptyMessage="#{labels.no_data}" selectionMode="multiple"
+				selection="#{_interface.methodVS.selectedMockDataPathParams}"
+				rowKey="#{pp.key}">
+
+				<p:columns
+					value="#{_interface.methodVS.tblMockDataPathParamsColumns}"
+					var="col" width="#{col.widthFull}">
+					<f:facet name="header">
+						<h:outputText value="#{col.header}" />
+					</f:facet>
+					<h:outputText value="#{pp[col.property]}" />
+				</p:columns>
+
+				<p:ajax event="rowSelect"
+					listener="#{_interface.methodVS.onMockDataPathParamsRowSelect}"
+					update=":form:panMdPathParams" />
+
+				<p:ajax event="rowUnselect"
+					listener="#{_interface.methodVS.onMockDataPathParamsRowUnselect}"
+					update=":form:panMdPathParams" />
+
+			</p:dataTable>
+
+
+			<p:commandButton value="#{labels.add}"
+				action="#{_interface.methodVS.addMockDataPathParam()}"
+				update=":form:pathParamDlg" />
+
+			<p:commandButton value="#{labels.delete}"
+				action="#{_interface.methodVS.deleteMockDataPathParams()}"
+				disabled="#{_interface.methodVS.deleteMockDataPathParamDisabled}"
+				process="@this" update=":form:panMdPathParams" />
+
+		</p:panel>
 
 		<h:panelGrid id="pangr_md_req_resp" columns="1" cellpadding="4">
 
@@ -101,6 +164,10 @@
 			<p:inputTextarea id="mdRequest" rows="10" cols="80"
 				value="#{_interface.methodVS.mdRequest}" />
 
+			<h:outputText value="#{labels.http_status_code}" rendered="#{_interface.methodVS.httpReturnCodeRendered}" />
+			<p:inputNumber id="mdHttpResponseCode" value="#{_interface.methodVS.mdHttpResponseCode}" rendered="#{_interface.methodVS.httpReturnCodeRendered}" 
+				thousandSeparator="" decimalSeparator="." decimalPlaces="0" maxValue="599" size="1" />
+			
 			<h:outputText value="#{labels.response}" />
 			<p:inputTextarea id="mdResponse" rows="10" cols="80"
 				value="#{_interface.methodVS.mdResponse}" />

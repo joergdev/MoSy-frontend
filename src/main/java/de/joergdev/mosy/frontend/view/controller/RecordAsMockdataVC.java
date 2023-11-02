@@ -129,7 +129,9 @@ public class RecordAsMockdataVC extends AbstractViewController<RecordAsMockdataV
         apiMockData.setInterfaceMethod(apiRecord.getInterfaceMethod());
         apiMockData.setTitle(buiTitle.toString() + "_" + countRecord);
         apiMockData.setActive(true);
+        apiMockData.getPathParams().addAll(apiRecord.getPathParams());
         apiMockData.setRequest(apiRecord.getRequestData());
+        apiMockData.setHttpReturnCode(apiRecord.getHttpReturnCode());
         apiMockData.setResponse(apiRecord.getResponse());
 
         invokeApiCall(apiclient -> apiclient.saveMockData(apiMockData));

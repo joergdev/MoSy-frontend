@@ -15,6 +15,7 @@ import org.primefaces.model.StreamedContent;
 import org.primefaces.model.TreeNode;
 import de.joergdev.mosy.api.model.Interface;
 import de.joergdev.mosy.api.model.MockProfile;
+import de.joergdev.mosy.api.model.PathParam;
 import de.joergdev.mosy.api.model.Record;
 import de.joergdev.mosy.api.model.RecordSession;
 import de.joergdev.mosy.frontend.Resources;
@@ -98,8 +99,17 @@ public class MainV extends AbstractView<MainVC>
   private String recMethod;
   private String recCreated;
 
+  private List<PathParam> tblRecordPathParams = new ArrayList<>();
+  private List<ColumnModel> tblRecordPathParamsColumns = new ArrayList<>();
+
   private String recRequest;
+  private Integer recHttpResponseCode;
   private String recResponse;
+
+  //component states
+  private boolean recPathParamsRendered = false;
+  private boolean recHttpReturnCodeRendered = false;
+
   // ---------------------------------------
 
   //--- RecordSessions ----------------------
@@ -120,6 +130,7 @@ public class MainV extends AbstractView<MainVC>
     initTblMockProfiles();
     initTblRecords();
     initTblRecordSessions();
+    initTblRecordPathParams();
 
     controller.loadRefresh();
   }
@@ -417,6 +428,17 @@ public class MainV extends AbstractView<MainVC>
   public void deleteRecord()
   {
     controller.deleteRecord();
+  }
+
+  private void initTblRecordPathParams()
+  {
+    ColumnModel colName = new ColumnModel(Resources.getLabel("name"), "key");
+    colName.setWidth(40, WidthUnit.PERCENT);
+    tblRecordPathParamsColumns.add(colName);
+
+    ColumnModel colValue = new ColumnModel(Resources.getLabel("value"), "value");
+    colValue.setWidth(60, WidthUnit.PERCENT);
+    tblRecordPathParamsColumns.add(colValue);
   }
 
   // --- End Record ----------------------------
@@ -839,5 +861,55 @@ public class MainV extends AbstractView<MainVC>
   public void setTblRecordSessionsColumns(List<ColumnModel> tblRecordSessionsColumns)
   {
     this.tblRecordSessionsColumns = tblRecordSessionsColumns;
+  }
+
+  public List<PathParam> getTblRecordPathParams()
+  {
+    return tblRecordPathParams;
+  }
+
+  public void setTblRecordPathParams(List<PathParam> tblRecordPathParams)
+  {
+    this.tblRecordPathParams = tblRecordPathParams;
+  }
+
+  public List<ColumnModel> getTblRecordPathParamsColumns()
+  {
+    return tblRecordPathParamsColumns;
+  }
+
+  public void setTblRecordPathParamsColumns(List<ColumnModel> tblRecordPathParamsColumns)
+  {
+    this.tblRecordPathParamsColumns = tblRecordPathParamsColumns;
+  }
+
+  public boolean isRecPathParamsRendered()
+  {
+    return recPathParamsRendered;
+  }
+
+  public void setRecPathParamsRendered(boolean recPathParamsRendered)
+  {
+    this.recPathParamsRendered = recPathParamsRendered;
+  }
+
+  public Integer getRecHttpResponseCode()
+  {
+    return recHttpResponseCode;
+  }
+
+  public void setRecHttpResponseCode(Integer recHttpResponseCode)
+  {
+    this.recHttpResponseCode = recHttpResponseCode;
+  }
+
+  public boolean isRecHttpReturnCodeRendered()
+  {
+    return recHttpReturnCodeRendered;
+  }
+
+  public void setRecHttpReturnCodeRendered(boolean recHttpReturnCodeRendered)
+  {
+    this.recHttpReturnCodeRendered = recHttpReturnCodeRendered;
   }
 }
