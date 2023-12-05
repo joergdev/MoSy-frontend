@@ -15,6 +15,7 @@ import de.joergdev.mosy.api.model.MockData;
 import de.joergdev.mosy.api.model.MockProfile;
 import de.joergdev.mosy.api.model.PathParam;
 import de.joergdev.mosy.api.model.RecordConfig;
+import de.joergdev.mosy.api.model.UrlArgument;
 import de.joergdev.mosy.frontend.Message;
 import de.joergdev.mosy.frontend.MessageLevel;
 import de.joergdev.mosy.frontend.Resources;
@@ -45,6 +46,7 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
 
   private List<MockProfile> apiMethodMockDataMockProfiles;
   private List<PathParam> apiMethodMockDataPathParams;
+  private List<UrlArgument> apiMethodMockDataUrlArguments;
 
   private RecordConfig apiRecordConfigSelected;
 
@@ -1516,6 +1518,9 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
     apiMethodMockDataPathParams = new ArrayList<>(apiMockData.getPathParams());
     methodVS.setTblMockDataPathParams(apiMethodMockDataPathParams);
 
+    apiMethodMockDataUrlArguments = new ArrayList<>(apiMockData.getUrlArguments());
+    methodVS.setTblMockDataUrlArguments(apiMethodMockDataUrlArguments);
+
     // UpdateComponents
     updateComponentsMockData();
   }
@@ -1527,11 +1532,13 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
 
     updateComponentsMockDataMockProfiles();
     updateComponentsMockDataPathParams();
+    updateComponentsMockDataUrlArguments();
 
     updateComponentsSaveDeleteInterfaceRendered();
 
     boolean isRestService = InterfaceType.REST.equals(apiInterface.getType());
     view.getMethodVS().setPathParamsRendered(isRestService);
+    view.getMethodVS().setUrlArgumentsRendered(isRestService);
     view.getMethodVS().setHttpReturnCodeRendered(isRestService);
   }
 
@@ -1545,6 +1552,12 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
   {
     view.getMethodVS()
         .setDeleteMockDataPathParamDisabled(view.getMethodVS().getSelectedMockDataPathParams().isEmpty());
+  }
+
+  private void updateComponentsMockDataUrlArguments()
+  {
+    view.getMethodVS().setDeleteMockDataUrlArgumentsDisabled(
+        view.getMethodVS().getSelectedMockDataUrlArguments().isEmpty());
   }
 
   public void saveMockData()
@@ -1625,6 +1638,9 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
 
       apiMockDataSelected.getPathParams().clear();
       apiMockDataSelected.getPathParams().addAll(apiMethodMockDataPathParams);
+
+      apiMockDataSelected.getUrlArguments().clear();
+      apiMockDataSelected.getUrlArguments().addAll(apiMethodMockDataUrlArguments);
 
       apiMockDataSelected.setRequest(methodVS.getMdRequest());
 
@@ -1849,6 +1865,11 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
     updateComponentsMockDataPathParams();
   }
 
+  public void handleMockDataUrlArgumentsSelection()
+  {
+    updateComponentsMockDataUrlArguments();
+  }
+
   public void deleteMockDataPathParams()
   {
     new DeleteMockDataPathParamsExecution().execute();
@@ -1955,6 +1976,116 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
       }
 
       PrimeFaces.current().executeScript("PF('pathParamDlg').hide();");
+    }
+  }
+
+  public void deleteMockDataUrlArguments()
+  {
+    new DeleteMockDataUrlArgumentsExecution().execute();
+  }
+
+  private class DeleteMockDataUrlArgumentsExecution extends Execution
+  {
+    private List<UrlArgument> selectedUrlArguments;
+    private int countSelected = 0;
+
+    @Override
+    protected void createPreValidations()
+    {
+      selectedUrlArguments = view.getMethodVS().getSelectedMockDataUrlArguments();
+      countSelected = selectedUrlArguments.size();
+
+      addValidation(new SelectionValidation(selectedUrlArguments, "url_argument"));
+    }
+
+    @Override
+    public Message getGrowlMessageOnSuccess()
+    {
+      return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(countSelected > 1
+          ? "url_arguments"
+          : "url_argument"));
+    }
+
+    @Override
+    protected void _execute()
+      throws Exception
+    {
+      for (UrlArgument ua2del : selectedUrlArguments)
+      {
+        apiMethodMockDataUrlArguments.remove(ua2del);
+      }
+    }
+  }
+
+  public void addMockDataUrlArgument()
+  {
+    new AddMockDataUrlArgumentExecution().execute();
+  }
+
+  private class AddMockDataUrlArgumentExecution extends Execution
+  {
+    @Override
+    protected void createPreValidations()
+    {
+      // no validation
+    }
+
+    @Override
+    public Message getGrowlMessageOnSuccess()
+    {
+      return null;
+    }
+
+    @Override
+    protected void _execute()
+      throws Exception
+    {
+      view.getMethodVS().setMdUrlArgumentKey(null);
+      view.getMethodVS().setMdUrlArgumentValue(null);
+
+      PrimeFaces.current().executeScript("PF('urlArgumentsDlg').show();");
+    }
+  }
+
+  public void addMockDataGivenUrlArgument()
+  {
+    new AddMockDataGivenUrlArgumentExecution().execute();
+  }
+
+  private class AddMockDataGivenUrlArgumentExecution extends Execution
+  {
+    private UrlArgument urlArgument;
+
+    @Override
+    protected void createPreValidations()
+    {
+      urlArgument = new UrlArgument(view.getMethodVS().getMdUrlArgumentKey(),
+          view.getMethodVS().getMdUrlArgumentValue());
+
+      addValidation(new StringNotEmpty(urlArgument.getKey(), "key") //
+          .addSubValidation( //
+              new UniqueData<>(apiMethodMockDataUrlArguments,
+                  ua -> ua.getKey().equals(urlArgument.getKey()))));
+
+      addValidation(new StringNotEmpty(urlArgument.getValue(), "value"));
+    }
+
+    @Override
+    public Message getGrowlMessageOnSuccess()
+    {
+      return new Message(MessageLevel.INFO, "added_var", Resources.getLabel("url_argument"));
+    }
+
+    @Override
+    protected void _execute()
+      throws Exception
+    {
+      if (urlArgument != null)
+      {
+        apiMethodMockDataUrlArguments.add(urlArgument);
+      }
+
+      PrimeFaces.current().executeScript("PF('urlArgumentsDlg').hide();");
     }
   }
 

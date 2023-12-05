@@ -57,6 +57,26 @@
 		</h:panelGrid>
 	</p:dialog>
 
+	<p:dialog header="#{labels.url_argument}" id="urlArgumentsDlg"
+		widgetVar="urlArgumentsDlg" resizable="false" modal="true">
+		<h:panelGrid columns="2" cellpadding="4" id="panDlgUA">
+
+			<h:outputLabel for="mdUrlArgumentKey" value="#{labels.key}" />
+			<p:inputText id="mdUrlArgumentKey" value="#{_interface.methodVS.mdUrlArgumentKey}" />
+	
+			<h:outputLabel for="mdUrlArgumentValue" value="#{labels.value}" />
+			<p:inputText id="mdUrlArgumentValue" value="#{_interface.methodVS.mdUrlArgumentValue}" />
+			
+			<f:facet name="footer">
+				<p:commandButton value="#{labels.confirm}"
+					update=":form:panMockData"
+					action="#{_interface.methodVS.addMockDataGivenUrlArgument}" />
+				<p:commandButton value="#{labels.cancel}"
+					oncomplete="PF('urlArgumentsDlg').hide();" />
+			</f:facet>
+		</h:panelGrid>
+	</p:dialog>
+	
 	<p:panel id="panMockData">
 
 		<p:panel id="panMdMockProfiles">
@@ -155,6 +175,47 @@
 				action="#{_interface.methodVS.deleteMockDataPathParams()}"
 				disabled="#{_interface.methodVS.deleteMockDataPathParamDisabled}"
 				process="@this" update=":form:panMdPathParams" />
+
+		</p:panel>
+
+		<p:panel id="panMdUrlArguments" style="margin-top: 15px;margin-bottom: 15px;" rendered="#{_interface.methodVS.urlArgumentsRendered}">
+			
+			<h:outputText value="#{labels.url_arguments}" />
+
+			<p:dataTable id="tblMockDataUrlArguments"
+				value="#{_interface.methodVS.tblMockDataUrlArguments}" var="ua"
+				emptyMessage="#{labels.no_data}" selectionMode="multiple"
+				selection="#{_interface.methodVS.selectedMockDataUrlArguments}"
+				rowKey="#{ua.key}">
+
+				<p:columns
+					value="#{_interface.methodVS.tblMockDataUrlArgumentsColumns}"
+					var="col" width="#{col.widthFull}">
+					<f:facet name="header">
+						<h:outputText value="#{col.header}" />
+					</f:facet>
+					<h:outputText value="#{ua[col.property]}" />
+				</p:columns>
+
+				<p:ajax event="rowSelect"
+					listener="#{_interface.methodVS.onMockDataUrlArgumentsRowSelect}"
+					update=":form:panMdUrlArguments" />
+
+				<p:ajax event="rowUnselect"
+					listener="#{_interface.methodVS.onMockDataUrlArgumentsRowUnselect}"
+					update=":form:panMdUrlArguments" />
+
+			</p:dataTable>
+
+
+			<p:commandButton value="#{labels.add}"
+				action="#{_interface.methodVS.addMockDataUrlArgument()}"
+				update=":form:urlArgumentsDlg" />
+
+			<p:commandButton value="#{labels.delete}"
+				action="#{_interface.methodVS.deleteMockDataUrlArguments()}"
+				disabled="#{_interface.methodVS.deleteMockDataUrlArgumentsDisabled}"
+				process="@this" update=":form:panMdUrlArguments" />
 
 		</p:panel>
 

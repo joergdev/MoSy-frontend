@@ -55,6 +55,21 @@
 
 			</p:panel>
 
+			<p:panel id="panRecUrlArguments" style="margin-top: 15px;margin-bottom: 15px;" rendered="#{main.recUrlArgumentsRendered}">
+			
+				<h:outputText value="#{labels.url_arguments}" />
+
+				<p:dataTable id="tblRecordUrlArguments" value="#{main.tblRecordUrlArguments}" var="ua" selectionMode="multiple" rowKey="#{ua.key}">
+					<p:columns value="#{main.tblRecordUrlArgumentsColumns}" var="col" width="#{col.widthFull}">
+						<f:facet name="header">
+							<h:outputText value="#{col.header}" />
+						</f:facet>
+						<h:outputText value="#{ua[col.property]}" />
+					</p:columns>
+				</p:dataTable>
+
+			</p:panel>
+			
 			<h:outputText value="#{labels.request}" />
 			<p:inputTextarea id="recRequest" rows="10" cols="80"
 				value="#{main.recRequest}" readonly="true" />

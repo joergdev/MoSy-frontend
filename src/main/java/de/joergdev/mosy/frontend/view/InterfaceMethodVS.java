@@ -10,6 +10,7 @@ import de.joergdev.mosy.api.model.MockData;
 import de.joergdev.mosy.api.model.MockProfile;
 import de.joergdev.mosy.api.model.PathParam;
 import de.joergdev.mosy.api.model.RecordConfig;
+import de.joergdev.mosy.api.model.UrlArgument;
 import de.joergdev.mosy.frontend.Resources;
 import de.joergdev.mosy.frontend.model.YesNoGlobalOrRecordConfigIndividuallyType;
 import de.joergdev.mosy.frontend.utils.ColumnModel;
@@ -111,6 +112,10 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
   // Dialog (add path param)
   private String mdPathParamKey;
   private String mdPathParamValue;
+  
+  // Dialog (add url argument)
+  private String mdUrlArgumentKey;
+  private String mdUrlArgumentValue;
 
   private String mdTitle;
   private boolean mdActive;
@@ -121,6 +126,12 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
   private List<PathParam> selectedMockDataPathParams;
 
   private List<ColumnModel> tblMockDataPathParamsColumns = new ArrayList<>();
+
+  private List<UrlArgument> tblMockDataUrlArguments = new ArrayList<>();
+
+  private List<UrlArgument> selectedMockDataUrlArguments;
+
+  private List<ColumnModel> tblMockDataUrlArgumentsColumns = new ArrayList<>();
 
   private String mdRequest;
   private Integer mdHttpResponseCode;
@@ -134,6 +145,8 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
   private boolean httpReturnCodeRendered = false;
   private boolean deleteMockDataPathParamDisabled = true;
   private boolean pathParamsRendered = false;
+  private boolean deleteMockDataUrlArgumentsDisabled = true;
+  private boolean urlArgumentsRendered = false;
 
   // --- End MockData data --------------------------------
 
@@ -143,6 +156,7 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
     initTblMockData();
     initTblMockDataMockProfiles();
     initTblMockDataPathParams();
+    initTblMockDataUrlArguments();
   }
 
   //--- Method data -------------------------------------
@@ -362,6 +376,42 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
     ColumnModel colValue = new ColumnModel(Resources.getLabel("value"), "value");
     colValue.setWidth(60, WidthUnit.PERCENT);
     tblMockDataPathParamsColumns.add(colValue);
+  }
+
+  public void onMockDataUrlArgumentsRowSelect()
+  {
+    controller.handleMockDataUrlArgumentsSelection();
+  }
+
+  public void onMockDataUrlArgumentsRowUnselect()
+  {
+    controller.handleMockDataUrlArgumentsSelection();
+  }
+
+  public void addMockDataUrlArgument()
+  {
+    controller.addMockDataUrlArgument();
+  }
+
+  public void addMockDataGivenUrlArgument()
+  {
+    controller.addMockDataGivenUrlArgument();
+  }
+
+  public void deleteMockDataUrlArguments()
+  {
+    controller.deleteMockDataUrlArguments();
+  }
+
+  private void initTblMockDataUrlArguments()
+  {
+    ColumnModel colName = new ColumnModel(Resources.getLabel("name"), "key");
+    colName.setWidth(40, WidthUnit.PERCENT);
+    tblMockDataUrlArgumentsColumns.add(colName);
+
+    ColumnModel colValue = new ColumnModel(Resources.getLabel("value"), "value");
+    colValue.setWidth(60, WidthUnit.PERCENT);
+    tblMockDataUrlArgumentsColumns.add(colValue);
   }
 
   public void saveMockData()
@@ -908,6 +958,41 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
     this.tblMockDataPathParamsColumns = tblMockDataPathParamsColumns;
   }
 
+  public List<UrlArgument> getTblMockDataUrlArguments()
+  {
+    return tblMockDataUrlArguments;
+  }
+
+  public void setTblMockDataUrlArguments(List<UrlArgument> tblMockDataUrlArguments)
+  {
+    this.tblMockDataUrlArguments = tblMockDataUrlArguments;
+  }
+
+  public List<UrlArgument> getSelectedMockDataUrlArguments()
+  {
+    if (selectedMockDataUrlArguments == null)
+    {
+      selectedMockDataUrlArguments = new ArrayList<>();
+    }
+
+    return selectedMockDataUrlArguments;
+  }
+
+  public void setSelectedMockDataUrlArguments(List<UrlArgument> selectedMockDataUrlArguments)
+  {
+    this.selectedMockDataUrlArguments = selectedMockDataUrlArguments;
+  }
+
+  public List<ColumnModel> getTblMockDataUrlArgumentsColumns()
+  {
+    return tblMockDataUrlArgumentsColumns;
+  }
+
+  public void setTblMockDataUrlArgumentsColumns(List<ColumnModel> tblMockDataUrlArgumentsColumns)
+  {
+    this.tblMockDataUrlArgumentsColumns = tblMockDataUrlArgumentsColumns;
+  }
+
   public boolean isHttpReturnCodeRendered()
   {
     return httpReturnCodeRendered;
@@ -928,6 +1013,26 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
     this.pathParamsRendered = pathParamsRendered;
   }
 
+  public boolean isDeleteMockDataUrlArgumentsDisabled()
+  {
+    return deleteMockDataUrlArgumentsDisabled;
+  }
+
+  public void setDeleteMockDataUrlArgumentsDisabled(boolean deleteMockDataUrlArgumentsDisabled)
+  {
+    this.deleteMockDataUrlArgumentsDisabled = deleteMockDataUrlArgumentsDisabled;
+  }
+
+  public boolean isUrlArgumentsRendered()
+  {
+    return urlArgumentsRendered;
+  }
+
+  public void setUrlArgumentsRendered(boolean urlArgumentsRendered)
+  {
+    this.urlArgumentsRendered = urlArgumentsRendered;
+  }
+
   public String getMdPathParamKey()
   {
     return mdPathParamKey;
@@ -946,6 +1051,26 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
   public void setMdPathParamValue(String mdPathParamValue)
   {
     this.mdPathParamValue = mdPathParamValue;
+  }
+
+  public String getMdUrlArgumentKey()
+  {
+    return mdUrlArgumentKey;
+  }
+
+  public void setMdUrlArgumentKey(String mdUrlArgumentKey)
+  {
+    this.mdUrlArgumentKey = mdUrlArgumentKey;
+  }
+
+  public String getMdUrlArgumentValue()
+  {
+    return mdUrlArgumentValue;
+  }
+
+  public void setMdUrlArgumentValue(String mdUrlArgumentValue)
+  {
+    this.mdUrlArgumentValue = mdUrlArgumentValue;
   }
 
   public boolean isDeleteMockDataPathParamDisabled()

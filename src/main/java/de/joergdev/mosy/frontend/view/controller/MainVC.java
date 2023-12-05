@@ -21,6 +21,7 @@ import de.joergdev.mosy.api.model.MockProfile;
 import de.joergdev.mosy.api.model.PathParam;
 import de.joergdev.mosy.api.model.Record;
 import de.joergdev.mosy.api.model.RecordSession;
+import de.joergdev.mosy.api.model.UrlArgument;
 import de.joergdev.mosy.api.response.mockprofile.LoadProfilesResponse;
 import de.joergdev.mosy.api.response.record.session.LoadSessionsResponse;
 import de.joergdev.mosy.frontend.Message;
@@ -734,6 +735,7 @@ public class MainVC extends AbstractViewController<MainV>
       view.setRecMethod(apiRecordLoaded.getMethodName());
       view.setRecCreated(apiRecordLoaded.getCreatedAsString());
       view.setTblRecordPathParams(new ArrayList<>(apiRecordLoaded.getPathParams()));
+      view.setTblRecordUrlArguments(new ArrayList<>(apiRecordLoaded.getUrlArguments()));
       view.setRecRequest(apiRecordLoaded.getRequestData());
       view.setRecHttpResponseCode(apiRecordLoaded.getHttpReturnCode());
       view.setRecResponse(apiRecordLoaded.getResponse());
@@ -745,6 +747,7 @@ public class MainVC extends AbstractViewController<MainV>
   private void updateComponentsRecord()
   {
     view.setRecPathParamsRendered(!view.getTblRecordPathParams().isEmpty());
+    view.setRecUrlArgumentsRendered(!view.getTblRecordUrlArguments().isEmpty());
     view.setRecHttpReturnCodeRendered(view.getRecHttpResponseCode() != null);
   }
 
@@ -854,6 +857,9 @@ public class MainVC extends AbstractViewController<MainV>
 
           apiRecord.getPathParams().clear();
           apiRecord.getPathParams().addAll(apiRecordLoaded.getPathParams());
+
+          apiRecord.getUrlArguments().clear();
+          apiRecord.getUrlArguments().addAll(apiRecordLoaded.getUrlArguments());
 
           apiRecord.setRequestData(apiRecordLoaded.getRequestData());
           apiRecord.setHttpReturnCode(apiRecordLoaded.getHttpReturnCode());
@@ -983,6 +989,17 @@ public class MainVC extends AbstractViewController<MainV>
         for (PathParam pathParam : pathParams)
         {
           bui.append(pathParam.getKey()).append(":").append(pathParam.getValue()).append("\n");
+        }
+      }
+
+      Collection<UrlArgument> urlArguments = apiRecord.getUrlArguments();
+      if (!urlArguments.isEmpty())
+      {
+        bui.append(MockData.PREFIX_MOCKDATA_IN_EXPORT_REQUEST_URL_ARGUMENTS).append("\n");
+
+        for (UrlArgument urlArg : urlArguments)
+        {
+          bui.append(urlArg.getKey()).append(":").append(urlArg.getValue()).append("\n");
         }
       }
 

@@ -130,6 +130,7 @@ public class RecordAsMockdataVC extends AbstractViewController<RecordAsMockdataV
         apiMockData.setTitle(buiTitle.toString() + "_" + countRecord);
         apiMockData.setActive(true);
         apiMockData.getPathParams().addAll(apiRecord.getPathParams());
+        apiMockData.getUrlArguments().addAll(apiRecord.getUrlArguments());
         apiMockData.setRequest(apiRecord.getRequestData());
         apiMockData.setHttpReturnCode(apiRecord.getHttpReturnCode());
         apiMockData.setResponse(apiRecord.getResponse());
