@@ -136,6 +136,7 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
   private String mdRequest;
   private Integer mdHttpResponseCode;
   private String mdResponse;
+  private Long mdDelay;
   private String mdCreated;
   private Integer mdCountCalls;
 
@@ -579,6 +580,16 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
   public void setMdResponse(String mdResponse)
   {
     this.mdResponse = mdResponse;
+  }
+
+  public Long getMdDelay()
+  {
+    return mdDelay;
+  }
+
+  public void setMdDelay(Long mdDelay)
+  {
+    this.mdDelay = mdDelay;
   }
 
   public String getMdCreated()

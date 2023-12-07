@@ -1509,6 +1509,7 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
     methodVS.setMdRequest(apiMockData.getRequest());
     methodVS.setMdHttpResponseCode(apiMockData.getHttpReturnCode());
     methodVS.setMdResponse(apiMockData.getResponse());
+    methodVS.setMdDelay(apiMockData.getDelay());
     methodVS.setMdCreated(apiMockData.getCreatedAsString());
     methodVS.setMdCountCalls(apiMockData.getCountCalls());
 
@@ -1647,6 +1648,8 @@ public class InterfaceVC extends AbstractViewController<InterfaceV>
       apiMockDataSelected.setHttpReturnCode(methodVS.getMdHttpResponseCode());
 
       apiMockDataSelected.setResponse(methodVS.getMdResponse());
+
+      apiMockDataSelected.setDelay(methodVS.getMdDelay());
 
       apiMockDataSelected.setInterfaceMethod(new InterfaceMethod());
       apiMockDataSelected.getInterfaceMethod().setInterfaceMethodId(apiMethodSelected.getInterfaceMethodId());

@@ -232,6 +232,10 @@
 			<h:outputText value="#{labels.response}" />
 			<p:inputTextarea id="mdResponse" rows="10" cols="80"
 				value="#{_interface.methodVS.mdResponse}" />
+				
+			<h:outputText value="#{labels.delay}" />
+			<p:inputNumber id="mdDelay" value="#{_interface.methodVS.mdDelay}" 
+				thousandSeparator="." decimalSeparator="," decimalPlaces="0" maxValue="9999999" size="5" />
 
 		</h:panelGrid>
 
