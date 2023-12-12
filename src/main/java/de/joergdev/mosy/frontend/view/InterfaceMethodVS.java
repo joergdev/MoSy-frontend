@@ -5,9 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
+import de.joergdev.mosy.api.model.HttpMethod;
 import de.joergdev.mosy.api.model.MockData;
 import de.joergdev.mosy.api.model.MockProfile;
+import de.joergdev.mosy.api.model.PathParam;
 import de.joergdev.mosy.api.model.RecordConfig;
+import de.joergdev.mosy.api.model.UrlArgument;
 import de.joergdev.mosy.frontend.Resources;
 import de.joergdev.mosy.frontend.model.YesNoGlobalOrRecordConfigIndividuallyType;
 import de.joergdev.mosy.frontend.utils.ColumnModel;
@@ -28,6 +31,8 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
 
   private String servicePath;
 
+  private HttpMethod httpMethod;
+
   private boolean mockActive;
   private boolean mockActiveOnStartup;
 
@@ -37,6 +42,8 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
 
   private Integer countCalls;
 
+  private final List<HttpMethod> httpMethods = Arrays.asList(HttpMethod.values());
+
   private final List<YesNoGlobalOrRecordConfigIndividuallyType> yesNoGlobalTypes = Arrays
       .asList(YesNoGlobalOrRecordConfigIndividuallyType.values());
 
@@ -44,6 +51,7 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
   private boolean routingOnNoMockDataDisabled;
   private boolean recordDisabled;
   private boolean servicePathRendered = true;
+  private boolean httpMethodRendered = false;
   private boolean deleteMethodDisabled = true;
 
   // --- End Method data --------------------------------
@@ -101,19 +109,45 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
   private List<MockProfile> mockProfiles = new ArrayList<>();
   private MockProfile mdMockProfile;
 
+  // Dialog (add path param)
+  private String mdPathParamKey;
+  private String mdPathParamValue;
+  
+  // Dialog (add url argument)
+  private String mdUrlArgumentKey;
+  private String mdUrlArgumentValue;
+
   private String mdTitle;
   private boolean mdActive;
   private boolean mdCommon;
 
-  private String mdRequest;
-  private String mdResponse;
+  private List<PathParam> tblMockDataPathParams = new ArrayList<>();
 
+  private List<PathParam> selectedMockDataPathParams;
+
+  private List<ColumnModel> tblMockDataPathParamsColumns = new ArrayList<>();
+
+  private List<UrlArgument> tblMockDataUrlArguments = new ArrayList<>();
+
+  private List<UrlArgument> selectedMockDataUrlArguments;
+
+  private List<ColumnModel> tblMockDataUrlArgumentsColumns = new ArrayList<>();
+
+  private String mdRequest;
+  private Integer mdHttpResponseCode;
+  private String mdResponse;
+  private Long mdDelay;
   private String mdCreated;
   private Integer mdCountCalls;
 
   // component states
   private boolean deleteMockDataDisabled = true;
   private boolean deleteMockDataMockProfileDisabled = true;
+  private boolean httpReturnCodeRendered = false;
+  private boolean deleteMockDataPathParamDisabled = true;
+  private boolean pathParamsRendered = false;
+  private boolean deleteMockDataUrlArgumentsDisabled = true;
+  private boolean urlArgumentsRendered = false;
 
   // --- End MockData data --------------------------------
 
@@ -122,6 +156,8 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
     initTblRecordConfigs();
     initTblMockData();
     initTblMockDataMockProfiles();
+    initTblMockDataPathParams();
+    initTblMockDataUrlArguments();
   }
 
   //--- Method data -------------------------------------
@@ -307,6 +343,78 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
     controller.deleteMockDataMockProfiles();
   }
 
+  public void onMockDataPathParamsRowSelect()
+  {
+    controller.handleMockDataPathParamsSelection();
+  }
+
+  public void onMockDataPathParamsRowUnselect()
+  {
+    controller.handleMockDataPathParamsSelection();
+  }
+
+  public void addMockDataPathParam()
+  {
+    controller.addMockDataPathParam();
+  }
+
+  public void addMockDataGivenPathParam()
+  {
+    controller.addMockDataGivenPathParam();
+  }
+
+  public void deleteMockDataPathParams()
+  {
+    controller.deleteMockDataPathParams();
+  }
+
+  private void initTblMockDataPathParams()
+  {
+    ColumnModel colName = new ColumnModel(Resources.getLabel("name"), "key");
+    colName.setWidth(40, WidthUnit.PERCENT);
+    tblMockDataPathParamsColumns.add(colName);
+
+    ColumnModel colValue = new ColumnModel(Resources.getLabel("value"), "value");
+    colValue.setWidth(60, WidthUnit.PERCENT);
+    tblMockDataPathParamsColumns.add(colValue);
+  }
+
+  public void onMockDataUrlArgumentsRowSelect()
+  {
+    controller.handleMockDataUrlArgumentsSelection();
+  }
+
+  public void onMockDataUrlArgumentsRowUnselect()
+  {
+    controller.handleMockDataUrlArgumentsSelection();
+  }
+
+  public void addMockDataUrlArgument()
+  {
+    controller.addMockDataUrlArgument();
+  }
+
+  public void addMockDataGivenUrlArgument()
+  {
+    controller.addMockDataGivenUrlArgument();
+  }
+
+  public void deleteMockDataUrlArguments()
+  {
+    controller.deleteMockDataUrlArguments();
+  }
+
+  private void initTblMockDataUrlArguments()
+  {
+    ColumnModel colName = new ColumnModel(Resources.getLabel("name"), "key");
+    colName.setWidth(40, WidthUnit.PERCENT);
+    tblMockDataUrlArgumentsColumns.add(colName);
+
+    ColumnModel colValue = new ColumnModel(Resources.getLabel("value"), "value");
+    colValue.setWidth(60, WidthUnit.PERCENT);
+    tblMockDataUrlArgumentsColumns.add(colValue);
+  }
+
   public void saveMockData()
   {
     controller.saveMockData();
@@ -337,6 +445,16 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
   public void setServicePath(String servicePath)
   {
     this.servicePath = servicePath;
+  }
+
+  public HttpMethod getHttpMethod()
+  {
+    return httpMethod;
+  }
+
+  public void setHttpMethod(HttpMethod httpMethod)
+  {
+    this.httpMethod = httpMethod;
   }
 
   public boolean isRoutingOnNoMockData()
@@ -464,6 +582,16 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
     this.mdResponse = mdResponse;
   }
 
+  public Long getMdDelay()
+  {
+    return mdDelay;
+  }
+
+  public void setMdDelay(Long mdDelay)
+  {
+    this.mdDelay = mdDelay;
+  }
+
   public String getMdCreated()
   {
     return mdCreated;
@@ -517,6 +645,16 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
   public boolean isServicePathRendered()
   {
     return servicePathRendered;
+  }
+
+  public boolean isHttpMethodRendered()
+  {
+    return httpMethodRendered;
+  }
+
+  public void setHttpMethodRendered(boolean httpMethodRendered)
+  {
+    this.httpMethodRendered = httpMethodRendered;
   }
 
   public String getRcTitle()
@@ -781,6 +919,11 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
     return yesNoGlobalTypes;
   }
 
+  public List<HttpMethod> getHttpMethods()
+  {
+    return httpMethods;
+  }
+
   public boolean isMdCommon()
   {
     return mdCommon;
@@ -789,5 +932,175 @@ public class InterfaceMethodVS extends AbstractSubView<InterfaceV, InterfaceVC>
   public void setMdCommon(boolean mdCommon)
   {
     this.mdCommon = mdCommon;
+  }
+
+  public List<PathParam> getTblMockDataPathParams()
+  {
+    return tblMockDataPathParams;
+  }
+
+  public void setTblMockDataPathParams(List<PathParam> tblMockDataPathParams)
+  {
+    this.tblMockDataPathParams = tblMockDataPathParams;
+  }
+
+  public List<PathParam> getSelectedMockDataPathParams()
+  {
+    if (selectedMockDataPathParams == null)
+    {
+      selectedMockDataPathParams = new ArrayList<>();
+    }
+
+    return selectedMockDataPathParams;
+  }
+
+  public void setSelectedMockDataPathParams(List<PathParam> selectedMockDataPathParams)
+  {
+    this.selectedMockDataPathParams = selectedMockDataPathParams;
+  }
+
+  public List<ColumnModel> getTblMockDataPathParamsColumns()
+  {
+    return tblMockDataPathParamsColumns;
+  }
+
+  public void setTblMockDataPathParamsColumns(List<ColumnModel> tblMockDataPathParamsColumns)
+  {
+    this.tblMockDataPathParamsColumns = tblMockDataPathParamsColumns;
+  }
+
+  public List<UrlArgument> getTblMockDataUrlArguments()
+  {
+    return tblMockDataUrlArguments;
+  }
+
+  public void setTblMockDataUrlArguments(List<UrlArgument> tblMockDataUrlArguments)
+  {
+    this.tblMockDataUrlArguments = tblMockDataUrlArguments;
+  }
+
+  public List<UrlArgument> getSelectedMockDataUrlArguments()
+  {
+    if (selectedMockDataUrlArguments == null)
+    {
+      selectedMockDataUrlArguments = new ArrayList<>();
+    }
+
+    return selectedMockDataUrlArguments;
+  }
+
+  public void setSelectedMockDataUrlArguments(List<UrlArgument> selectedMockDataUrlArguments)
+  {
+    this.selectedMockDataUrlArguments = selectedMockDataUrlArguments;
+  }
+
+  public List<ColumnModel> getTblMockDataUrlArgumentsColumns()
+  {
+    return tblMockDataUrlArgumentsColumns;
+  }
+
+  public void setTblMockDataUrlArgumentsColumns(List<ColumnModel> tblMockDataUrlArgumentsColumns)
+  {
+    this.tblMockDataUrlArgumentsColumns = tblMockDataUrlArgumentsColumns;
+  }
+
+  public boolean isHttpReturnCodeRendered()
+  {
+    return httpReturnCodeRendered;
+  }
+
+  public void setHttpReturnCodeRendered(boolean httpReturnCodeRendered)
+  {
+    this.httpReturnCodeRendered = httpReturnCodeRendered;
+  }
+
+  public boolean isPathParamsRendered()
+  {
+    return pathParamsRendered;
+  }
+
+  public void setPathParamsRendered(boolean pathParamsRendered)
+  {
+    this.pathParamsRendered = pathParamsRendered;
+  }
+
+  public boolean isDeleteMockDataUrlArgumentsDisabled()
+  {
+    return deleteMockDataUrlArgumentsDisabled;
+  }
+
+  public void setDeleteMockDataUrlArgumentsDisabled(boolean deleteMockDataUrlArgumentsDisabled)
+  {
+    this.deleteMockDataUrlArgumentsDisabled = deleteMockDataUrlArgumentsDisabled;
+  }
+
+  public boolean isUrlArgumentsRendered()
+  {
+    return urlArgumentsRendered;
+  }
+
+  public void setUrlArgumentsRendered(boolean urlArgumentsRendered)
+  {
+    this.urlArgumentsRendered = urlArgumentsRendered;
+  }
+
+  public String getMdPathParamKey()
+  {
+    return mdPathParamKey;
+  }
+
+  public void setMdPathParamKey(String mdPathParamKey)
+  {
+    this.mdPathParamKey = mdPathParamKey;
+  }
+
+  public String getMdPathParamValue()
+  {
+    return mdPathParamValue;
+  }
+
+  public void setMdPathParamValue(String mdPathParamValue)
+  {
+    this.mdPathParamValue = mdPathParamValue;
+  }
+
+  public String getMdUrlArgumentKey()
+  {
+    return mdUrlArgumentKey;
+  }
+
+  public void setMdUrlArgumentKey(String mdUrlArgumentKey)
+  {
+    this.mdUrlArgumentKey = mdUrlArgumentKey;
+  }
+
+  public String getMdUrlArgumentValue()
+  {
+    return mdUrlArgumentValue;
+  }
+
+  public void setMdUrlArgumentValue(String mdUrlArgumentValue)
+  {
+    this.mdUrlArgumentValue = mdUrlArgumentValue;
+  }
+
+  public boolean isDeleteMockDataPathParamDisabled()
+  {
+    return deleteMockDataPathParamDisabled;
+  }
+
+  public void setDeleteMockDataPathParamDisabled(boolean deleteMockDataPathParamDisabled)
+  {
+    this.deleteMockDataPathParamDisabled = deleteMockDataPathParamDisabled;
+  }
+
+  public Integer getMdHttpResponseCode()
+  {
+    return mdHttpResponseCode;
+  }
+
+  public void setMdHttpResponseCode(Integer mdHttpResponseCode)
+  {
+    this.mdHttpResponseCode = mdHttpResponseCode;
   }
 }

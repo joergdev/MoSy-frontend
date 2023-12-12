@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +18,10 @@ import de.joergdev.mosy.api.model.Interface;
 import de.joergdev.mosy.api.model.InterfaceType;
 import de.joergdev.mosy.api.model.MockData;
 import de.joergdev.mosy.api.model.MockProfile;
+import de.joergdev.mosy.api.model.PathParam;
 import de.joergdev.mosy.api.model.Record;
 import de.joergdev.mosy.api.model.RecordSession;
+import de.joergdev.mosy.api.model.UrlArgument;
 import de.joergdev.mosy.api.response.mockprofile.LoadProfilesResponse;
 import de.joergdev.mosy.api.response.record.session.LoadSessionsResponse;
 import de.joergdev.mosy.frontend.Message;
@@ -731,9 +734,21 @@ public class MainVC extends AbstractViewController<MainV>
       view.setRecInterface(apiRecordLoaded.getInterfaceName());
       view.setRecMethod(apiRecordLoaded.getMethodName());
       view.setRecCreated(apiRecordLoaded.getCreatedAsString());
+      view.setTblRecordPathParams(new ArrayList<>(apiRecordLoaded.getPathParams()));
+      view.setTblRecordUrlArguments(new ArrayList<>(apiRecordLoaded.getUrlArguments()));
       view.setRecRequest(apiRecordLoaded.getRequestData());
+      view.setRecHttpResponseCode(apiRecordLoaded.getHttpReturnCode());
       view.setRecResponse(apiRecordLoaded.getResponse());
+
+      updateComponentsRecord();
     }
+  }
+
+  private void updateComponentsRecord()
+  {
+    view.setRecPathParamsRendered(!view.getTblRecordPathParams().isEmpty());
+    view.setRecUrlArgumentsRendered(!view.getTblRecordUrlArguments().isEmpty());
+    view.setRecHttpReturnCodeRendered(view.getRecHttpResponseCode() != null);
   }
 
   public void deleteRecords()
@@ -840,7 +855,14 @@ public class MainVC extends AbstractViewController<MainV>
           Record apiRecordLoaded = invokeApiCall(apiClient -> apiClient.loadRecord(apiRecord.getRecordId()))
               .getRecord();
 
+          apiRecord.getPathParams().clear();
+          apiRecord.getPathParams().addAll(apiRecordLoaded.getPathParams());
+
+          apiRecord.getUrlArguments().clear();
+          apiRecord.getUrlArguments().addAll(apiRecordLoaded.getUrlArguments());
+
           apiRecord.setRequestData(apiRecordLoaded.getRequestData());
+          apiRecord.setHttpReturnCode(apiRecordLoaded.getHttpReturnCode());
           apiRecord.setResponse(apiRecordLoaded.getResponse());
         }
       }
@@ -959,9 +981,39 @@ public class MainVC extends AbstractViewController<MainV>
       StringBuilder bui = new StringBuilder(
           apiRecord.getRequestData().length() + apiRecord.getResponse().length() + 30);
 
+      Collection<PathParam> pathParams = apiRecord.getPathParams();
+      if (!pathParams.isEmpty())
+      {
+        bui.append(MockData.PREFIX_MOCKDATA_IN_EXPORT_REQUEST_PATH_PARAMS).append("\n");
+
+        for (PathParam pathParam : pathParams)
+        {
+          bui.append(pathParam.getKey()).append(":").append(pathParam.getValue()).append("\n");
+        }
+      }
+
+      Collection<UrlArgument> urlArguments = apiRecord.getUrlArguments();
+      if (!urlArguments.isEmpty())
+      {
+        bui.append(MockData.PREFIX_MOCKDATA_IN_EXPORT_REQUEST_URL_ARGUMENTS).append("\n");
+
+        for (UrlArgument urlArg : urlArguments)
+        {
+          bui.append(urlArg.getKey()).append(":").append(urlArg.getValue()).append("\n");
+        }
+      }
+
       bui.append(MockData.PREFIX_MOCKDATA_IN_EXPORT_REQUEST).append("\n");
       bui.append(apiRecord.getRequestData());
       bui.append("\n");
+
+      Integer httpReturnCode = apiRecord.getHttpReturnCode();
+      if (httpReturnCode != null)
+      {
+        bui.append(MockData.PREFIX_MOCKDATA_IN_EXPORT_RESPONSE_HTTP_CODE).append("\n");
+        bui.append(httpReturnCode);
+        bui.append("\n");
+      }
 
       bui.append(MockData.PREFIX_MOCKDATA_IN_EXPORT_RESPONSE).append("\n");
       bui.append(apiRecord.getResponse());

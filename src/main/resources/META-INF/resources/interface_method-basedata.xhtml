@@ -27,6 +27,12 @@
 				value="#{_interface.methodVS.servicePath}"
 				rendered="#{_interface.methodVS.servicePathRendered}" />
 
+			<h:outputText for="cbHttpMethod" value="#{labels.http_method}" rendered="#{_interface.methodVS.httpMethodRendered}" />
+			<p:selectOneMenu id="cbHttpMethod"
+				value="#{_interface.methodVS.httpMethod}"
+				rendered="#{_interface.methodVS.httpMethodRendered}">
+				<f:selectItems value="#{_interface.methodVS.httpMethods}" />
+			</p:selectOneMenu>
 
 			<p:selectBooleanCheckbox value="#{_interface.methodVS.mockActive}"
 				itemLabel="#{labels.mock_active}">
