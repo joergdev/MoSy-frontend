@@ -45,8 +45,7 @@ public class MainV extends AbstractView<MainVC>
   private String dataPanel;
 
   // --- Basedata ----------------------
-  private final List<YesNoGlobalOrInterfaceIndividuallyType> yesNoGlobalTypes = Arrays
-      .asList(YesNoGlobalOrInterfaceIndividuallyType.values());
+  private final List<YesNoGlobalOrInterfaceIndividuallyType> yesNoGlobalTypes = Arrays.asList(YesNoGlobalOrInterfaceIndividuallyType.values());
 
   private YesNoGlobalOrInterfaceIndividuallyType mockActive;
   private YesNoGlobalOrInterfaceIndividuallyType mockActiveOnStartup;
@@ -90,6 +89,7 @@ public class MainV extends AbstractView<MainVC>
   private boolean downloadRecordsDisabled = true;
   private boolean showRecordsDisabled = true;
   private boolean deleteRecordsDisabled = true;
+  private boolean deleteAllRecordsDisabled = true;
 
   private StreamedContent fileRecords;
   // ---------------------------------------
@@ -202,15 +202,13 @@ public class MainV extends AbstractView<MainVC>
     }
   }
 
-  private void addSubTreeNodes(List<TreeData> treeDataListTmp, TreeNode rootNode,
-                               ValueWrapper<TreeNode> nodeToSelect)
+  private void addSubTreeNodes(List<TreeData> treeDataListTmp, TreeNode rootNode, ValueWrapper<TreeNode> nodeToSelect)
   {
     for (TreeData treeData : treeDataListTmp)
     {
       TreeNode node = new DefaultTreeNode(treeData, rootNode);
 
-      if (selectedNode != null && nodeToSelect.getValue() == null
-          && treeData.isEqual((TreeData) selectedNode.getData()))
+      if (selectedNode != null && nodeToSelect.getValue() == null && treeData.isEqual((TreeData) selectedNode.getData()))
       {
         nodeToSelect.setValue(node);
       }
@@ -346,6 +344,8 @@ public class MainV extends AbstractView<MainVC>
     ColumnModel colCreated = new ColumnModel(Resources.getLabel("created"), "createdAsString");
     colCreated.setWidth(30, WidthUnit.PERCENT);
     tblRecordsColumns.add(colCreated);
+
+    tblRecords.addDataModelListener(e -> controller.updateComponentsRecords());
   }
 
   //--- End Records -------------------------------
@@ -393,6 +393,11 @@ public class MainV extends AbstractView<MainVC>
   public void deleteRecords()
   {
     controller.deleteRecords();
+  }
+
+  public void deleteAllRecords()
+  {
+    controller.deleteAllRecords();
   }
 
   public void onRecordsRowSelect()
@@ -522,6 +527,16 @@ public class MainV extends AbstractView<MainVC>
   public void setDeleteRecordsDisabled(boolean deleteRecordsDisabled)
   {
     this.deleteRecordsDisabled = deleteRecordsDisabled;
+  }
+
+  public boolean isDeleteAllRecordsDisabled()
+  {
+    return deleteAllRecordsDisabled;
+  }
+
+  public void setDeleteAllRecordsDisabled(boolean deleteAllRecordsDisabled)
+  {
+    this.deleteAllRecordsDisabled = deleteAllRecordsDisabled;
   }
 
   public String getRecInterface()
