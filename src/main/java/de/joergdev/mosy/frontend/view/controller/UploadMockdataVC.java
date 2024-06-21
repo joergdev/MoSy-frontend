@@ -69,8 +69,7 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
 
     private void loadAndTransferInterfacesToView()
     {
-      List<Interface> interfaces = invokeApiCall(apiClient -> apiClient.systemLoadBasedata()).getBaseData()
-          .getInterfaces();
+      List<Interface> interfaces = invokeApiCall(apiClient -> apiClient.systemLoadBasedata()).getBaseData().getInterfaces();
 
       view.getInterfaces().clear();
       view.getInterfaces().addAll(interfaces);
@@ -91,8 +90,7 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
       {
         Integer ifcID = interfaceID;
 
-        view.setInterfaceSelected(
-            interfaces.stream().filter(ifc -> ifcID.equals(ifc.getInterfaceId())).findAny().orElse(null));
+        view.setInterfaceSelected(interfaces.stream().filter(ifc -> ifcID.equals(ifc.getInterfaceId())).findAny().orElse(null));
 
         handleInterfaceSelection(false);
       }
@@ -167,8 +165,7 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
     {
       String ifcName = ifc.getName();
 
-      ifc = view.getInterfaces().stream().filter(ifcList -> Utils.isEqual(ifcList.getName(), ifcName))
-          .findAny()
+      ifc = view.getInterfaces().stream().filter(ifcList -> Utils.isEqual(ifcList.getName(), ifcName)).findAny()
           .orElseThrow(() -> new IllegalArgumentException("no interface found with name " + ifcName));
 
       if (ifc.getMethods().isEmpty())
@@ -176,8 +173,7 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
         Integer ifcID = ifc.getInterfaceId();
 
         // load methods
-        List<InterfaceMethod> methods = invokeApiCall(apiClient -> apiClient.loadInterface(ifcID))
-            .getInterface().getMethods();
+        List<InterfaceMethod> methods = invokeApiCall(apiClient -> apiClient.loadInterface(ifcID)).getInterface().getMethods();
 
         ifc.getMethods().addAll(methods);
       }
@@ -198,16 +194,13 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
         {
           String methodName = methodSelected.getName();
 
-          view.setMethodSelected(
-              methods.stream().filter(m -> methodName.equals(m.getName())).findAny().orElse(null));
+          view.setMethodSelected(methods.stream().filter(m -> methodName.equals(m.getName())).findAny().orElse(null));
         }
-        else if (!Utils.isEmpty(view.getMethodID())
-                 && Integer.valueOf(view.getInterfaceID()).equals(ifc.getInterfaceId()))
+        else if (!Utils.isEmpty(view.getMethodID()) && Integer.valueOf(view.getInterfaceID()).equals(ifc.getInterfaceId()))
         {
           Integer methodID = Integer.valueOf(view.getMethodID());
 
-          view.setMethodSelected(
-              methods.stream().filter(m -> methodID.equals(m.getInterfaceMethodId())).findAny().orElse(null));
+          view.setMethodSelected(methods.stream().filter(m -> methodID.equals(m.getInterfaceMethodId())).findAny().orElse(null));
 
         }
       }
@@ -230,8 +223,7 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
 
   private void useUploadedMockData(boolean singlemode, FileUploadEvent event)
   {
-    boolean singlemodeEnabled = Boolean.TRUE
-        .equals(Boolean.valueOf(Resources.getProperty(Resources.PROPERTY_UPLOAD_MOCKDATA_SINGLEMODE)));
+    boolean singlemodeEnabled = Boolean.TRUE.equals(Boolean.valueOf(Resources.getProperty(Resources.PROPERTY_UPLOAD_MOCKDATA_SINGLEMODE)));
 
     if (singlemode == singlemodeEnabled)
     {
@@ -242,8 +234,7 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
     // because message in UseUploadedMockDataExecution ist not showing in this case.
     if (!singlemode && singlemodeEnabled)
     {
-      showGrowlMessage(new Message(MessageLevel.INFO, "uploaded_var",
-          mockDataUploadedEvents.size() + " " + Resources.getLabel("mockdata")));
+      showGrowlMessage(new Message(MessageLevel.INFO, "uploaded_var", mockDataUploadedEvents.size() + " " + Resources.getLabel("mockdata")));
 
       mockDataUploadedEvents.clear();
     }
@@ -297,9 +288,7 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
     protected void _execute()
       throws Exception
     {
-      Iterator<FileUploadEvent> itFiles = singlemode
-          ? Arrays.asList(event).iterator()
-          : mockDataUploadedEvents.iterator();
+      Iterator<FileUploadEvent> itFiles = singlemode ? Arrays.asList(event).iterator() : mockDataUploadedEvents.iterator();
 
       while (itFiles.hasNext())
       {
@@ -319,21 +308,19 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
           int idxEndInterfaceName = filename.indexOf("_");
           if (idxEndInterfaceName <= 0 || idxEndInterfaceName == filename.length() - 1)
           {
-            leaveWithBusinessException("mockdata_file_invalid", filename,
-                Resources.getErrorMessage("mockdata_file_invalid_no_interface_name"));
+            leaveWithBusinessException("mockdata_file_invalid", filename, Resources.getErrorMessage("mockdata_file_invalid_no_interface_name"));
           }
 
           int idxEndMethodName = filename.indexOf("_", idxEndInterfaceName + 1);
           if (idxEndMethodName < 0)
           {
-            leaveWithBusinessException("mockdata_file_invalid", filename,
-                Resources.getErrorMessage("mockdata_file_invalid_no_interface_method_name"));
+            leaveWithBusinessException("mockdata_file_invalid", filename, Resources.getErrorMessage("mockdata_file_invalid_no_interface_method_name"));
           }
 
           methodSelected = new InterfaceMethod();
           methodSelected.setName(filename.substring(idxEndInterfaceName + 1, idxEndMethodName));
 
-          methodSelected.setMockInterface(new Interface());
+          methodSelected.setMockInterfaceData(new Interface());
           methodSelected.getMockInterface().setName(filename.substring(0, idxEndInterfaceName));
 
           filenameNew = filename.substring(idxEndMethodName + 1);
@@ -342,7 +329,7 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
         {
           if (methodSelected != null && methodSelected.getMockInterface() == null)
           {
-            methodSelected.setMockInterface(view.getInterfaceSelected());
+            methodSelected.setMockInterfaceData(view.getInterfaceSelected());
           }
         }
 
@@ -361,8 +348,7 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
         }
         catch (IndexOutOfBoundsException ex)
         {
-          leaveWithBusinessException("mockdata_file_invalid", filename,
-              Resources.getErrorMessage("mockdata_file_invalid_no_request_response"));
+          leaveWithBusinessException("mockdata_file_invalid", filename, Resources.getErrorMessage("mockdata_file_invalid_no_request_response"));
         }
 
         // Save
@@ -388,8 +374,7 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
 
       if (view.isTitlePostfixTimestamp())
       {
-        buiTitle.append("_").append(Utils.localDateTimeToString(LocalDateTime.now(),
-            Utils.DATE_FORMAT_DD_MM_YYYY_HH_MM_SS_UNDERSCORES));
+        buiTitle.append("_").append(Utils.localDateTimeToString(LocalDateTime.now(), Utils.DATE_FORMAT_DD_MM_YYYY_HH_MM_SS_UNDERSCORES));
       }
 
       apiMockData.setTitle(buiTitle.toString());
@@ -405,8 +390,7 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
 
   public void addMockProfile()
   {
-    List<MockProfile> mockProfiles = invokeApiCall(apiClient -> apiClient.loadMockProfiles())
-        .getMockProfiles();
+    List<MockProfile> mockProfiles = invokeApiCall(apiClient -> apiClient.loadMockProfiles()).getMockProfiles();
 
     mockProfiles.removeAll(view.getTblMockProfiles());
 
@@ -437,9 +421,7 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
     @Override
     public Message getGrowlMessageOnSuccess()
     {
-      return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(countSelected > 1
-          ? "mock_profiles"
-          : "mock_profile"));
+      return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(countSelected > 1 ? "mock_profiles" : "mock_profile"));
     }
 
     @Override

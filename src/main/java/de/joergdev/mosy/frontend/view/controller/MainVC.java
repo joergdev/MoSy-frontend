@@ -79,8 +79,7 @@ public class MainVC extends AbstractViewController<MainV>
     {
       String dataPanel = view.getDataPanel();
 
-      if (Utils.isEmpty(dataPanel)
-          || Arrays.asList(Resources.SITE_MAIN_BASEDATA, Resources.SITE_MAIN_INTERFACES).contains(dataPanel))
+      if (Utils.isEmpty(dataPanel) || Arrays.asList(Resources.SITE_MAIN_BASEDATA, Resources.SITE_MAIN_INTERFACES).contains(dataPanel))
       {
         loadedMessageDetail = Resources.getLabel("basedata") + " / " + Resources.getLabel("interfaces");
 
@@ -130,8 +129,7 @@ public class MainVC extends AbstractViewController<MainV>
 
     private void loadAndTransferRecordSessionsToView()
     {
-      List<RecordSession> recordSessions = invokeApiCall(apiClient -> apiClient.loadRecordSessions())
-          .getRecordSessions();
+      List<RecordSession> recordSessions = invokeApiCall(apiClient -> apiClient.loadRecordSessions()).getRecordSessions();
 
       view.getRecordSessions().clear();
       view.getRecordSessions().addAll(recordSessions);
@@ -139,9 +137,8 @@ public class MainVC extends AbstractViewController<MainV>
       RecordSession recordSessionSelected = view.getRecordSessionOvSelected();
       if (recordSessionSelected != null)
       {
-        view.setRecordSessionOvSelected(recordSessions.stream()
-            .filter(rs -> recordSessionSelected.getRecordSessionID().equals(rs.getRecordSessionID()))
-            .findAny().orElse(null));
+        view.setRecordSessionOvSelected(
+            recordSessions.stream().filter(rs -> recordSessionSelected.getRecordSessionID().equals(rs.getRecordSessionID())).findAny().orElse(null));
       }
     }
 
@@ -152,10 +149,8 @@ public class MainVC extends AbstractViewController<MainV>
       buildTreeData();
 
       view.setMockActive(YesNoGlobalOrInterfaceIndividuallyType.fromBoolean(basedata.getMockActive()));
-      view.setMockActiveOnStartup(
-          YesNoGlobalOrInterfaceIndividuallyType.fromBoolean(basedata.getMockActiveOnStartup()));
-      view.setRoutingOnNoMockData(
-          YesNoGlobalOrInterfaceIndividuallyType.fromBoolean(basedata.getRoutingOnNoMockData()));
+      view.setMockActiveOnStartup(YesNoGlobalOrInterfaceIndividuallyType.fromBoolean(basedata.getMockActiveOnStartup()));
+      view.setRoutingOnNoMockData(YesNoGlobalOrInterfaceIndividuallyType.fromBoolean(basedata.getRoutingOnNoMockData()));
       view.setRecord(YesNoGlobalOrInterfaceIndividuallyType.fromBoolean(basedata.getRecord()));
 
       view.getTblInterfaces().clear();
@@ -177,8 +172,7 @@ public class MainVC extends AbstractViewController<MainV>
       // MockProfiles
       if (Utils.isPositive(basedata.getCountMockProfiles()))
       {
-        treeDataList
-            .add(new TreeData(Resources.getLabel("mock_profiles"), Resources.SITE_MAIN_MOCK_PROFILES));
+        treeDataList.add(new TreeData(Resources.getLabel("mock_profiles"), Resources.SITE_MAIN_MOCK_PROFILES));
       }
 
       // Records
@@ -188,29 +182,23 @@ public class MainVC extends AbstractViewController<MainV>
       }
 
       // RecordSessions
-      treeDataList
-          .add(new TreeData(Resources.getLabel("record_sessions"), Resources.SITE_MAIN_RECORDSESSIONS));
+      treeDataList.add(new TreeData(Resources.getLabel("record_sessions"), Resources.SITE_MAIN_RECORDSESSIONS));
 
       view.setTreeDataList(treeDataList);
     }
 
     private void buildTreeDataInterfaces(BaseData baseData, List<TreeData> treeDataList)
     {
-      TreeData treeDataInterfaces = new TreeData(Resources.getLabel("interfaces"),
-          Resources.SITE_MAIN_INTERFACES);
+      TreeData treeDataInterfaces = new TreeData(Resources.getLabel("interfaces"), Resources.SITE_MAIN_INTERFACES);
       treeDataList.add(treeDataInterfaces);
 
-      TreeData treeDataInterfacesSoap = new TreeData(Resources.getLabel("soap"),
-          Resources.SITE_MAIN_INTERFACES);
-      TreeData treeDataInterfacesRest = new TreeData(Resources.getLabel("rest"),
-          Resources.SITE_MAIN_INTERFACES);
-      TreeData treeDataInterfacesCustom = new TreeData(Resources.getLabel("custom"),
-          Resources.SITE_MAIN_INTERFACES);
+      TreeData treeDataInterfacesSoap = new TreeData(Resources.getLabel("soap"), Resources.SITE_MAIN_INTERFACES);
+      TreeData treeDataInterfacesRest = new TreeData(Resources.getLabel("rest"), Resources.SITE_MAIN_INTERFACES);
+      TreeData treeDataInterfacesCustom = new TreeData(Resources.getLabel("custom"), Resources.SITE_MAIN_INTERFACES);
 
       for (Interface apiInterface : baseData.getInterfaces())
       {
-        TreeData treeDataInterface = new TreeData(apiInterface.getName(), Resources.SITE_INTERFACE,
-            apiInterface);
+        TreeData treeDataInterface = new TreeData(apiInterface.getName(), Resources.SITE_INTERFACE, apiInterface);
 
         if (InterfaceType.SOAP.equals(apiInterface.getType()))
         {
@@ -276,14 +264,12 @@ public class MainVC extends AbstractViewController<MainV>
       String viewPage = treeData.getViewPage();
 
       // page in main view
-      if (Arrays.asList(Resources.SITE_MAIN_BASEDATA, Resources.SITE_MAIN_INTERFACES,
-          Resources.SITE_MAIN_MOCK_PROFILES, Resources.SITE_MAIN_RECORDSESSIONS, Resources.SITE_MAIN_RECORDS)
-          .contains(viewPage))
+      if (Arrays.asList(Resources.SITE_MAIN_BASEDATA, Resources.SITE_MAIN_INTERFACES, Resources.SITE_MAIN_MOCK_PROFILES, Resources.SITE_MAIN_RECORDSESSIONS,
+          Resources.SITE_MAIN_RECORDS).contains(viewPage))
       {
         view.setDataPanel(viewPage);
 
-        if (Resources.SITE_MAIN_MOCK_PROFILES.equals(viewPage)
-            || Resources.SITE_MAIN_RECORDSESSIONS.equals(viewPage)
+        if (Resources.SITE_MAIN_MOCK_PROFILES.equals(viewPage) || Resources.SITE_MAIN_RECORDSESSIONS.equals(viewPage)
             || Resources.SITE_MAIN_RECORDS.equals(viewPage))
         {
           loadRefresh();
@@ -296,8 +282,7 @@ public class MainVC extends AbstractViewController<MainV>
 
         if (Resources.SITE_INTERFACE.equals(viewPage))
         {
-          queryParams.put(InterfaceV.VIEW_PARAM_INTERFACE_ID,
-              ((Interface) treeData.getEntity()).getInterfaceId());
+          queryParams.put(InterfaceV.VIEW_PARAM_INTERFACE_ID, ((Interface) treeData.getEntity()).getInterfaceId());
         }
 
         JsfUtils.redirect(viewPage, queryParams);
@@ -355,14 +340,10 @@ public class MainVC extends AbstractViewController<MainV>
     protected void _execute()
       throws Exception
     {
-      YesNoGlobalOrInterfaceIndividuallyType savedMockActive = YesNoGlobalOrInterfaceIndividuallyType
-          .fromBoolean(basedata.getMockActive());
-      YesNoGlobalOrInterfaceIndividuallyType savedMockActiveOnStartup = YesNoGlobalOrInterfaceIndividuallyType
-          .fromBoolean(basedata.getMockActiveOnStartup());
-      YesNoGlobalOrInterfaceIndividuallyType savedRoutingOnNoMockdata = YesNoGlobalOrInterfaceIndividuallyType
-          .fromBoolean(basedata.getRoutingOnNoMockData());
-      YesNoGlobalOrInterfaceIndividuallyType savedRecord = YesNoGlobalOrInterfaceIndividuallyType
-          .fromBoolean(basedata.getRecord());
+      YesNoGlobalOrInterfaceIndividuallyType savedMockActive = YesNoGlobalOrInterfaceIndividuallyType.fromBoolean(basedata.getMockActive());
+      YesNoGlobalOrInterfaceIndividuallyType savedMockActiveOnStartup = YesNoGlobalOrInterfaceIndividuallyType.fromBoolean(basedata.getMockActiveOnStartup());
+      YesNoGlobalOrInterfaceIndividuallyType savedRoutingOnNoMockdata = YesNoGlobalOrInterfaceIndividuallyType.fromBoolean(basedata.getRoutingOnNoMockData());
+      YesNoGlobalOrInterfaceIndividuallyType savedRecord = YesNoGlobalOrInterfaceIndividuallyType.fromBoolean(basedata.getRecord());
 
       YesNoGlobalOrInterfaceIndividuallyType viewMockActive = view.getMockActive();
       YesNoGlobalOrInterfaceIndividuallyType viewMockActiveOnStartup = view.getMockActiveOnStartup();
@@ -370,16 +351,15 @@ public class MainVC extends AbstractViewController<MainV>
       YesNoGlobalOrInterfaceIndividuallyType viewRecord = view.getRecord();
 
       // Check for changes
-      if (savedMockActive == viewMockActive && savedMockActiveOnStartup == viewMockActiveOnStartup
-          && savedRoutingOnNoMockdata == viewRoutingOnNoMockData && savedRecord == viewRecord)
+      if (savedMockActive == viewMockActive && savedMockActiveOnStartup == viewMockActiveOnStartup && savedRoutingOnNoMockdata == viewRoutingOnNoMockData
+          && savedRecord == viewRecord)
       {
         leaveWithBusinessException(MessageLevel.INFO, "no_changes");
       }
 
       // updateComponents enabled / disabled state
       boolean enableRoutingOnNoMockdata = !YesNoGlobalOrInterfaceIndividuallyType.NO.equals(viewMockActive)
-                                          || !YesNoGlobalOrInterfaceIndividuallyType.NO
-                                              .equals(viewMockActiveOnStartup);
+                                          || !YesNoGlobalOrInterfaceIndividuallyType.NO.equals(viewMockActiveOnStartup);
       boolean enableRecord = !YesNoGlobalOrInterfaceIndividuallyType.YES.equals(viewMockActive)
                              || !YesNoGlobalOrInterfaceIndividuallyType.YES.equals(viewMockActiveOnStartup)
                              || !YesNoGlobalOrInterfaceIndividuallyType.NO.equals(viewRoutingOnNoMockData);
@@ -402,10 +382,8 @@ public class MainVC extends AbstractViewController<MainV>
       // save
       BaseData basedataSave = new BaseData();
       basedataSave.setMockActive(YesNoGlobalOrInterfaceIndividuallyType.toBoolean(viewMockActive));
-      basedataSave
-          .setMockActiveOnStartup(YesNoGlobalOrInterfaceIndividuallyType.toBoolean(viewMockActiveOnStartup));
-      basedataSave
-          .setRoutingOnNoMockData(YesNoGlobalOrInterfaceIndividuallyType.toBoolean(viewRoutingOnNoMockData));
+      basedataSave.setMockActiveOnStartup(YesNoGlobalOrInterfaceIndividuallyType.toBoolean(viewMockActiveOnStartup));
+      basedataSave.setRoutingOnNoMockData(YesNoGlobalOrInterfaceIndividuallyType.toBoolean(viewRoutingOnNoMockData));
       basedataSave.setRecord(YesNoGlobalOrInterfaceIndividuallyType.toBoolean(viewRecord));
 
       invokeApiCall(apiClient -> apiClient.globalConfigSave(basedataSave));
@@ -475,8 +453,7 @@ public class MainVC extends AbstractViewController<MainV>
     @Override
     protected void createPreValidations()
     {
-      addValidation(
-          new UniqueSelectionValidation(view.getSelectedInterfaces(), Resources.getLabel("interface")));
+      addValidation(new UniqueSelectionValidation(view.getSelectedInterfaces(), Resources.getLabel("interface")));
     }
 
     @Override
@@ -484,8 +461,7 @@ public class MainVC extends AbstractViewController<MainV>
       throws Exception
     {
       Map<String, Object> queryParams = new HashMap<>();
-      queryParams.put(InterfaceV.VIEW_PARAM_INTERFACE_ID,
-          Utils.getFirstElementOfCollection(view.getSelectedInterfaces()).getInterfaceId());
+      queryParams.put(InterfaceV.VIEW_PARAM_INTERFACE_ID, Utils.getFirstElementOfCollection(view.getSelectedInterfaces()).getInterfaceId());
 
       JsfUtils.redirect(Resources.SITE_INTERFACE, queryParams);
     }
@@ -509,9 +485,7 @@ public class MainVC extends AbstractViewController<MainV>
     @Override
     public Message getGrowlMessageOnSuccess()
     {
-      return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(idsDeleted.size() > 1
-          ? "interfaces"
-          : "interface"));
+      return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(idsDeleted.size() > 1 ? "interfaces" : "interface"));
     }
 
     @Override
@@ -555,8 +529,7 @@ public class MainVC extends AbstractViewController<MainV>
 
   private TreeData getTreeDataInterfaces()
   {
-    return view.getTreeDataList().stream()
-        .filter(td -> Resources.SITE_MAIN_INTERFACES.equals(td.getViewPage())).findAny().orElse(null);
+    return view.getTreeDataList().stream().filter(td -> Resources.SITE_MAIN_INTERFACES.equals(td.getViewPage())).findAny().orElse(null);
   }
 
   private List<TreeData> getTreeDataInterfaceGroups()
@@ -574,8 +547,7 @@ public class MainVC extends AbstractViewController<MainV>
 
   private TreeData getTreeDataInterfaceGroup(TreeData treeDataInterfaces, String label)
   {
-    return treeDataInterfaces.getSubEntries().stream()
-        .filter(td -> Resources.getLabel(label).equals(td.getText())).findAny().orElse(null);
+    return treeDataInterfaces.getSubEntries().stream().filter(td -> Resources.getLabel(label).equals(td.getText())).findAny().orElse(null);
   }
 
   public void handleInterfacesSelection()
@@ -647,9 +619,7 @@ public class MainVC extends AbstractViewController<MainV>
     @Override
     public Message getGrowlMessageOnSuccess()
     {
-      return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(idsDeleted.size() > 1
-          ? "mock_profiles"
-          : "mock_profile"));
+      return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(idsDeleted.size() > 1 ? "mock_profiles" : "mock_profile"));
     }
 
     @Override
@@ -682,8 +652,7 @@ public class MainVC extends AbstractViewController<MainV>
     @Override
     protected void createPreValidations()
     {
-      addValidation(
-          new UniqueSelectionValidation(view.getSelectedMockProfiles(), Resources.getLabel("mock_profile")));
+      addValidation(new UniqueSelectionValidation(view.getSelectedMockProfiles(), Resources.getLabel("mock_profile")));
     }
 
     @Override
@@ -691,8 +660,7 @@ public class MainVC extends AbstractViewController<MainV>
       throws Exception
     {
       Map<String, Object> queryParams = new HashMap<>();
-      queryParams.put(MockProfileV.VIEW_PARAM_MOCK_PROFILE_ID,
-          Utils.getFirstElementOfCollection(view.getSelectedMockProfiles()).getMockProfileID());
+      queryParams.put(MockProfileV.VIEW_PARAM_MOCK_PROFILE_ID, Utils.getFirstElementOfCollection(view.getSelectedMockProfiles()).getMockProfileID());
 
       JsfUtils.redirect(Resources.SITE_MOCK_PROFILE, queryParams);
     }
@@ -722,15 +690,12 @@ public class MainVC extends AbstractViewController<MainV>
       apiRecordSelected = view.getSelectedRecords().get(0);
 
       // load data
-      Record apiRecordLoaded = invokeApiCall(
-          apiClient -> apiClient.loadRecord(apiRecordSelected.getRecordId())).getRecord();
+      Record apiRecordLoaded = invokeApiCall(apiClient -> apiClient.loadRecord(apiRecordSelected.getRecordId())).getRecord();
 
       getView().setDataPanel(Resources.SITE_MAIN_RECORD);
 
       // Transfer Model->View
-      view.setRecRecordSession(apiRecordLoaded.getRecordSession() == null
-          ? null
-          : apiRecordLoaded.getRecordSession().toString());
+      view.setRecRecordSession(apiRecordLoaded.getRecordSession() == null ? null : apiRecordLoaded.getRecordSession().toString());
       view.setRecInterface(apiRecordLoaded.getInterfaceName());
       view.setRecMethod(apiRecordLoaded.getMethodName());
       view.setRecCreated(apiRecordLoaded.getCreatedAsString());
@@ -769,9 +734,7 @@ public class MainVC extends AbstractViewController<MainV>
     @Override
     public Message getGrowlMessageOnSuccess()
     {
-      return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(idsDeleted.size() > 1
-          ? "records"
-          : "record"));
+      return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(idsDeleted.size() > 1 ? "records" : "record"));
     }
 
     @Override
@@ -793,6 +756,39 @@ public class MainVC extends AbstractViewController<MainV>
     }
   }
 
+  public void deleteAllRecords()
+  {
+    new DeleteAllRecordsExecution().execute();
+  }
+
+  private class DeleteAllRecordsExecution extends Execution
+  {
+    @Override
+    protected void createPreValidations()
+    {
+      // no validation, option only avalilable if entries loaded
+      // in worst case we fire a delete for no entries resulting in doing nothing.
+    }
+
+    @Override
+    public Message getGrowlMessageOnSuccess()
+    {
+      return new Message(MessageLevel.INFO, "deleted_var", "records");
+    }
+
+    @Override
+    protected void _execute()
+      throws Exception
+    {
+      invokeApiCall(apiClient -> apiClient.deleteRecords());
+
+      view.getTblRecords().reset();
+      view.getSelectedRecords().clear();
+
+      updateComponentsRecords();
+    }
+  }
+
   private void removeRecordFromView(Record apiRecord)
   {
     view.getTblRecords().removeRecord(apiRecord);
@@ -804,13 +800,14 @@ public class MainVC extends AbstractViewController<MainV>
     updateComponentsRecords();
   }
 
-  private void updateComponentsRecords()
+  public void updateComponentsRecords()
   {
     int cntSelected = view.getSelectedRecords().size();
 
     view.setDownloadRecordsDisabled(cntSelected == 0);
     view.setDeleteRecordsDisabled(cntSelected == 0);
     view.setShowRecordsDisabled(cntSelected != 1);
+    view.setDeleteAllRecordsDisabled(view.getTblRecords().getRowCount() == 0);
   }
 
   public StreamedContent getFileRecords()
@@ -852,8 +849,7 @@ public class MainVC extends AbstractViewController<MainV>
       {
         if (apiRecord.getRequestData() == null)
         {
-          Record apiRecordLoaded = invokeApiCall(apiClient -> apiClient.loadRecord(apiRecord.getRecordId()))
-              .getRecord();
+          Record apiRecordLoaded = invokeApiCall(apiClient -> apiClient.loadRecord(apiRecord.getRecordId())).getRecord();
 
           apiRecord.getPathParams().clear();
           apiRecord.getPathParams().addAll(apiRecordLoaded.getPathParams());
@@ -874,8 +870,7 @@ public class MainVC extends AbstractViewController<MainV>
 
         String contentType = getContentTypeRecordDownload(apiRecord);
 
-        streamedContent.setValue(new DefaultStreamedContent(
-            new ByteArrayInputStream(getFileContentRecordDownload(apiRecord).getBytes("UTF-8")), contentType,
+        streamedContent.setValue(new DefaultStreamedContent(new ByteArrayInputStream(getFileContentRecordDownload(apiRecord).getBytes("UTF-8")), contentType,
             getFilenameRecordDownload(apiRecord, contentType)));
       }
       // mapRecordFiles.size() > 1 => ZIP
@@ -893,8 +888,7 @@ public class MainVC extends AbstractViewController<MainV>
 
           for (Record apiRecord : view.getSelectedRecords())
           {
-            String filenameForZipping = getFilenameRecordDownload(apiRecord,
-                getContentTypeRecordDownload(apiRecord));
+            String filenameForZipping = getFilenameRecordDownload(apiRecord, getContentTypeRecordDownload(apiRecord));
 
             Integer countFilename = mapFilenameCount.get(filenameForZipping);
 
@@ -906,8 +900,7 @@ public class MainVC extends AbstractViewController<MainV>
             {
               mapFilenameCount.put(filenameForZipping, countFilename + 1);
 
-              filenameForZipping = new StringBuilder(filenameForZipping)
-                  .insert(filenameForZipping.lastIndexOf("."), "_" + countFilename).toString();
+              filenameForZipping = new StringBuilder(filenameForZipping).insert(filenameForZipping.lastIndexOf("."), "_" + countFilename).toString();
             }
 
             ZipEntry entry = new ZipEntry(filenameForZipping);
@@ -978,8 +971,7 @@ public class MainVC extends AbstractViewController<MainV>
 
     private String getFileContentRecordDownload(Record apiRecord)
     {
-      StringBuilder bui = new StringBuilder(
-          apiRecord.getRequestData().length() + apiRecord.getResponse().length() + 30);
+      StringBuilder bui = new StringBuilder(apiRecord.getRequestData().length() + apiRecord.getResponse().length() + 30);
 
       Collection<PathParam> pathParams = apiRecord.getPathParams();
       if (!pathParams.isEmpty())
@@ -1086,8 +1078,7 @@ public class MainVC extends AbstractViewController<MainV>
     @Override
     protected void createPreValidations()
     {
-      addValidation(new NotNull(apiRecordSelected, "record")
-          .addSubValidation(new NotNull(() -> apiRecordSelected.getRecordId(), "id")) //
+      addValidation(new NotNull(apiRecordSelected, "record").addSubValidation(new NotNull(() -> apiRecordSelected.getRecordId(), "id")) //
       );
     }
 
@@ -1152,8 +1143,7 @@ public class MainVC extends AbstractViewController<MainV>
     protected void _execute()
       throws Exception
     {
-      RecordSession apiRecordSession = invokeApiCall(apiClient -> apiClient.createRecordSession())
-          .getRecordSession();
+      RecordSession apiRecordSession = invokeApiCall(apiClient -> apiClient.createRecordSession()).getRecordSession();
 
       view.getTblRecordSessions().add(apiRecordSession);
     }
@@ -1177,9 +1167,7 @@ public class MainVC extends AbstractViewController<MainV>
     @Override
     public Message getGrowlMessageOnSuccess()
     {
-      return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(idsDeleted.size() > 1
-          ? "record_sessions"
-          : "record_session"));
+      return new Message(MessageLevel.INFO, "deleted_var", Resources.getLabel(idsDeleted.size() > 1 ? "record_sessions" : "record_session"));
     }
 
     @Override

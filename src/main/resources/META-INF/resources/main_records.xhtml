@@ -98,6 +98,11 @@ function stopDlRecords() {
 			action="#{main.deleteRecords()}"
 			disabled="#{main.deleteRecordsDisabled}" process="@this"
 			update=":form:panRecords" />
+		
+		<p:commandButton value="#{labels.deleteAll}"
+			action="#{main.deleteAllRecords()}"
+			disabled="#{main.deleteAllRecordsDisabled}" process="@this"
+			update=":form:panRecords" />
 
 	</p:panel>
 
