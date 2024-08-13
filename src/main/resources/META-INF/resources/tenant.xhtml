@@ -7,22 +7,22 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:head>
-	<title>MoSy Login</title>
+	<title>MoSy Tenant</title>
+</h:head>
 
-	<h:outputStylesheet name="primeicons/primeicons.css"
-		library="primefaces" />
+<h:outputStylesheet name="primeicons/primeicons.css"
+	library="primefaces" />
 
-	<style type="text/css">
+<style type="text/css">
 .pan_grid td {
 	text-align: right;
 }
 </style>
-</h:head>
 
 <h:body>
-	<h:form id="f_login">
+	<h:form id="f_tenant">
 
-		<p:panel header="#{labels.login_head}" id="panLogin">
+		<p:panel header="#{labels.tenant}" id="panTenant">
 
 			<p:messages id="info" showDetail="true" closeable="true" for="info"
 				escape="false">
@@ -52,24 +52,25 @@
 			<p:panelGrid styleClass="ui-noborder">
 				<p:row>
 					<p:column>
-						<h:outputText value="#{labels.tenant}"
-							rendered="#{login.multiTanencyEnabled}" />
-					</p:column>
-					<p:column colspan="2">
-						<p:selectOneMenu id="tenant" value="#{login.tenantSelected}"
-							rendered="#{login.multiTanencyEnabled}" style="width:14.3em"
-							converter="TenantConverter">
-							<p:ajax listener="#{login.onTenantSelect}" update="panLogin"
-								process="panLogin" />
-							<f:selectItem itemLabel="#{labels.select_tenant}" itemValue=""
-								noSelectionOption="true" />
-							<f:selectItems value="#{login.tenants}" />
-						</p:selectOneMenu>
+						<h:outputText value="#{labels.id}" />
 					</p:column>
 					<p:column>
-						<p:commandButton id="btnCreateTenant" value="#{labels._new}"
-							action="#{login.doCreateTenant}"
-							rendered="#{login.multiTanencyEnabled}" />
+						<p:inputText id="tenantId" value="#{tenant.tenantId}"
+							readonly="true" />
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column>
+						<h:outputText value="#{labels.name}" />
+					</p:column>
+					<p:column>
+						<p:inputText id="name" value="#{tenant.name}" />
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column colspan="2">
 					</p:column>
 				</p:row>
 
@@ -77,27 +78,36 @@
 					<p:column>
 						<h:outputText value="#{labels.password}" />
 					</p:column>
-					<p:column colspan="2">
-						<p:password id="pw" value="#{login.password}" style="width:15em" />
+					<p:column>
+						<p:password id="password" value="#{tenant.password}" />
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column>
+						<h:outputText value="#{labels.password_repeat}" />
 					</p:column>
 					<p:column>
+						<p:password id="passwordRepeat" value="#{tenant.passwordRepeat}" />
 					</p:column>
 				</p:row>
 
 				<p:row>
 					<p:column colspan="2">
 					</p:column>
-					<p:column style="text-align: right;">
-						<p:commandButton id="btnLogin" value="#{labels.login}"
-							action="#{login.doLogin}" />
-					</p:column>
-					<p:column>
-					</p:column>
 				</p:row>
-
 			</p:panelGrid>
 
-			<ui:include id="uincl_dataPanel" src="#{login.nullString}" />
+			<p:commandButton value="#{labels.save}"
+				action="#{tenant.saveTenant()}" update=":f_tenant" />
+
+			<p:commandButton value="#{labels.delete}"
+				action="#{tenant.deleteTenant()}"
+				disabled="#{tenant.deleteTenantDisabled}" />
+
+			<p:commandButton value="#{labels.cancel}" action="#{tenant.cancel()}" />
+
+			<ui:include id="uincl_dataPanel" src="#{tenant.nullString}" />
 
 		</p:panel>
 

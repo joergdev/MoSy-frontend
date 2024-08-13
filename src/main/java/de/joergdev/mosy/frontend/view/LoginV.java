@@ -1,16 +1,24 @@
 package de.joergdev.mosy.frontend.view;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
+import de.joergdev.mosy.api.model.Tenant;
 import de.joergdev.mosy.frontend.view.controller.LoginVC;
 import de.joergdev.mosy.frontend.view.core.AbstractView;
 
 @ManagedBean("login")
-@SessionScoped
+@ViewScoped
 public class LoginV extends AbstractView<LoginVC>
 {
   public static final String VIEW_PARAM_NO_AUTH = "no_auth";
+
+  private boolean multiTanencyEnabled = false;
+  private final List<Tenant> tenants = new ArrayList<>();
+  private Tenant tenantSelected;
+  private boolean tenantEditDeletePossible = false;
 
   private String password;
 
@@ -37,6 +45,17 @@ public class LoginV extends AbstractView<LoginVC>
     invokeWithErrorHandling(controller::doLogin);
   }
 
+  public void onTenantSelect()
+  {
+    // set visible state of buttons for tenant
+    controller.updateComponents();
+  }
+
+  public void doCreateTenant()
+  {
+    invokeWithErrorHandling(controller::doCreateTenant);
+  }
+
   public String getPassword()
   {
     return password;
@@ -55,5 +74,40 @@ public class LoginV extends AbstractView<LoginVC>
   public void setNullString(String nullString)
   {
     this.nullString = nullString;
+  }
+
+  public List<Tenant> getTenants()
+  {
+    return tenants;
+  }
+
+  public Tenant getTenantSelected()
+  {
+    return tenantSelected;
+  }
+
+  public void setTenantSelected(Tenant tenantSelected)
+  {
+    this.tenantSelected = tenantSelected;
+  }
+
+  public boolean isMultiTanencyEnabled()
+  {
+    return multiTanencyEnabled;
+  }
+
+  public void setMultiTanencyEnabled(boolean multiTanencyEnabled)
+  {
+    this.multiTanencyEnabled = multiTanencyEnabled;
+  }
+
+  public boolean isTenantEditDeletePossible()
+  {
+    return tenantEditDeletePossible;
+  }
+
+  public void setTenantEditDeletePossible(boolean tenantEditDeletePossible)
+  {
+    this.tenantEditDeletePossible = tenantEditDeletePossible;
   }
 }

@@ -228,6 +228,11 @@ public class MainV extends AbstractView<MainVC>
     controller.uploadMockData();
   }
 
+  public void editTenantData()
+  {
+    controller.editTenantData();
+  }
+
   // --- Basedata ----------------------
 
   public void baseDataChanged()

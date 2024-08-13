@@ -321,8 +321,8 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
           methodSelected.setName(filename.substring(idxEndInterfaceName + 1, idxEndMethodName));
 
           methodSelected.setMockInterfaceData(new Interface());
-          methodSelected.getMockInterface().setName(filename.substring(0, idxEndInterfaceName));
-
+          methodSelected.setInterfaceName(filename.substring(0, idxEndInterfaceName));
+          
           filenameNew = filename.substring(idxEndMethodName + 1);
         }
         else
