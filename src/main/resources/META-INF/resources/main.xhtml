@@ -63,9 +63,9 @@
 							
 						<f:facet name="options">
 							<p:commandButton id="btnEditTenantData" value="#{labels.edit_tenant}"
-								icon="pi pi-home" action="#{main.editTenantData}" process="@this" />
+								icon="pi pi-user" action="#{main.editTenantData}" rendered="#{main.multiTanencyEnabled}" process="@this" />
 							<p:commandButton id="btnLogout" value="#{labels.logout}"
-								icon="pi-user-edit" action="#{main.logout}" process="@this" />
+								icon="pi pi-sign-out" action="#{main.logout}" process="@this" />
 						</f:facet>
 					</p:menubar>
 				</div>
