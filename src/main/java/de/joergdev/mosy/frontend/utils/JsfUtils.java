@@ -7,6 +7,7 @@ import javax.faces.application.FacesMessage.Severity;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+import de.joergdev.mosy.frontend.security.TokenHolder;
 
 public class JsfUtils
 {
@@ -29,9 +30,7 @@ public class JsfUtils
   {
     ExternalContext ec = getExternalContext();
 
-    return ec == null
-        ? null
-        : (HttpSession) ec.getSession(createIfNull);
+    return ec == null ? null : (HttpSession) ec.getSession(createIfNull);
   }
 
   public static FacesContext getFacesContext()
@@ -43,9 +42,7 @@ public class JsfUtils
   {
     FacesContext fc = getFacesContext();
 
-    return fc == null
-        ? null
-        : fc.getExternalContext();
+    return fc == null ? null : fc.getExternalContext();
   }
 
   public static void redirect(String target)
@@ -68,9 +65,7 @@ public class JsfUtils
         Object paramValue = queryParams.get(paramName);
         if (paramValue != null)
         {
-          bui.append(firstParam
-              ? "?"
-              : "&");
+          bui.append(firstParam ? "?" : "&");
 
           bui.append(paramName).append("=").append(paramValue);
 
@@ -87,5 +82,8 @@ public class JsfUtils
   public static void invalidateSession()
   {
     getExternalContext().invalidateSession();
+
+    TokenHolder.setTenant(null);
+    TokenHolder.setToken(null);
   }
 }

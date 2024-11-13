@@ -22,6 +22,7 @@ import de.joergdev.mosy.api.model.UrlArgument;
 import de.joergdev.mosy.frontend.Resources;
 import de.joergdev.mosy.frontend.model.RecordsLazyDataModel;
 import de.joergdev.mosy.frontend.model.YesNoGlobalOrInterfaceIndividuallyType;
+import de.joergdev.mosy.frontend.security.TokenHolder;
 import de.joergdev.mosy.frontend.utils.ColumnModel;
 import de.joergdev.mosy.frontend.utils.TreeData;
 import de.joergdev.mosy.frontend.utils.WidthUnit;
@@ -33,6 +34,8 @@ import de.joergdev.mosy.shared.ValueWrapper;
 @ViewScoped
 public class MainV extends AbstractView<MainVC>
 {
+  private boolean multiTanencyEnabled = false;
+
   // --- Tree --------------------------
   private TreeNode treeRoot;
   private TreeNode selectedNode;
@@ -129,6 +132,8 @@ public class MainV extends AbstractView<MainVC>
   @PostConstruct
   public void init()
   {
+    multiTanencyEnabled = TokenHolder.getTenant() != null;
+
     treeRoot = new DefaultTreeNode("MoSy", null);
 
     initTblInterfaces();
@@ -226,6 +231,11 @@ public class MainV extends AbstractView<MainVC>
   public void uploadMockData()
   {
     controller.uploadMockData();
+  }
+
+  public void editTenantData()
+  {
+    controller.editTenantData();
   }
 
   // --- Basedata ----------------------
@@ -973,5 +983,15 @@ public class MainV extends AbstractView<MainVC>
   public void setRecHttpReturnCodeRendered(boolean recHttpReturnCodeRendered)
   {
     this.recHttpReturnCodeRendered = recHttpReturnCodeRendered;
+  }
+
+  public boolean isMultiTanencyEnabled()
+  {
+    return multiTanencyEnabled;
+  }
+
+  public void setMultiTanencyEnabled(boolean multiTanencyEnabled)
+  {
+    this.multiTanencyEnabled = multiTanencyEnabled;
   }
 }

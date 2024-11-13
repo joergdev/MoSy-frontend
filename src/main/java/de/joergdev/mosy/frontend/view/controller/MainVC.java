@@ -420,6 +420,27 @@ public class MainVC extends AbstractViewController<MainV>
     }
   }
 
+  public void editTenantData()
+  {
+    new EditTenantExecution().execute();
+  }
+
+  private class EditTenantExecution extends Execution
+  {
+    @Override
+    protected void createPreValidations()
+    {
+      // no validation
+    }
+
+    @Override
+    protected void _execute()
+      throws Exception
+    {
+      JsfUtils.redirect(Resources.SITE_TENANT);
+    }
+  }
+
   //--- Interfaces ----------------------
 
   public void newInterface()

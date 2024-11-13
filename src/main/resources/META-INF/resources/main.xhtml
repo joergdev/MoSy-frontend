@@ -62,8 +62,10 @@
 							action="#{main.uploadMockData}" icon="pi pi-cloud-upload" />
 							
 						<f:facet name="options">
+							<p:commandButton id="btnEditTenantData" value="#{labels.edit_tenant}"
+								icon="pi pi-user" action="#{main.editTenantData}" rendered="#{main.multiTanencyEnabled}" process="@this" />
 							<p:commandButton id="btnLogout" value="#{labels.logout}"
-								icon="pi pi-home" action="#{main.logout}" process="@this" />
+								icon="pi pi-sign-out" action="#{main.logout}" process="@this" />
 						</f:facet>
 					</p:menubar>
 				</div>
