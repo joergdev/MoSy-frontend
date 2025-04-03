@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:head>
@@ -67,9 +67,11 @@
 					<f:facet name="footer">
 						<p:commandButton value="#{labels.confirm}"
 							update="panMockProfiles"
-							action="#{recordAsMockdata.addSelectedMockProfile}" />
+							action="#{recordAsMockdata.addSelectedMockProfile}"
+							style="margin-top: 10px; margin-right: 10px;" />
 						<p:commandButton value="#{labels.cancel}"
-							oncomplete="PF('mockProfileSelectionDlg').hide();" />
+							oncomplete="PF('mockProfileSelectionDlg').hide();"
+							styleClass="ui-button-secondary" style="margin-top: 10px;" />
 					</f:facet>
 				</h:panelGrid>
 			</p:dialog>
@@ -123,12 +125,14 @@
 
 						<p:commandButton value="#{labels.add}"
 							action="#{recordAsMockdata.addMockProfile()}"
-							update=":form:mockProfileSelectionDlg" />
+							update=":form:mockProfileSelectionDlg"
+							style="margin-top: 10px; margin-right: 10px;" />
 
 						<p:commandButton value="#{labels.delete}"
 							action="#{recordAsMockdata.deleteMockProfiles()}"
 							disabled="#{recordAsMockdata.deleteMockProfileDisabled}"
-							process="@this" update=":form:panMockProfiles" />
+							process="@this" update=":form:panMockProfiles"
+							styleClass="ui-button-danger" style="margin-top: 10px;" />
 
 					</p:panel>
 
@@ -157,10 +161,11 @@
 
 					<p:commandButton value="#{labels.use_as_mockdata}"
 						action="#{recordAsMockdata.useRecordsAsMockdata()}"
-						process="pan_ifc" />
+						process="pan_ifc" style="margin-top: 10px; margin-right: 10px;" />
 
 					<p:commandButton value="#{labels.cancel}"
-						action="#{recordAsMockdata.cancel()}" />
+						action="#{recordAsMockdata.cancel()}"
+						styleClass="ui-button-secondary" style="margin-top: 10px;" />
 
 				</div>
 

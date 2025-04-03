@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:head>
@@ -18,44 +18,45 @@
 		<h:panelGrid id="pangr_meth" columns="2" cellpadding="4">
 
 			<h:outputText for="name" value="#{labels.name}" />
-			<p:inputText id="name" value="#{_interface.methodVS.name}" />
+			<p:inputText id="name" value="#{interfaceBean.methodVS.name}" />
 
 			<h:outputText id="lblServicePath" for="servicePath"
 				value="#{labels.service_path}"
-				rendered="#{_interface.methodVS.servicePathRendered}" />
+				rendered="#{interfaceBean.methodVS.servicePathRendered}" />
 			<p:inputText id="servicePath"
-				value="#{_interface.methodVS.servicePath}"
-				rendered="#{_interface.methodVS.servicePathRendered}" />
+				value="#{interfaceBean.methodVS.servicePath}"
+				rendered="#{interfaceBean.methodVS.servicePathRendered}" />
 
-			<h:outputText for="cbHttpMethod" value="#{labels.http_method}" rendered="#{_interface.methodVS.httpMethodRendered}" />
+			<h:outputText for="cbHttpMethod" value="#{labels.http_method}"
+				rendered="#{interfaceBean.methodVS.httpMethodRendered}" />
 			<p:selectOneMenu id="cbHttpMethod"
-				value="#{_interface.methodVS.httpMethod}"
-				rendered="#{_interface.methodVS.httpMethodRendered}">
-				<f:selectItems value="#{_interface.methodVS.httpMethods}" />
+				value="#{interfaceBean.methodVS.httpMethod}"
+				rendered="#{interfaceBean.methodVS.httpMethodRendered}">
+				<f:selectItems value="#{interfaceBean.methodVS.httpMethods}" />
 			</p:selectOneMenu>
 
-			<p:selectBooleanCheckbox value="#{_interface.methodVS.mockActive}"
+			<p:selectBooleanCheckbox value="#{interfaceBean.methodVS.mockActive}"
 				itemLabel="#{labels.mock_active}">
 				<p:ajax update="panIfMethBasedata"
-					listener="#{_interface.methodVS.handleMockDisabled}"
+					listener="#{interfaceBean.methodVS.handleMockDisabled}"
 					process="panIfMethBasedata" />
 			</p:selectBooleanCheckbox>
 
 			<p:selectBooleanCheckbox
-				value="#{_interface.methodVS.mockActiveOnStartup}"
+				value="#{interfaceBean.methodVS.mockActiveOnStartup}"
 				itemLabel="#{labels.on_startup}">
 				<p:ajax update="panIfMethBasedata"
-					listener="#{_interface.methodVS.handleMockDisabled}"
+					listener="#{interfaceBean.methodVS.handleMockDisabled}"
 					process="panIfMethBasedata" />
 			</p:selectBooleanCheckbox>
 
 
 			<p:selectBooleanCheckbox id="chk_routing_on_no_mockdata"
-				value="#{_interface.methodVS.routingOnNoMockData}"
+				value="#{interfaceBean.methodVS.routingOnNoMockData}"
 				itemLabel="#{labels.routing_on_no_mockdata}"
-				disabled="#{_interface.methodVS.routingOnNoMockDataDisabled}">
+				disabled="#{interfaceBean.methodVS.routingOnNoMockDataDisabled}">
 				<p:ajax update="panIfMethBasedata"
-					listener="#{_interface.methodVS.handleRoutingOnNoMockData}"
+					listener="#{interfaceBean.methodVS.handleRoutingOnNoMockData}"
 					process="panIfMethBasedata" />
 			</p:selectBooleanCheckbox>
 
@@ -65,9 +66,9 @@
 
 			<h:outputText for="chk_record" value="#{labels.record}" />
 			<p:selectOneMenu id="chk_record"
-				value="#{_interface.methodVS.record}"
-				disabled="#{_interface.methodVS.recordDisabled}">
-				<f:selectItems value="#{_interface.methodVS.yesNoGlobalTypes}" />
+				value="#{interfaceBean.methodVS.record}"
+				disabled="#{interfaceBean.methodVS.recordDisabled}">
+				<f:selectItems value="#{interfaceBean.methodVS.yesNoGlobalTypes}" />
 			</p:selectOneMenu>
 
 
@@ -75,18 +76,20 @@
 			<h:outputText id="lblCountCalls" for="countCalls"
 				value="#{labels.count_calls}" />
 			<p:inputText id="countCalls"
-				value="#{_interface.methodVS.countCalls}" readonly="true" />
+				value="#{interfaceBean.methodVS.countCalls}" readonly="true" />
 
 		</h:panelGrid>
 
 		<p:commandButton id="btnConfirmMethod" value="#{labels.confirm}"
-			action="#{_interface.methodVS.saveMethod()}"
-			process="panIfMethBasedata" update=":form" />
+			action="#{interfaceBean.methodVS.saveMethod()}"
+			process="panIfMethBasedata" update=":form"
+			style="margin-top: 10px; margin-right: 10px;" />
 
 		<p:commandButton id="btnDeleteMethod" value="#{labels.delete}"
-			action="#{_interface.methodVS.deleteMethod()}"
-			disabled="#{_interface.methodVS.deleteMethodDisabled}"
-			process="@this" update=":form" />
+			action="#{interfaceBean.methodVS.deleteMethod()}"
+			disabled="#{interfaceBean.methodVS.deleteMethodDisabled}"
+			process="@this" update=":form" style="margin-top: 10px;"
+			styleClass="ui-button-danger" />
 
 	</p:panel>
 

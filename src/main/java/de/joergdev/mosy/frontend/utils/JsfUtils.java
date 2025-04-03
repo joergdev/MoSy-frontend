@@ -2,11 +2,11 @@ package de.joergdev.mosy.frontend.utils;
 
 import java.io.IOException;
 import java.util.Map;
-import javax.faces.application.FacesMessage;
-import javax.faces.application.FacesMessage.Severity;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpSession;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.application.FacesMessage.Severity;
+import jakarta.faces.context.ExternalContext;
+import jakarta.faces.context.FacesContext;
+import jakarta.servlet.http.HttpSession;
 import de.joergdev.mosy.frontend.security.TokenHolder;
 
 public class JsfUtils

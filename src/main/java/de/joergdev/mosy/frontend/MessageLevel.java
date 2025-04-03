@@ -1,7 +1,7 @@
 package de.joergdev.mosy.frontend;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.application.FacesMessage.Severity;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.application.FacesMessage.Severity;
 import de.joergdev.mosy.api.response.ResponseMessageLevel;
 
 public enum MessageLevel

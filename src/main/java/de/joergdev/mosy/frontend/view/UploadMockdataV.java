@@ -2,9 +2,9 @@ package de.joergdev.mosy.frontend.view;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.ManagedBean;
-import javax.annotation.PostConstruct;
-import javax.faces.view.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import org.primefaces.event.FileUploadEvent;
 import de.joergdev.mosy.api.model.Interface;
 import de.joergdev.mosy.api.model.InterfaceMethod;
@@ -16,7 +16,7 @@ import de.joergdev.mosy.frontend.utils.WidthUnit;
 import de.joergdev.mosy.frontend.view.controller.UploadMockdataVC;
 import de.joergdev.mosy.frontend.view.core.AbstractView;
 
-@ManagedBean("uploadMockdata")
+@Named("uploadMockdata")
 @ViewScoped
 public class UploadMockdataV extends AbstractView<UploadMockdataVC>
 {

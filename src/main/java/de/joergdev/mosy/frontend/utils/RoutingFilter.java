@@ -2,15 +2,15 @@ package de.joergdev.mosy.frontend.utils;
 
 import java.io.IOException;
 import java.util.Arrays;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import de.joergdev.mosy.frontend.Resources;
 import de.joergdev.mosy.shared.Utils;
 
@@ -34,7 +34,7 @@ public class RoutingFilter implements Filter
 
     final String url = httpRequest.getRequestURI();
 
-    if (url.startsWith("/javax.faces.resource/"))
+    if (url.startsWith("/jakarta.faces.resource/"))
     {
       chain.doFilter(httpRequest, httpResponse);
 

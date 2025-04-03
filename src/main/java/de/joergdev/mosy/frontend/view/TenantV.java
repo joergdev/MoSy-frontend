@@ -1,12 +1,12 @@
 package de.joergdev.mosy.frontend.view;
 
-import javax.annotation.ManagedBean;
-import javax.annotation.PostConstruct;
-import javax.faces.view.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import de.joergdev.mosy.frontend.view.controller.TenantVC;
 import de.joergdev.mosy.frontend.view.core.AbstractView;
 
-@ManagedBean("tenant")
+@Named("tenant")
 @ViewScoped
 public class TenantV extends AbstractView<TenantVC>
 {

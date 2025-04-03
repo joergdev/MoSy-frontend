@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:head>
 	<title>MoSy Mockprofile</title>
+
+	<style type="text/css">
+.col1 {
+	width: 15%;
+	text-align: left;
+}
+
+.col2 {
+	width: 85%;
+	text-align: left;
+}
+</style>
+
 </h:head>
 
 <h:outputStylesheet name="primeicons/primeicons.css"
@@ -67,15 +80,16 @@
 
 				<div class="ui-g-12">
 
-					<p:panelGrid styleClass="ui-noborder">
+					<p:panelGrid styleClass="ui-noborder" columns="2"
+						columnClasses="col1,col2">
 
 						<p:row>
-							<p:column>
+							<p:column style="display: flex; align-items: center;">
 								<h:outputText for="name" value="#{labels.name}" />
 							</p:column>
-							<p:column colspan="2">
+							<p:column>
 								<p:inputText id="name" value="#{mockprofile.name}"
-									style="width:100%" />
+									style="width:40%" />
 							</p:column>
 						</p:row>
 
@@ -95,23 +109,16 @@
 
 						<p:row>
 							<p:column>
-								<h:outputText value="#{labels.description}"
-									style="margin-top: 30px" />
+								<h:outputText value="#{labels.description}" />
 							</p:column>
 							<p:column>
 								<p:inputTextarea id="description" rows="10" cols="80"
-									value="#{mockprofile.description}" style="margin-top: 30px" />
+									style="width:40%" value="#{mockprofile.description}" />
 							</p:column>
 						</p:row>
 
 						<p:row>
-							<p:column>
-								<h:outputText />
-							</p:column>
-						</p:row>
-
-						<p:row>
-							<p:column>
+							<p:column style="display: flex; align-items: center;">
 								<h:outputText for="created" value="#{labels.created}" />
 							</p:column>
 							<p:column>
@@ -124,14 +131,18 @@
 
 					<p:commandButton value="#{labels.save}"
 						action="#{mockprofile.save()}" update=":form"
-						style="margin-top: 50px" />
+						style="margin-top: 50px; margin-right: 10px;" />
 
 					<p:commandButton value="#{labels.delete}"
 						action="#{mockprofile.delete()}"
-						disabled="#{mockprofile.deleteDisabled}" style="margin-top: 50px" />
+						disabled="#{mockprofile.deleteDisabled}"
+						style="margin-top: 50px; margin-right: 10px;"
+						styleClass="ui-button-danger" />
 
 					<p:commandButton value="#{labels.cancel}"
-						action="#{mockprofile.cancel()}" style="margin-top: 50px" />
+						action="#{mockprofile.cancel()}"
+						style="margin-top: 50px; margin-right: 10px;"
+						styleClass="ui-button-secondary" />
 
 				</div>
 

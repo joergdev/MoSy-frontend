@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:head>
@@ -19,40 +19,46 @@
 
 			<h:outputLabel for="mdMockProfile" value="#{labels.mock_profile}" />
 			<p:selectOneMenu id="mdMockProfile"
-				value="#{_interface.methodVS.mdMockProfile}"
+				value="#{interfaceBean.methodVS.mdMockProfile}"
 				converter="MockProfileConverter">
 				<f:selectItem itemLabel="#{labels.select_mock_profile}" itemValue=""
 					noSelectionOption="true" />
-				<f:selectItems value="#{_interface.methodVS.mockProfiles}" />
+				<f:selectItems value="#{interfaceBean.methodVS.mockProfiles}" />
 			</p:selectOneMenu>
 
 
 			<f:facet name="footer">
 				<p:commandButton value="#{labels.confirm}"
 					update=":form:panMockData"
-					action="#{_interface.methodVS.addMockDataSelectedMockProfile}" />
+					action="#{interfaceBean.methodVS.addMockDataSelectedMockProfile}"
+					style="margin-top: 10px; margin-right: 10px;" />
 				<p:commandButton value="#{labels.cancel}"
-					oncomplete="PF('mockProfileSelectionDlg').hide();" />
+					oncomplete="PF('mockProfileSelectionDlg').hide();"
+					styleClass="ui-button-secondary" style="margin-top: 10px;" />
 			</f:facet>
 		</h:panelGrid>
 	</p:dialog>
-	
+
 	<p:dialog header="#{labels.path_param}" id="pathParamDlg"
 		widgetVar="pathParamDlg" resizable="false" modal="true">
 		<h:panelGrid columns="2" cellpadding="4" id="panDlgPP">
 
 			<h:outputLabel for="mdPathParamKey" value="#{labels.key}" />
-			<p:inputText id="mdPathParamKey" value="#{_interface.methodVS.mdPathParamKey}" />
-	
+			<p:inputText id="mdPathParamKey"
+				value="#{interfaceBean.methodVS.mdPathParamKey}" />
+
 			<h:outputLabel for="mdPathParamValue" value="#{labels.value}" />
-			<p:inputText id="mdPathParamValue" value="#{_interface.methodVS.mdPathParamValue}" />
-			
+			<p:inputText id="mdPathParamValue"
+				value="#{interfaceBean.methodVS.mdPathParamValue}" />
+
 			<f:facet name="footer">
 				<p:commandButton value="#{labels.confirm}"
 					update=":form:panMockData"
-					action="#{_interface.methodVS.addMockDataGivenPathParam}" />
+					action="#{interfaceBean.methodVS.addMockDataGivenPathParam}"
+					style="margin-top: 10px; margin-right: 10px;" />
 				<p:commandButton value="#{labels.cancel}"
-					oncomplete="PF('pathParamDlg').hide();" />
+					oncomplete="PF('pathParamDlg').hide();"
+					styleClass="ui-button-secondary" style="margin-top: 10px;" />
 			</f:facet>
 		</h:panelGrid>
 	</p:dialog>
@@ -62,21 +68,25 @@
 		<h:panelGrid columns="2" cellpadding="4" id="panDlgUA">
 
 			<h:outputLabel for="mdUrlArgumentKey" value="#{labels.key}" />
-			<p:inputText id="mdUrlArgumentKey" value="#{_interface.methodVS.mdUrlArgumentKey}" />
-	
+			<p:inputText id="mdUrlArgumentKey"
+				value="#{interfaceBean.methodVS.mdUrlArgumentKey}" />
+
 			<h:outputLabel for="mdUrlArgumentValue" value="#{labels.value}" />
-			<p:inputText id="mdUrlArgumentValue" value="#{_interface.methodVS.mdUrlArgumentValue}" />
-			
+			<p:inputText id="mdUrlArgumentValue"
+				value="#{interfaceBean.methodVS.mdUrlArgumentValue}" />
+
 			<f:facet name="footer">
 				<p:commandButton value="#{labels.confirm}"
 					update=":form:panMockData"
-					action="#{_interface.methodVS.addMockDataGivenUrlArgument}" />
+					action="#{interfaceBean.methodVS.addMockDataGivenUrlArgument}"
+					style="margin-top: 10px; margin-right: 10px;" />
 				<p:commandButton value="#{labels.cancel}"
-					oncomplete="PF('urlArgumentsDlg').hide();" />
+					oncomplete="PF('urlArgumentsDlg').hide();"
+					styleClass="ui-button-secondary" style="margin-top: 10px;" />
 			</f:facet>
 		</h:panelGrid>
 	</p:dialog>
-	
+
 	<p:panel id="panMockData">
 
 		<p:panel id="panMdMockProfiles">
@@ -84,13 +94,13 @@
 			<h:outputText value="#{labels.mock_profiles}" />
 
 			<p:dataTable id="tblMockDataMockProfiles"
-				value="#{_interface.methodVS.tblMockDataMockProfiles}" var="mp"
+				value="#{interfaceBean.methodVS.tblMockDataMockProfiles}" var="mp"
 				emptyMessage="#{labels.no_data}" selectionMode="multiple"
-				selection="#{_interface.methodVS.selectedMockDataMockProfiles}"
+				selection="#{interfaceBean.methodVS.selectedMockDataMockProfiles}"
 				rowKey="#{mp.mockProfileID}">
 
 				<p:columns
-					value="#{_interface.methodVS.tblMockDataMockProfilesColumns}"
+					value="#{interfaceBean.methodVS.tblMockDataMockProfilesColumns}"
 					var="col" width="#{col.widthFull}">
 					<f:facet name="header">
 						<h:outputText value="#{col.header}" />
@@ -99,24 +109,26 @@
 				</p:columns>
 
 				<p:ajax event="rowSelect"
-					listener="#{_interface.methodVS.onMockDataMockProfilesRowSelect}"
+					listener="#{interfaceBean.methodVS.onMockDataMockProfilesRowSelect}"
 					update=":form:panMdMockProfiles" />
 
 				<p:ajax event="rowUnselect"
-					listener="#{_interface.methodVS.onMockDataMockProfilesRowUnselect}"
+					listener="#{interfaceBean.methodVS.onMockDataMockProfilesRowUnselect}"
 					update=":form:panMdMockProfiles" />
 
 			</p:dataTable>
 
 
 			<p:commandButton value="#{labels.add}"
-				action="#{_interface.methodVS.addMockDataMockProfile()}"
-				update=":form:mockProfileSelectionDlg" />
+				action="#{interfaceBean.methodVS.addMockDataMockProfile()}"
+				update=":form:mockProfileSelectionDlg"
+				style="margin-top: 10px; margin-right: 10px;" />
 
 			<p:commandButton value="#{labels.delete}"
-				action="#{_interface.methodVS.deleteMockDataMockProfiles()}"
-				disabled="#{_interface.methodVS.deleteMockDataMockProfileDisabled}"
-				process="@this" update=":form:panMdMockProfiles" />
+				action="#{interfaceBean.methodVS.deleteMockDataMockProfiles()}"
+				disabled="#{interfaceBean.methodVS.deleteMockDataMockProfileDisabled}"
+				process="@this" update=":form:panMdMockProfiles"
+				style="margin-top: 10px;" styleClass="ui-button-danger" />
 
 		</p:panel>
 
@@ -125,30 +137,32 @@
 		<h:panelGrid id="pangr_md" columns="2" cellpadding="4">
 
 			<h:outputText for="mdTitle" value="#{labels.title}" />
-			<p:inputText id="mdTitle" value="#{_interface.methodVS.mdTitle}" />
+			<p:inputText id="mdTitle" value="#{interfaceBean.methodVS.mdTitle}" />
 
-			<p:selectBooleanCheckbox value="#{_interface.methodVS.mdActive}"
+			<p:selectBooleanCheckbox value="#{interfaceBean.methodVS.mdActive}"
 				itemLabel="#{labels.active}" />
 			<div />
 
-			<p:selectBooleanCheckbox value="#{_interface.methodVS.mdCommon}"
+			<p:selectBooleanCheckbox value="#{interfaceBean.methodVS.mdCommon}"
 				itemLabel="#{labels.common}" />
 			<div />
 
 		</h:panelGrid>
-		
-		<p:panel id="panMdPathParams" style="margin-top: 15px;margin-bottom: 15px;" rendered="#{_interface.methodVS.pathParamsRendered}">
-			
+
+		<p:panel id="panMdPathParams"
+			style="margin-top: 15px;margin-bottom: 15px;"
+			rendered="#{interfaceBean.methodVS.pathParamsRendered}">
+
 			<h:outputText value="#{labels.path_params}" />
 
 			<p:dataTable id="tblMockDataPathParams"
-				value="#{_interface.methodVS.tblMockDataPathParams}" var="pp"
+				value="#{interfaceBean.methodVS.tblMockDataPathParams}" var="pp"
 				emptyMessage="#{labels.no_data}" selectionMode="multiple"
-				selection="#{_interface.methodVS.selectedMockDataPathParams}"
+				selection="#{interfaceBean.methodVS.selectedMockDataPathParams}"
 				rowKey="#{pp.key}">
 
 				<p:columns
-					value="#{_interface.methodVS.tblMockDataPathParamsColumns}"
+					value="#{interfaceBean.methodVS.tblMockDataPathParamsColumns}"
 					var="col" width="#{col.widthFull}">
 					<f:facet name="header">
 						<h:outputText value="#{col.header}" />
@@ -157,39 +171,43 @@
 				</p:columns>
 
 				<p:ajax event="rowSelect"
-					listener="#{_interface.methodVS.onMockDataPathParamsRowSelect}"
+					listener="#{interfaceBean.methodVS.onMockDataPathParamsRowSelect}"
 					update=":form:panMdPathParams" />
 
 				<p:ajax event="rowUnselect"
-					listener="#{_interface.methodVS.onMockDataPathParamsRowUnselect}"
+					listener="#{interfaceBean.methodVS.onMockDataPathParamsRowUnselect}"
 					update=":form:panMdPathParams" />
 
 			</p:dataTable>
 
 
 			<p:commandButton value="#{labels.add}"
-				action="#{_interface.methodVS.addMockDataPathParam()}"
-				update=":form:pathParamDlg" />
+				action="#{interfaceBean.methodVS.addMockDataPathParam()}"
+				update=":form:pathParamDlg"
+				style="margin-top: 10px; margin-right: 10px;" />
 
 			<p:commandButton value="#{labels.delete}"
-				action="#{_interface.methodVS.deleteMockDataPathParams()}"
-				disabled="#{_interface.methodVS.deleteMockDataPathParamDisabled}"
-				process="@this" update=":form:panMdPathParams" />
+				action="#{interfaceBean.methodVS.deleteMockDataPathParams()}"
+				disabled="#{interfaceBean.methodVS.deleteMockDataPathParamDisabled}"
+				process="@this" update=":form:panMdPathParams"
+				styleClass="ui-button-danger" style="margin-top: 10px;" />
 
 		</p:panel>
 
-		<p:panel id="panMdUrlArguments" style="margin-top: 15px;margin-bottom: 15px;" rendered="#{_interface.methodVS.urlArgumentsRendered}">
-			
+		<p:panel id="panMdUrlArguments"
+			style="margin-top: 15px;margin-bottom: 15px;"
+			rendered="#{interfaceBean.methodVS.urlArgumentsRendered}">
+
 			<h:outputText value="#{labels.url_arguments}" />
 
 			<p:dataTable id="tblMockDataUrlArguments"
-				value="#{_interface.methodVS.tblMockDataUrlArguments}" var="ua"
+				value="#{interfaceBean.methodVS.tblMockDataUrlArguments}" var="ua"
 				emptyMessage="#{labels.no_data}" selectionMode="multiple"
-				selection="#{_interface.methodVS.selectedMockDataUrlArguments}"
+				selection="#{interfaceBean.methodVS.selectedMockDataUrlArguments}"
 				rowKey="#{ua.key}">
 
 				<p:columns
-					value="#{_interface.methodVS.tblMockDataUrlArgumentsColumns}"
+					value="#{interfaceBean.methodVS.tblMockDataUrlArgumentsColumns}"
 					var="col" width="#{col.widthFull}">
 					<f:facet name="header">
 						<h:outputText value="#{col.header}" />
@@ -198,24 +216,26 @@
 				</p:columns>
 
 				<p:ajax event="rowSelect"
-					listener="#{_interface.methodVS.onMockDataUrlArgumentsRowSelect}"
+					listener="#{interfaceBean.methodVS.onMockDataUrlArgumentsRowSelect}"
 					update=":form:panMdUrlArguments" />
 
 				<p:ajax event="rowUnselect"
-					listener="#{_interface.methodVS.onMockDataUrlArgumentsRowUnselect}"
+					listener="#{interfaceBean.methodVS.onMockDataUrlArgumentsRowUnselect}"
 					update=":form:panMdUrlArguments" />
 
 			</p:dataTable>
 
 
 			<p:commandButton value="#{labels.add}"
-				action="#{_interface.methodVS.addMockDataUrlArgument()}"
-				update=":form:urlArgumentsDlg" />
+				action="#{interfaceBean.methodVS.addMockDataUrlArgument()}"
+				update=":form:urlArgumentsDlg"
+				style="margin-top: 10px; margin-right: 10px;" />
 
 			<p:commandButton value="#{labels.delete}"
-				action="#{_interface.methodVS.deleteMockDataUrlArguments()}"
-				disabled="#{_interface.methodVS.deleteMockDataUrlArgumentsDisabled}"
-				process="@this" update=":form:panMdUrlArguments" />
+				action="#{interfaceBean.methodVS.deleteMockDataUrlArguments()}"
+				disabled="#{interfaceBean.methodVS.deleteMockDataUrlArgumentsDisabled}"
+				process="@this" update=":form:panMdUrlArguments"
+				styleClass="ui-button-danger" style="margin-top: 10px;" />
 
 		</p:panel>
 
@@ -223,42 +243,49 @@
 
 			<h:outputText value="#{labels.request}" />
 			<p:inputTextarea id="mdRequest" rows="10" cols="80"
-				value="#{_interface.methodVS.mdRequest}" />
+				value="#{interfaceBean.methodVS.mdRequest}" />
 
-			<h:outputText value="#{labels.http_status_code}" rendered="#{_interface.methodVS.httpReturnCodeRendered}" />
-			<p:inputNumber id="mdHttpResponseCode" value="#{_interface.methodVS.mdHttpResponseCode}" rendered="#{_interface.methodVS.httpReturnCodeRendered}" 
-				thousandSeparator="" decimalSeparator="." decimalPlaces="0" maxValue="599" size="1" />
-			
+			<h:outputText value="#{labels.http_status_code}"
+				rendered="#{interfaceBean.methodVS.httpReturnCodeRendered}" />
+			<p:inputNumber id="mdHttpResponseCode"
+				value="#{interfaceBean.methodVS.mdHttpResponseCode}"
+				rendered="#{interfaceBean.methodVS.httpReturnCodeRendered}"
+				thousandSeparator="" decimalSeparator="." decimalPlaces="0"
+				maxValue="599" size="1" />
+
 			<h:outputText value="#{labels.response}" />
 			<p:inputTextarea id="mdResponse" rows="10" cols="80"
-				value="#{_interface.methodVS.mdResponse}" />
-				
+				value="#{interfaceBean.methodVS.mdResponse}" />
+
 			<h:outputText value="#{labels.delay}" />
-			<p:inputNumber id="mdDelay" value="#{_interface.methodVS.mdDelay}" 
-				thousandSeparator="." decimalSeparator="," decimalPlaces="0" maxValue="9999999" size="5" />
+			<p:inputNumber id="mdDelay" value="#{interfaceBean.methodVS.mdDelay}"
+				thousandSeparator="." decimalSeparator="," decimalPlaces="0"
+				maxValue="9999999" size="5" />
 
 		</h:panelGrid>
 
 		<h:panelGrid id="pangr_md2" columns="4" cellpadding="4">
 
 			<h:outputText for="mdCreated" value="#{labels.created}" />
-			<p:inputText id="mdCreated" value="#{_interface.methodVS.mdCreated}"
-				readonly="true" />
+			<p:inputText id="mdCreated"
+				value="#{interfaceBean.methodVS.mdCreated}" readonly="true" />
 
 			<h:outputText for="mdCountCalls" value="#{labels.count_calls}" />
 			<p:inputText id="mdCountCalls"
-				value="#{_interface.methodVS.mdCountCalls}" readonly="true" />
+				value="#{interfaceBean.methodVS.mdCountCalls}" readonly="true" />
 
 		</h:panelGrid>
 
 		<p:commandButton id="btnSaveMockData" value="#{labels.save}"
-			action="#{_interface.methodVS.saveMockData()}" process="panMockData"
-			update=":form" />
+			action="#{interfaceBean.methodVS.saveMockData()}"
+			process="panMockData" update=":form"
+			style="margin-top: 10px; margin-right: 10px;" />
 
 		<p:commandButton id="btnDeleteMockData" value="#{labels.delete}"
-			action="#{_interface.methodVS.deleteMockData()}"
-			disabled="#{_interface.methodVS.deleteMockDataDisabled}"
-			process="@this" update=":form" />
+			action="#{interfaceBean.methodVS.deleteMockData()}"
+			disabled="#{interfaceBean.methodVS.deleteMockDataDisabled}"
+			process="@this" update=":form" style="margin-top: 10px;"
+			styleClass="ui-button-danger" />
 
 	</p:panel>
 

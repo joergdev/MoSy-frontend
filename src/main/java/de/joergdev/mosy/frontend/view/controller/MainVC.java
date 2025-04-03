@@ -2,6 +2,7 @@ package de.joergdev.mosy.frontend.view.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -891,8 +892,12 @@ public class MainVC extends AbstractViewController<MainV>
 
         String contentType = getContentTypeRecordDownload(apiRecord);
 
-        streamedContent.setValue(new DefaultStreamedContent(new ByteArrayInputStream(getFileContentRecordDownload(apiRecord).getBytes("UTF-8")), contentType,
-            getFilenameRecordDownload(apiRecord, contentType)));
+        streamedContent.setValue( //
+            DefaultStreamedContent.builder() //
+                .stream(() -> new ByteArrayInputStream(getFileContentRecordDownload(apiRecord).getBytes(StandardCharsets.UTF_8))) //
+                .contentType(contentType) //
+                .name(getFilenameRecordDownload(apiRecord, contentType)) //
+                .build());
       }
       // mapRecordFiles.size() > 1 => ZIP
       else
@@ -935,8 +940,12 @@ public class MainVC extends AbstractViewController<MainV>
 
           byte[] bytes = baos.toByteArray();
 
-          streamedContent.setValue(new DefaultStreamedContent(new ByteArrayInputStream(bytes), null,
-              "records_" + Utils.localDateTimeToString(LocalDateTime.now(), "dd_MM_yyyy_HH_mm_ss") + ".zip"));
+          streamedContent.setValue( //
+              DefaultStreamedContent.builder() //
+                  .stream(() -> new ByteArrayInputStream(bytes)) //
+                  .contentType("application/zip") //
+                  .name("records_" + Utils.localDateTimeToString(LocalDateTime.now(), "dd_MM_yyyy_HH_mm_ss") + ".zip") //
+                  .build());
         }
         catch (Exception ex)
         {

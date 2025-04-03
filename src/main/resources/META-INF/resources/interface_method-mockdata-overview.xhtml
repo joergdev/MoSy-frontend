@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:head>
@@ -16,12 +16,12 @@
 	<p:panel id="pnl_md_ov" header="#{labels.mockdata}">
 
 		<p:dataTable id="tblMockData"
-			value="#{_interface.methodVS.tblMockData}" var="md"
+			value="#{interfaceBean.methodVS.tblMockData}" var="md"
 			emptyMessage="#{labels.no_data}" rowKey="#{md.title}"
 			selectionMode="multiple"
-			selection="#{_interface.methodVS.selectedMockDataList}">
+			selection="#{interfaceBean.methodVS.selectedMockDataList}">
 
-			<p:columns value="#{_interface.methodVS.tblMockDataColumns}"
+			<p:columns value="#{interfaceBean.methodVS.tblMockDataColumns}"
 				var="col" width="#{col.widthFull}">
 				<f:facet name="header">
 					<h:outputText value="#{col.header}" />
@@ -30,38 +30,43 @@
 			</p:columns>
 
 			<p:ajax event="rowSelect"
-				listener="#{_interface.methodVS.onMockDataRowSelect}"
+				listener="#{interfaceBean.methodVS.onMockDataRowSelect}"
 				update=":form:pnl_md_ov" />
 
 			<p:ajax event="rowUnselect"
-				listener="#{_interface.methodVS.onMockDataRowUnselect}"
+				listener="#{interfaceBean.methodVS.onMockDataRowUnselect}"
 				update=":form:pnl_md_ov" />
 
 			<p:ajax event="rowDblselect"
-				listener="#{_interface.methodVS.onMockDataRowDoubleClick}"
+				listener="#{interfaceBean.methodVS.onMockDataRowDoubleClick}"
 				update="form" />
 
 		</p:dataTable>
 
 
 		<p:commandButton value="#{labels._new}"
-			action="#{_interface.methodVS.newMockData()}"
-			disabled="#{_interface.methodVS.newMockDataDisabled}" process="@this"
-			update=":form" />
+			action="#{interfaceBean.methodVS.newMockData()}"
+			disabled="#{interfaceBean.methodVS.newMockDataDisabled}"
+			process="@this" update=":form"
+			style="margin-top: 10px; margin-right: 10px;" />
 
 		<p:commandButton value="#{labels.upload}"
-			action="#{_interface.methodVS.uploadMockData()}"
-			disabled="#{_interface.methodVS.newMockDataDisabled}" process="@this" />
+			action="#{interfaceBean.methodVS.uploadMockData()}"
+			disabled="#{interfaceBean.methodVS.newMockDataDisabled}"
+			process="@this" style="margin-top: 10px; margin-right: 10px;" />
 
 		<p:commandButton value="#{labels.show_edit}"
-			action="#{_interface.methodVS.editMockData()}"
-			disabled="#{_interface.methodVS.editMockDataDisabled}"
-			process="@this" update=":form" />
+			action="#{interfaceBean.methodVS.editMockData()}"
+			disabled="#{interfaceBean.methodVS.editMockDataDisabled}"
+			process="@this" update=":form"
+			style="margin-top: 10px; margin-right: 10px;"
+			styleClass="ui-button-warning" />
 
 		<p:commandButton value="#{labels.delete}"
-			action="#{_interface.methodVS.deleteMockDataFromOverview()}"
-			disabled="#{_interface.methodVS.deleteMockDataOverviewDisabled}"
-			process="@this" update=":form" />
+			action="#{interfaceBean.methodVS.deleteMockDataFromOverview()}"
+			disabled="#{interfaceBean.methodVS.deleteMockDataOverviewDisabled}"
+			process="@this" update=":form" style="margin-top: 10px;"
+			styleClass="ui-button-danger" />
 
 	</p:panel>
 

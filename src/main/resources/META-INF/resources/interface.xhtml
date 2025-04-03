@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:head>
@@ -54,11 +54,11 @@
 				<div class="ui-g-12">
 					<p:menubar>
 						<p:menuitem id="men_refresh" value="#{labels.refresh}"
-							action="#{_interface.refresh}" icon="pi pi-refresh"
-							disabled="#{_interface.refreshDisabled}" update=":form" />
+							action="#{interfaceBean.refresh}" icon="pi pi-refresh"
+							disabled="#{interfaceBean.refreshDisabled}" update=":form" />
 						<f:facet name="options">
 							<p:commandButton id="btnLogout" value="#{labels.logout}"
-								icon="pi pi-home" action="#{_interface.logout()}"
+								icon="pi pi-home" action="#{interfaceBean.logout()}"
 								process="@this" />
 						</f:facet>
 					</p:menubar>
@@ -67,17 +67,17 @@
 				<div class="ui-g-12">
 
 					<div class="ui-g-12 ui-md-3">
-						<p:tree value="#{_interface.treeRoot}" var="node"
-							selectionMode="single" selection="#{_interface.selectedNode}"
+						<p:tree value="#{interfaceBean.treeRoot}" var="node"
+							selectionMode="single" selection="#{interfaceBean.selectedNode}"
 							dynamic="true">
 
 							<p:ajax event="select" update=":form"
-								listener="#{_interface.onNodeSelect}" />
+								listener="#{interfaceBean.onNodeSelect}" />
 
 							<p:ajax event="unselect" update=":form:data_panel"
-								listener="#{_interface.onNodeUnselect}" />
+								listener="#{interfaceBean.onNodeUnselect}" />
 
-							<p:ajax event="expand" listener="#{_interface.onNodeExpand}" />
+							<p:ajax event="expand" listener="#{interfaceBean.onNodeExpand}" />
 
 							<p:treeNode>
 								<h:outputText value="#{node}" />
@@ -90,21 +90,25 @@
 						<h:panelGroup id="data_panel">
 							<h:panelGroup id="pangr2_data_panel" rendered="true">
 								<ui:include id="ifc_incl_data_panel"
-									src="#{_interface.dataPanel}" />
+									src="#{interfaceBean.dataPanel}" />
 							</h:panelGroup>
 						</h:panelGroup>
 
 						<p:commandButton value="#{labels.save}"
-							action="#{_interface.saveInterface()}" update=":form"
-							rendered="#{_interface.saveDeleteInterfaceRendered}" />
+							action="#{interfaceBean.saveInterface()}" update=":form"
+							rendered="#{interfaceBean.saveDeleteInterfaceRendered}"
+							style="margin-top: 10px; margin-right: 10px;" />
 
 						<p:commandButton value="#{labels.delete}"
-							action="#{_interface.deleteInterface()}"
-							disabled="#{_interface.deleteInterfaceDisabled}"
-							rendered="#{_interface.saveDeleteInterfaceRendered}" />
+							action="#{interfaceBean.deleteInterface()}"
+							disabled="#{interfaceBean.deleteInterfaceDisabled}"
+							rendered="#{interfaceBean.saveDeleteInterfaceRendered}"
+							style="margin-top: 10px; margin-right: 10px;"
+							styleClass="ui-button-danger" />
 
 						<p:commandButton value="#{labels.cancel}"
-							action="#{_interface.cancel()}" />
+							action="#{interfaceBean.cancel()}" style="margin-top: 10px;"
+							styleClass="ui-button-secondary" />
 
 					</div>
 
