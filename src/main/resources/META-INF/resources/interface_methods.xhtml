@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:head>
@@ -15,11 +15,11 @@
 
 	<p:panel id="pnl_methods" header="#{labels.methods}">
 
-		<p:dataTable id="tblMethods" value="#{_interface.tblMethods}"
+		<p:dataTable id="tblMethods" value="#{interfaceBean.tblMethods}"
 			var="meth" emptyMessage="#{labels.no_data}" rowKey="#{meth.name}"
-			selectionMode="multiple" selection="#{_interface.selectedMethods}">
+			selectionMode="multiple" selection="#{interfaceBean.selectedMethods}">
 
-			<p:columns value="#{_interface.tblMethodsColumns}" var="col"
+			<p:columns value="#{interfaceBean.tblMethodsColumns}" var="col"
 				width="#{col.widthFull}">
 				<f:facet name="header">
 					<h:outputText value="#{col.header}" />
@@ -27,31 +27,35 @@
 				<h:outputText value="#{meth[col.property]}" />
 			</p:columns>
 
-			<p:ajax event="rowSelect" listener="#{_interface.onMethodsRowSelect}"
+			<p:ajax event="rowSelect"
+				listener="#{interfaceBean.onMethodsRowSelect}"
 				update="form:pnl_methods" />
 
 			<p:ajax event="rowUnselect"
-				listener="#{_interface.onMethodsRowUnselect}"
+				listener="#{interfaceBean.onMethodsRowUnselect}"
 				update="form:pnl_methods" />
 
 			<p:ajax event="rowDblselect"
-				listener="#{_interface.onMethodsRowDoubleClick}" update="form" />
+				listener="#{interfaceBean.onMethodsRowDoubleClick}" update="form" />
 
 		</p:dataTable>
 
 
 		<p:commandButton value="#{labels._new}"
-			action="#{_interface.newMethod()}" process="@this" update=":form" />
+			action="#{interfaceBean.newMethod()}" process="@this" update=":form"
+			style="margin-top: 10px; margin-right: 10px;" />
 
 		<p:commandButton value="#{labels.show_edit}"
-			action="#{_interface.editMethod()}"
-			disabled="#{_interface.editMethodDisabled}" process="@this"
-			update=":form" />
+			action="#{interfaceBean.editMethod()}"
+			disabled="#{interfaceBean.editMethodDisabled}" process="@this"
+			update=":form" style="margin-top: 10px; margin-right: 10px;"
+			styleClass="ui-button-warning" />
 
 		<p:commandButton value="#{labels.delete}"
-			action="#{_interface.deleteMethods()}"
-			disabled="#{_interface.deleteMethodDisabled}" process="@this"
-			update=":form" />
+			action="#{interfaceBean.deleteMethods()}"
+			disabled="#{interfaceBean.deleteMethodDisabled}" process="@this"
+			update=":form" style="margin-top: 10px;"
+			styleClass="ui-button-danger" />
 
 	</p:panel>
 

@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import javax.ws.rs.NotAuthorizedException;
+import jakarta.ws.rs.NotAuthorizedException;
 import org.apache.log4j.Logger;
 import de.joergdev.mosy.api.client.MosyApiClient;
 import de.joergdev.mosy.api.response.AbstractResponse;

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
-import org.primefaces.model.SortOrder;
 import de.joergdev.mosy.api.model.Record;
 import de.joergdev.mosy.api.model.RecordSession;
 import de.joergdev.mosy.frontend.utils.JsfUtils;
@@ -31,32 +31,28 @@ public class RecordsLazyDataModel extends LazyDataModel<Record>
   }
 
   @Override
-  public List<Record> load(int first, int pageSize, String sortField, SortOrder sortOrder,
-                           Map<String, Object> filters)
+  public List<Record> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy)
   {
     return load(first, pageSize);
   }
 
   @Override
-  public List<Record> load(int first, int pageSize, List<SortMeta> multiSortMeta, Map<String, Object> filters)
+  public int count(Map<String, FilterMeta> filterBy)
   {
-    return load(first, pageSize);
+    return 0;
   }
 
   private List<Record> load(int first, int pageSize)
   {
     if (!allLoaded && first >= allRecordsLoaded.size())
     {
-      List<Record> records = viewController.invokeApiCall(apiClient -> apiClient.loadRecords(pageSize,
-          lastLoadedId, filterSession == null
-              ? null
-              : filterSession.getRecordSessionID()))
+      List<Record> records = viewController
+          .invokeApiCall(apiClient -> apiClient.loadRecords(pageSize, lastLoadedId, filterSession == null ? null : filterSession.getRecordSessionID()))
           .getRecords();
 
       if (!Utils.isCollectionEmpty(records))
       {
-        lastLoadedId = records.stream().map(r -> r.getRecordId()).min(Utils.getDefaultComparator())
-            .orElse(null);
+        lastLoadedId = records.stream().map(r -> r.getRecordId()).min(Utils.getDefaultComparator()).orElse(null);
       }
 
       allRecordsLoaded.addAll(records);
@@ -66,33 +62,26 @@ public class RecordsLazyDataModel extends LazyDataModel<Record>
         allLoaded = records.size() < pageSize;
       }
 
-      setRowCount(allRecordsLoaded.size() + (allLoaded
-          ? 0
-          : 1));
+      setRowCount(allRecordsLoaded.size() + (allLoaded ? 0 : 1));
 
       return records;
     }
     else
     {
-      return allRecordsLoaded.isEmpty()
-          ? allRecordsLoaded
-          : allRecordsLoaded.subList(first, Utils.min(first + pageSize, allRecordsLoaded.size()));
+      return allRecordsLoaded.isEmpty() ? allRecordsLoaded : allRecordsLoaded.subList(first, Utils.min(first + pageSize, allRecordsLoaded.size()));
     }
   }
 
   @Override
   public Record getRowData(String rowKey)
   {
-    return getWrappedData().stream().filter(r -> r.getRecordId().toString().equals(rowKey)).findAny()
-        .orElse(null);
+    return getWrappedData().stream().filter(r -> r.getRecordId().toString().equals(rowKey)).findAny().orElse(null);
   }
 
   @Override
-  public Object getRowKey(Record record)
+  public String getRowKey(Record apiRecord)
   {
-    return record == null
-        ? null
-        : record.getRecordId();
+    return Utils.asString(apiRecord.getRecordId());
   }
 
   public void removeRecord(Record r)

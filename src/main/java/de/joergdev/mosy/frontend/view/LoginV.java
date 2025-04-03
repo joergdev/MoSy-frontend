@@ -2,14 +2,14 @@ package de.joergdev.mosy.frontend.view;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.ManagedBean;
-import javax.annotation.PostConstruct;
-import javax.faces.view.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import de.joergdev.mosy.api.model.Tenant;
 import de.joergdev.mosy.frontend.view.controller.LoginVC;
 import de.joergdev.mosy.frontend.view.core.AbstractView;
 
-@ManagedBean("login")
+@Named("login")
 @ViewScoped
 public class LoginV extends AbstractView<LoginVC>
 {

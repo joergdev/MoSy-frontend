@@ -3,9 +3,9 @@ package de.joergdev.mosy.frontend.view;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.annotation.ManagedBean;
-import javax.annotation.PostConstruct;
-import javax.faces.view.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.NodeUnselectEvent;
 import org.primefaces.event.SelectEvent;
@@ -30,7 +30,7 @@ import de.joergdev.mosy.frontend.view.controller.MainVC;
 import de.joergdev.mosy.frontend.view.core.AbstractView;
 import de.joergdev.mosy.shared.ValueWrapper;
 
-@ManagedBean("main")
+@Named("main")
 @ViewScoped
 public class MainV extends AbstractView<MainVC>
 {

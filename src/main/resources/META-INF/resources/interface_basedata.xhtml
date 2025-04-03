@@ -1,13 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:head>
 	<title>Interface basedata</title>
+
+	<style type="text/css">
+.col1 {
+	width: 17%;
+	text-align: left;
+}
+
+.col2 {
+	width: 20%;
+	text-align: left;
+}
+
+.col3 {
+	width: 10%;
+	text-align: left;
+}
+
+.col4 {
+	width: 53%;
+	text-align: left;
+}
+</style>
+
 </h:head>
 
 
@@ -15,115 +38,125 @@
 
 	<p:panel id="panIfBasedata">
 
-		<p:panelGrid styleClass="ui-noborder">
+		<p:panelGrid styleClass="ui-noborder" layout="grid" columns="4"
+			columnClasses="col1,col2,col3,col4">
 			<p:row>
-				<p:column>
+				<p:column style="display: flex; align-items: center;">
 					<h:outputText for="name" value="#{labels.name}" />
 				</p:column>
-				<p:column colspan="2">
-					<p:inputText id="name" value="#{_interface.name}"
-						style="width:100%" />
+				<p:column>
+					<p:inputText id="name" value="#{interfaceBean.name}"
+						style="width:100%;" />
 				</p:column>
+				<p:column></p:column>
+				<p:column></p:column>
 			</p:row>
 
 
 			<p:row>
-				<p:column>
+				<p:column style="display: flex; align-items: center;">
 					<h:outputText for="type" value="#{labels.type}" />
 				</p:column>
 				<p:column>
 					<p:selectOneMenu id="type"
-						value="#{_interface.interfaceTypeSelected}">
-						<p:ajax listener="#{_interface.onInterfaceTypeSelect}"
+						value="#{interfaceBean.interfaceTypeSelected}">
+						<p:ajax listener="#{interfaceBean.onInterfaceTypeSelect}"
 							update="panIfBasedata" process="panIfBasedata" />
 						<f:selectItem itemLabel="#{labels.select_type}" itemValue=""
 							noSelectionOption="true" />
-						<f:selectItems value="#{_interface.interfaceTypes}" />
+						<f:selectItems value="#{interfaceBean.interfaceTypes}" />
 					</p:selectOneMenu>
 				</p:column>
+				<p:column></p:column>
+				<p:column></p:column>
 			</p:row>
 
 
-			<p:row>
-				<p:column>
+			<p:row rendered="#{interfaceBean.servicePathRendered}">
+				<p:column style="display: flex; align-items: center;">
 					<h:outputText id="lblServicePath" for="servicePath"
-						value="#{labels.service_path}"
-						rendered="#{_interface.servicePathRendered}" />
+						value="#{labels.service_path}" />
 				</p:column>
-				<p:column colspan="2">
-					<p:inputText id="servicePath" value="#{_interface.servicePath}"
-						rendered="#{_interface.servicePathRendered}" style="width:100%" />
+				<p:column>
+					<p:inputText id="servicePath" value="#{interfaceBean.servicePath}"
+						style="width:100%" />
 				</p:column>
+				<p:column></p:column>
+				<p:column></p:column>
 			</p:row>
 
 
 			<p:row>
-				<p:column>
+				<p:column style="display: flex; align-items: center;">
 					<h:outputText for="mockActive" value="#{labels.mock_active}" />
 				</p:column>
 				<p:column>
-					<p:selectOneMenu id="mockActive" value="#{_interface.mockActive}">
-						<p:ajax listener="#{_interface.handleMockActive}"
+					<p:selectOneMenu id="mockActive"
+						value="#{interfaceBean.mockActive}">
+						<p:ajax listener="#{interfaceBean.handleMockActive}"
 							update="panIfBasedata" process="panIfBasedata" />
-						<f:selectItems value="#{_interface.yesNoGlobalTypes}" />
+						<f:selectItems value="#{interfaceBean.yesNoGlobalTypes}" />
 					</p:selectOneMenu>
 				</p:column>
 
-				<p:column>
+				<p:column style="display: flex; align-items: center;">
 					<h:outputText for="mockActiveOnStartup"
 						value="#{labels.on_startup}" />
 				</p:column>
 				<p:column>
 					<p:selectOneMenu id="mockActiveOnStartup"
-						value="#{_interface.mockActiveOnStartup}">
-						<p:ajax listener="#{_interface.handleMockActive}"
+						value="#{interfaceBean.mockActiveOnStartup}">
+						<p:ajax listener="#{interfaceBean.handleMockActive}"
 							update="panIfBasedata" process="panIfBasedata" />
-						<f:selectItems value="#{_interface.yesNoGlobalTypes}" />
+						<f:selectItems value="#{interfaceBean.yesNoGlobalTypes}" />
 					</p:selectOneMenu>
 				</p:column>
 			</p:row>
 
 
 			<p:row>
-				<p:column>
+				<p:column style="display: flex; align-items: center;">
 					<h:outputText for="chk_routing_on_no_mockdata"
 						value="#{labels.routing_on_no_mockdata}" />
 				</p:column>
 				<p:column>
 					<p:selectOneMenu id="chk_routing_on_no_mockdata"
-						value="#{_interface.routingOnNoMockData}"
-						disabled="#{_interface.routingOnNoMockDataDisabled}">
+						value="#{interfaceBean.routingOnNoMockData}"
+						disabled="#{interfaceBean.routingOnNoMockDataDisabled}">
 						<p:ajax update="panIfBasedata"
-							listener="#{_interface.handleRoutingOnNoMockData}"
+							listener="#{interfaceBean.handleRoutingOnNoMockData}"
 							process="panIfBasedata" />
-						<f:selectItems value="#{_interface.yesNoGlobalTypes}" />
+						<f:selectItems value="#{interfaceBean.yesNoGlobalTypes}" />
 					</p:selectOneMenu>
 				</p:column>
+				<p:column></p:column>
+				<p:column></p:column>
 			</p:row>
 
 
-			<p:row>
-				<p:column>
-					<h:outputText for="routingUrl" value="#{labels.routing_URL}"
-						rendered="#{_interface.routingUrlRendered}" />
+			<p:row rendered="#{interfaceBean.routingUrlRendered}">
+				<p:column style="display: flex; align-items: center;">
+					<h:outputText for="routingUrl" value="#{labels.routing_URL}" />
 				</p:column>
 				<p:column colspan="3">
-					<p:inputText id="routingUrl" value="#{_interface.routingUrl}"
-						rendered="#{_interface.routingUrlRendered}" style="width:45em" />
+					<p:inputText id="routingUrl" value="#{interfaceBean.routingUrl}"
+						style="width:260%" />
 				</p:column>
 			</p:row>
 
 
 			<p:row>
-				<p:column>
+				<p:column style="display: flex; align-items: center;">
 					<h:outputText for="chk_record" value="#{labels.record}" />
 				</p:column>
 				<p:column>
-					<p:selectOneMenu id="chk_record" value="#{_interface.record}"
-						disabled="#{_interface.recordDisabled}">
-						<f:selectItems value="#{_interface.yesNoGlobalTypes}" />
+					<p:selectOneMenu id="chk_record" value="#{interfaceBean.record}"
+						disabled="#{interfaceBean.recordDisabled}">
+						<f:selectItems value="#{interfaceBean.yesNoGlobalTypes}" />
 					</p:selectOneMenu>
 				</p:column>
+				<p:column></p:column>
+				<p:column></p:column>
 			</p:row>
 
 		</p:panelGrid>

@@ -1,7 +1,7 @@
 package de.joergdev.mosy.frontend.security;
 
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.HttpHeaders;
+import jakarta.servlet.http.HttpSession;
+import jakarta.ws.rs.core.HttpHeaders;
 import de.joergdev.mosy.api.model.Tenant;
 import de.joergdev.mosy.frontend.utils.JsfUtils;
 import de.joergdev.mosy.shared.Utils;

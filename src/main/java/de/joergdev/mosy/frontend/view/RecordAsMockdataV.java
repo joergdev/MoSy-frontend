@@ -2,9 +2,9 @@ package de.joergdev.mosy.frontend.view;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.ManagedBean;
-import javax.annotation.PostConstruct;
-import javax.faces.view.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import de.joergdev.mosy.api.model.MockProfile;
 import de.joergdev.mosy.api.model.Record;
 import de.joergdev.mosy.frontend.Resources;
@@ -14,7 +14,7 @@ import de.joergdev.mosy.frontend.utils.WidthUnit;
 import de.joergdev.mosy.frontend.view.controller.RecordAsMockdataVC;
 import de.joergdev.mosy.frontend.view.core.AbstractView;
 
-@ManagedBean("recordAsMockdata")
+@Named("recordAsMockdata")
 @ViewScoped
 public class RecordAsMockdataV extends AbstractView<RecordAsMockdataVC>
 {

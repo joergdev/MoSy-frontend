@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import de.joergdev.mosy.api.model.Interface;
 import de.joergdev.mosy.api.model.InterfaceMethod;
 import de.joergdev.mosy.api.model.MockData;
@@ -22,6 +22,7 @@ import de.joergdev.mosy.frontend.validation.SelectionValidation;
 import de.joergdev.mosy.frontend.view.UploadMockdataV;
 import de.joergdev.mosy.frontend.view.controller.core.AbstractViewController;
 import de.joergdev.mosy.shared.Utils;
+import java.nio.charset.StandardCharsets;
 
 public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
 {
@@ -295,7 +296,7 @@ public class UploadMockdataVC extends AbstractViewController<UploadMockdataV>
         FileUploadEvent e = itFiles.next();
         UploadedFile upFile = e.getFile();
         String filename = upFile.getFileName();
-        String content = new String(upFile.getContents(), "UTF-8");
+        String content = new String(upFile.getContent(), StandardCharsets.UTF_8);
 
         InterfaceMethod methodSelected = view.getMethodSelected();
 

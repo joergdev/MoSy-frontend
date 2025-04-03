@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import javax.annotation.ManagedBean;
-import javax.annotation.PostConstruct;
-import javax.faces.view.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import org.primefaces.event.NodeExpandEvent;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.NodeUnselectEvent;
@@ -27,7 +27,7 @@ import de.joergdev.mosy.frontend.view.core.AbstractView;
 import de.joergdev.mosy.shared.Utils;
 import de.joergdev.mosy.shared.ValueWrapper;
 
-@ManagedBean("_interface")
+@Named("interfaceBean")
 @ViewScoped
 public class InterfaceV extends AbstractView<InterfaceVC>
 {

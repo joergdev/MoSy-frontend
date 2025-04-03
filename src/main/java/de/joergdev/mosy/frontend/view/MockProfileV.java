@@ -1,13 +1,13 @@
 package de.joergdev.mosy.frontend.view;
 
-import javax.annotation.ManagedBean;
-import javax.annotation.PostConstruct;
-import javax.faces.view.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import de.joergdev.mosy.frontend.utils.JsfUtils;
 import de.joergdev.mosy.frontend.view.controller.MockProfileVC;
 import de.joergdev.mosy.frontend.view.core.AbstractView;
 
-@ManagedBean("mockprofile")
+@Named("mockprofile")
 @ViewScoped
 public class MockProfileV extends AbstractView<MockProfileVC>
 {
