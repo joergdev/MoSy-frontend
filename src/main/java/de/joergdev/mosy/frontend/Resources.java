@@ -6,6 +6,8 @@ public class Resources
 {
   public static final String PROPERTY_UPLOAD_MOCKDATA_SINGLEMODE = "upload_mockdata_singlemode";
 
+  public static final String SITE_HEALTHCHECK = "healthcheck.xhtml";
+  
   public static final String SITE_LOGIN = "login.xhtml";
   public static final String SITE_GOODBUY = "goodbye.xhtml";
 

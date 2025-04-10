@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.joergdev.mosy</groupId>
 	<artifactId>mosy-frontend</artifactId>
-	<version>5.0.0</version>
+	<version>5.0.1</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Mock system for all kind of interfaces (Rest / SOAP / custom) - Frontend</description>

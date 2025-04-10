@@ -47,7 +47,7 @@ public class LoginFilter implements Filter
     }
 
     if (!url.contains(Resources.SITE_LOGIN) && !url.contains(Resources.SITE_GOODBUY) && !url.contains(Resources.SITE_TENANT) && Utils.isEmpty(token)
-        && Utils.isEmpty(TokenHolder.getToken(httpSesion)))
+        && Utils.isEmpty(TokenHolder.getToken(httpSesion)) && !url.contains(Resources.SITE_HEALTHCHECK))
     {
       httpResponse.sendRedirect(httpRequest.getContextPath() + "/" + Resources.SITE_LOGIN + "?" + LoginV.VIEW_PARAM_NO_AUTH + "=true");
     }
