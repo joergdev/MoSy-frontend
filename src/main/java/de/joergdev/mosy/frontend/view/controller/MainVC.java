@@ -1001,7 +1001,12 @@ public class MainVC extends AbstractViewController<MainV>
 
     private String getFileContentRecordDownload(Record apiRecord)
     {
-      StringBuilder bui = new StringBuilder(apiRecord.getRequestData().length() + apiRecord.getResponse().length() + 30);
+      String request = apiRecord.getRequestData();
+      String response = apiRecord.getResponse();
+
+      StringBuilder bui = new StringBuilder((request == null ? 0 : request.length()) //
+                                            + (response == null ? 0 : response.length()) //
+                                            + 30);
 
       Collection<PathParam> pathParams = apiRecord.getPathParams();
       if (!pathParams.isEmpty())
@@ -1025,9 +1030,12 @@ public class MainVC extends AbstractViewController<MainV>
         }
       }
 
-      bui.append(MockData.PREFIX_MOCKDATA_IN_EXPORT_REQUEST).append("\n");
-      bui.append(apiRecord.getRequestData());
-      bui.append("\n");
+      if (!Utils.isEmpty(request))
+      {
+        bui.append(MockData.PREFIX_MOCKDATA_IN_EXPORT_REQUEST).append("\n");
+        bui.append(request);
+        bui.append("\n");
+      }
 
       Integer httpReturnCode = apiRecord.getHttpReturnCode();
       if (httpReturnCode != null)
@@ -1037,8 +1045,11 @@ public class MainVC extends AbstractViewController<MainV>
         bui.append("\n");
       }
 
-      bui.append(MockData.PREFIX_MOCKDATA_IN_EXPORT_RESPONSE).append("\n");
-      bui.append(apiRecord.getResponse());
+      if (!Utils.isEmpty(response))
+      {
+        bui.append(MockData.PREFIX_MOCKDATA_IN_EXPORT_RESPONSE).append("\n");
+        bui.append(response);
+      }
 
       return bui.toString();
     }

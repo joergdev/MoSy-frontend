@@ -1,12 +1,13 @@
 package de.joergdev.mosy.frontend.view.core;
 
 import java.io.Serializable;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import de.joergdev.mosy.frontend.view.controller.core.AbstractViewController;
 
 public abstract class AbstractView<T extends AbstractViewController<?>> implements Serializable
 {
-  private static final Logger LOG = Logger.getLogger(AbstractView.class);
+  private static final Logger LOG = LogManager.getLogger(AbstractView.class);
 
   protected T controller;
 

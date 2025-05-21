@@ -8,8 +8,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import jakarta.ws.rs.NotAuthorizedException;
-import org.apache.log4j.Logger;
 import de.joergdev.mosy.api.client.MosyApiClient;
 import de.joergdev.mosy.api.response.AbstractResponse;
 import de.joergdev.mosy.api.response.ResponseMessage;
@@ -27,7 +28,7 @@ import de.joergdev.mosy.shared.ValueWrapper;
 
 public abstract class AbstractViewController<T extends AbstractView<?>>
 {
-  private static final Logger LOG = Logger.getLogger(AbstractViewController.class);
+  private static final Logger LOG = LogManager.getLogger(AbstractViewController.class);
 
   protected T view;
 
